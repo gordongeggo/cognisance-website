@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognizance | Die Realität der Wahrnehmung</title>
+    <style>
+        /* Globales Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Versteckt den Standard-Cursor */
+        }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #030308;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Intro-Bildschirm */
+        #intro-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1), visibility 2s;
+        }
+
+        #quantum-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Minimalistischer Untertitel */
+        .subtitle {
+            position: absolute;
+            bottom: 8%;
+            width: 100%;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 200;
+            letter-spacing: 6px;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 5;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        /* Das interaktive Portal im Zentrum */
+        #portal-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+            pointer-events: none;
+        }
+
+        #portal-container.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        /* SVG-Ladering */
+        #progress-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        #progress-ring circle {
+            fill: none;
+            stroke-width: 2;
+        }
+
+        #progress-ring .bg {
+            stroke: rgba(212, 175, 55, 0.1);
+        }
+
+        #progress-ring .progress {
+            stroke: #d4af37; /* Gold */
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        #portal-text {
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            text-indent: 8px; /* Zentrierungs-Ausgleich */
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        /* Der Quantum Cursor */
+        #quantum-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #quantum-cursor::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background-color: #b19ffb; /* Violett */
+            border-radius: 50%;
+        }
+
+        .cursor-charging {
+            width: 40px !important;
+            height: 40px !important;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        /* KAPITEL I: DIE ILLUSION DER ZEIT (Nach der Explosion) */
+        #chapter-one {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0;
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #080815 0%, #010103 100%);
+            transition: opacity 3s ease;
+            padding: 20px;
+        }
+
+        #chapter-one.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chapter-header {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .chapter-num {
+            font-size: 0.9rem;
+            letter-spacing: 12px;
+            color: #b19ffb;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .chapter-title {
+            font-size: 3rem;
+            font-weight: 100;
+            letter-spacing: 16px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            text-shadow: 0 0 30px rgba(177, 159, 251, 0.2);
+        }
+
+        .chapter-quote {
+            font-size: 1.2rem;
+            font-weight: 200;
+            line-height: 2.2;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- INTERAKTIVES INTRO -->
+    <div id="intro-screen">
+        <canvas id="quantum-canvas"></canvas>
+        
+        <div id="portal-container">
+            <svg id="progress-ring" viewBox="0 0 150 150">
+                <circle class="bg" cx="75" cy="75" r="70"></circle>
+                <circle class="progress" cx="75" cy="75" r="70" id="loader-circle"></circle>
+            </svg>
+            <div id="portal-text">ERKENNE</div>
+        </div>
+
+        <div class="subtitle" id="intro-subtitle">Realität existiert erst, wenn du sie ansiehst. Tritt ein.</div>
+    </div>
+
+    <!-- KAPITEL I (Zunächst verborgen) -->
+    <div id="chapter-one">
+        <div class="chapter-header">
+            <div class="chapter-num">Kapitel I</div>
+            <h1 class="chapter-title">Die Illusion der Zeit</h1>
+            <p class="chapter-quote">
+                „Für uns gläubige Physiker hat die Scheidung zwischen Vergangenheit, Gegenwart und Zukunft nur die Bedeutung einer, wenn auch hartnäckigen, Illusion.“<br>
+                <span style="color: #d4af37; font-size: 0.95rem; letter-spacing: 3px; display: block; margin-top: 15px;">— Albert Einstein</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- UNSICHTBARER INTERAKTIVER CURSOR -->
+    <div id="quantum-cursor"></div>
+
+    <script>
+        const canvas = document.getElementById('quantum-canvas');
+        const ctx = canvas.getContext('2d');
+        const cursor = document.getElementById('quantum-cursor');
+        const portal = document.getElementById('portal-container');
+        const loaderCircle = document.getElementById('loader-circle');
+        const introScreen = document.getElementById('intro-screen');
+        const chapterOne = document.getElementById('chapter-one');
+        const subtitle = document.getElementById('intro-subtitle');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        // Zustandssystem
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let realMouseX = mouseX;
+        let realMouseY = mouseY;
+        let mouseMoving = false;
+        let idleTimer = 0;
+        let charge = 0;
+        let isMouseDown = false;
+        let exploded = false;
+
+        // Progress-Ring Setup (Umfang = 2 * PI * r = 2 * PI * 70 ≈ 440)
+        const ringCircumference = 440;
+
+        // Event-Listeners für Maus und Touch
+        window.addEventListener('mousemove', (e) => {
+            realMouseX = e.clientX;
+            realMouseY = e.clientY;
+            mouseMoving = true;
+            idleTimer = 0;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            realMouseX = e.touches.clientX;
+            realMouseY = e.touches.clientY;
+            mouseMoving = true;
+            idleTimer = 0;
+        }, { passive: true });
+
+        window.addEventListener('mousedown', () => { isMouseDown = true; });
+        window.addEventListener('mouseup', () => { isMouseDown = false; });
+        window.addEventListener('touchstart', () => { isMouseDown = true; });
+        window.addEventListener('touchend', () => { isMouseDown = false; });
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            generateEyeCoordinates();
+        });
+
+        // Partikel-Definition
+        const particleCount = 400;
+        const particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.destX = this.x;
+                this.destY = this.y;
+                this.vx = 0;
+                this.vy = 0;
+                this.size = 1 + Math.random() * 2;
+                this.alpha = 0.1 + Math.random() * 0.7;
+                this.baseAlpha = this.alpha;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = 0.5 + Math.random() * 1.5;
+                
+                // Farbmischung (Gold, Violett, Weiß)
+                const rand = Math.random();
+                if (rand < 0.4) {
+                    this.color = `rgba(212, 175, 55, `; // Gold
+                } else if (rand < 0.8) {
+                    this.color = `rgba(177, 159, 251, `; // Violett
+                } else {
+                    this.color = `rgba(255, 255, 255, `; // Weiß
+                }
+            }
+
+            update() {
+                if (exploded) {
+                    // Explosionsphysik: Partikel schießen vom Zentrum weg
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha -= 0.01; // Verblassen
+                    return;
+                }
+
+                if (mouseMoving) {
+                    // LERP zum Ziel (Auge formen)
+                    let dx = this.destX - this.x;
+                    let dy = this.destY - this.y;
+                    
+                    // Während des Drückens vibrieren die Partikel vor Energie
+                    if (isMouseDown && charge > 0) {
+                        this.x += dx * 0.08 + (Math.random() - 0.5) * (charge * 12);
+                        this.y += dy * 0.08 + (Math.random() - 0.5) * (charge * 12);
+                    } else {
+                        this.x += dx * 0.08;
+                        this.y += dy * 0.08;
+                    }
+                } else {
+                    // Superposition: Flüssiges, zielloses Treiben im Raum
+                    this.x += Math.sin(this.angle) * this.speed * 0.4;
+                    this.y += Math.cos(this.angle) * this.speed * 0.4;
+                    this.angle += (Math.random() - 0.5) * 0.1;
+
+                    // Grenzen einhalten
+                    if (this.x < 0 || this.x > width) this.angle += Math.PI;
+                    if (this.y < 0 || this.y > height) this.angle += Math.PI;
+                }
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.alpha + ")";
+                ctx.fill();
+            }
+        }
+
+        // Mathematische Erzeugung der Augen-Struktur
+        const eyePoints = [];
+        function generateEyeCoordinates() {
+            eyePoints.length = 0;
+            const centerX = 0; // relativ zum Augenzentrum
+            const centerY = 0;
+
+            // 1. Augenlider (Oben und Unten) - 150 Punkte
+            for (let i = 0; i < 150; i++) {
+                let pct = (i / 150) * 2 - 1; // -1 bis 1
+                let x = pct * 180;
+                // Formelschnitt für die Augenform
+                let yUpper = -Math.sin(Math.acos(pct)) * 65;
+                let yLower = Math.sin(Math.acos(pct)) * 65;
+                
+                eyePoints.push({ x: x, y: yUpper });
+                eyePoints.push({ x: x, y: yLower });
+            }
+
+            // 2. Iris (Kreisstruktur im Auge) - 150 Punkte
+            for (let i = 0; i < 150; i++) {
+                let angle = (i / 150) * Math.PI * 2;
+                let r = 25 + Math.random() * 30; // Ringbreite der Iris
+                let x = Math.cos(angle) * r;
+                let y = Math.sin(angle) * r;
+                eyePoints.push({ x: x, y: y });
+            }
+
+            // 3. Pupille (Dichter innerer Kern) - 100 Punkte
+            for (let i = 0; i < 100; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let r = Math.random() * 18;
+                let x = Math.cos(angle) * r;
+                let y = Math.sin(angle) * r;
+                eyePoints.push({ x: x, y: y });
+            }
+        }
+
+        // Initialisierung
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        generateEyeCoordinates();
+
+        // Haupt-Render-Schleife
+        function loop() {
+            ctx.fillStyle = 'rgba(3, 3, 8, 0.2)'; // Bewegungspfad-Effekt (Motion Blur)
+            ctx.fillRect(0, 0, width, height);
+
+            // Flüssige Cursor-Verfolgung (Trägheit)
+            let cdx = realMouseX - mouseX;
+            let cdy = realMouseY - mouseY;
+            mouseX += cdx * 0.12;
+            mouseY += cdy * 0.12;
+
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+
+            // Idle-Detektion (Wann wechselt die Seite wieder in Superposition?)
+            idleTimer++;
+            if (idleTimer > 180) { // ca. 3 Sekunden Inaktivität
+                mouseMoving = false;
+                portal.classList.remove('visible');
+            } else if (!exploded) {
+                portal.classList.add('visible');
+            }
+
+            // Augen-Tracking-Berechnung
+            // Die Pupille weicht leicht in Richtung der echten Maus ab (Blickkontakt-Effekt)
+            let eyeCenterX = width / 2 + (mouseX - width / 2) * 0.08;
+            let eyeCenterY = height / 2 + (mouseY - height / 2) * 0.08;
+
+            // Update der Partikelziele
+            if (mouseMoving && !exploded) {
+                particles.forEach((p, index) => {
+                    if (index < eyePoints.length) {
+                        p.destX = eyeCenterX + eyePoints[index].x;
+                        p.destY = eyeCenterY + eyePoints[index].y;
+                        p.alpha = p.baseAlpha;
+                    } else {
+                        // Überschüssige Partikel umkreisen das Auge sanft
+                        let angle = (index * 0.05) + (Date.now() * 0.001);
+                        p.destX = eyeCenterX + Math.cos(angle) * 240;
+                        p.destY = eyeCenterY + Math.sin(angle) * 100;
+                        p.alpha = 0.2;
+                    }
+                });
+            }
+
+            // Click and Hold Steuerung
+            if (isMouseDown && mouseMoving && !exploded) {
+                // Distanz zum Zentrum prüfen
+                let distToCenter = Math.hypot(mouseX - width / 2, mouseY - height / 2);
+                if (distToCenter < 120) {
+                    charge += 0.015; // Aufladegeschwindigkeit
+                    cursor.classList.add('cursor-charging');
+                    if (charge >= 1) {
+                        charge = 1;
+                        triggerExplosion();
+                    }
+                } else {
+                    charge -= 0.02;
+                    cursor.classList.remove('cursor-charging');
+                }
+            } else {
+                charge -= 0.02;
+                cursor.classList.remove('cursor-charging');
+            }
+            if (charge < 0) charge = 0;
+
+            // SVG Lade-Ring aktualisieren
+            const offset = ringCircumference - (charge * ringCircumference);
+            loaderCircle.style.strokeDashoffset = offset;
+
+            // Partikel updaten und zeichnen
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(loop);
+        }
+
+        // Die Quanten-Explosion auslösen
+        function triggerExplosion() {
+            exploded = true;
+            cursor.style.display = 'none';
+            portal.classList.remove('visible');
+            subtitle.style.opacity = '0';
+            
+            // Druckwellen-Vektoren für alle Partikel berechnen
+            particles.forEach(p => {
+                let dx = p.x - width / 2;
+                let dy = p.y - height / 2;
+                let dist = Math.hypot(dx, dy) || 1;
+                // Kraft ist umgekehrt proportional zur Distanz
+                let force = (120 / dist) + 12;
+                p.vx = (dx / dist) * force * (1 + Math.random() * 1.5);
+                p.vy = (dy / dist) * force * (1 + Math.random() * 1.5);
+            });
+
+            // Transition zum ersten Kapitel einleiten
+            setTimeout(() => {
+                introScreen.style.opacity = '0';
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                    chapterOne.classList.add('active');
+                }, 2000);
+            }, 1000);
+        }
+
+        // Start
+        loop();
+    </script>
+</body>
+</html>
