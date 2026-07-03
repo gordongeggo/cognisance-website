@@ -163,7 +163,7 @@
             justify-content: center;
             align-items: center;
             background: radial-gradient(circle at center, #080815 0%, #010103 100%);
-            transition: opacity 3s ease;
+            transition: opacity 4.5s ease;
             padding: 20px;
         }
 
@@ -523,11 +523,12 @@
                     
                     // Während des Drückens vibrieren die Partikel vor Energie
                     if (isMouseDown && charge > 0) {
-                        this.x += dx * 0.08 + (Math.random() - 0.5) * (charge * 12);
-                        this.y += dy * 0.08 + (Math.random() - 0.5) * (charge * 12);
+                        this.x += dx * 0.05 + (Math.random() - 0.5) * (charge * 12);
+                        this.y += dy * 0.05 + (Math.random() - 0.5) * (charge * 12);
                     } else {
-                        this.x += dx * 0.08;
-                        this.y += dy * 0.08;
+                        // langsameres, gemächlicheres Formen des Auges
+                        this.x += dx * 0.035;
+                        this.y += dy * 0.035;
                     }
                 } else {
                     // Superposition: Flüssiges, zielloses Treiben im Raum
@@ -714,24 +715,39 @@
 
         /* =========================================================
            WURMLOCH-FLUG
-           Ein echter Tunnel: Ringe ("Rippen") rasen aus der Tiefe auf
-           dich zu, verbunden durch Längslinien = die Tunnelwand.
+           Ein geometrischer Tunnel: quadratische Rahmen mit gekreuzten
+           Quadraten rasen als gerade Linien aus der Tiefe auf dich zu.
            Die Tunnelmitte schlängelt sich seitlich -> Wurmloch-Gefühl.
-           Mittendrin schimmert kurz eine DNA-Doppelhelix durch.
-           Am Ende bremst der Flug ab und mündet sanft ins Menü.
+           Mittendrin dreht sich ein Tesserakt (4D-Würfel) und deutet die
+           vierte Dimension an. Am Ende bremst der Flug ab -> Menü.
            ========================================================= */
         const menuScreen = document.getElementById('menu-screen');
         const menuStatus = document.getElementById('menu-status');
         const bloom = document.getElementById('bloom');
 
-        const WH_DURATION  = 8500;   // Dauer des Fluges in ms (langsamer, ruhiger)
+        const WH_DURATION  = 6500;   // Dauer des Fluges in ms (kürzer, knackiger)
         const WH_FOCAL     = 340;    // "Brennweite" - Stärke des 3D-Eindrucks
-        const RING_COUNT   = 24;     // Anzahl der Tunnel-Ringe (Rippen)
-        const RING_POINTS  = 26;     // Punkte pro Ring
-        const RING_SPACING = 130;    // Tiefen-Abstand zwischen zwei Ringen
+        const RING_COUNT   = 16;     // Anzahl der Tunnel-Rahmen (luftiger)
+        const RING_POINTS  = 8;      // 8 Ecken = zwei gekreuzte Quadrate pro Rahmen
+        const RING_SPACING = 175;    // Tiefen-Abstand zwischen zwei Rahmen
         const TUBE_RADIUS  = 300;    // Radius der Tunnelröhre
-        const NEAR_Z       = 40;     // ab hier ist ein Ring "vorbeigeflogen"
+        const NEAR_Z       = 40;     // ab hier ist ein Rahmen "vorbeigeflogen"
         const WH_PALETTE   = ['212, 175, 55', '177, 159, 251', '255, 255, 255'];
+
+        // Tesserakt (4D-Hyperwürfel): 16 Ecken in 4D + seine Kanten. Er deutet die
+        // vierte Dimension an, die wir in unserer 3D-Welt nicht direkt sehen können.
+        const TESS_V = [];
+        for (let x = -1; x <= 1; x += 2)
+        for (let y = -1; y <= 1; y += 2)
+        for (let z = -1; z <= 1; z += 2)
+        for (let w = -1; w <= 1; w += 2) TESS_V.push([x, y, z, w]);
+        const TESS_E = [];
+        for (let i = 0; i < TESS_V.length; i++)
+        for (let j = i + 1; j < TESS_V.length; j++) {
+            let d = 0;
+            for (let k = 0; k < 4; k++) if (TESS_V[i][k] !== TESS_V[j][k]) d++;
+            if (d === 1) TESS_E.push([i, j]);  // Kante = Unterschied in genau einer Achse
+        }
 
         let rings = [];
         let dust  = [];
@@ -755,7 +771,7 @@
             const maxZ = NEAR_Z + RING_COUNT * RING_SPACING;
             rings = [];
             for (let i = 0; i < RING_COUNT; i++) {
-                rings.push({ z: NEAR_Z + i * RING_SPACING, color: WH_PALETTE[i % 3] });
+                rings.push({ z: NEAR_Z + i * RING_SPACING, cA: WH_PALETTE[i % 3], cB: WH_PALETTE[(i + 1) % 3] });
             }
             dust = [];
             for (let i = 0; i < 130; i++) {
@@ -786,7 +802,15 @@
             const speed    = warpSpeed(progress);
             const maxZ     = NEAR_Z + RING_COUNT * RING_SPACING;
 
-            // 1) Staub-Partikel bewegen und zeichnen (Textur zwischen den Ringen)
+            // Während der Tesserakt durchfliegt, tritt der Tunnel etwas zurück,
+            // damit der 4D-Würfel klar hervortritt.
+            let tunnelDim = 1;
+            if (progress > 0.38 && progress < 0.82) {
+                const td = (progress - 0.38) / 0.44;
+                tunnelDim = 1 - Math.sin(td * Math.PI) * 0.55;
+            }
+
+            // 1) Staub-Partikel bewegen und zeichnen (Textur zwischen den Rahmen)
             dust.forEach(p => {
                 p.z -= speed;
                 if (p.z < NEAR_Z) { p.z = maxZ; p.angle = Math.random() * Math.PI * 2; }
@@ -795,7 +819,7 @@
                 const a = p.angle + tunnelTwist(p.z);
                 const sx = c.x + Math.cos(a) * p.radius * scale;
                 const sy = c.y + Math.sin(a) * p.radius * scale;
-                const alpha = Math.min(1, (1 - p.z / maxZ) * 1.3) * 0.65;
+                const alpha = Math.min(1, (1 - p.z / maxZ) * 1.3) * 0.65 * tunnelDim;
                 if (alpha <= 0.02) return;
                 ctx.beginPath();
                 ctx.arc(sx, sy, p.size * scale, 0, Math.PI * 2);
@@ -803,16 +827,18 @@
                 ctx.fill();
             });
 
-            // 2) Ringe in der Tiefe nach vorne bewegen; vorbei -> ganz nach hinten
+            // 2) Rahmen in der Tiefe nach vorne bewegen; vorbei -> ganz nach hinten
             rings.forEach(r => {
                 r.z -= speed;
                 if (r.z < NEAR_Z) {
                     r.z += RING_COUNT * RING_SPACING;
-                    r.color = WH_PALETTE[Math.floor(Math.random() * 3)];
+                    const i = Math.floor(Math.random() * 3);
+                    r.cA = WH_PALETTE[i];
+                    r.cB = WH_PALETTE[(i + 1) % 3];
                 }
             });
 
-            // 3) Für jeden Ring die projizierten Punkte berechnen (von hinten nach vorne)
+            // 3) Für jeden Rahmen die 8 projizierten Eckpunkte berechnen (hinten -> vorne)
             const ordered = rings.slice().sort((a, b) => b.z - a.z);
             const ringPts = ordered.map(r => {
                 const c = tunnelCenter(r.z);
@@ -826,12 +852,12 @@
                         y: c.y + Math.sin(a) * TUBE_RADIUS * scale
                     });
                 }
-                return { pts: pts, alpha: Math.min(1, (1 - r.z / maxZ) * 1.5), color: r.color };
+                return { pts: pts, alpha: Math.min(1, (1 - r.z / maxZ) * 1.5), cA: r.cA, cB: r.cB };
             });
 
-            // 4) Längslinien = Tunnelwand (verbinden gleiche Punkte über alle Ringe)
+            // 4) Gerade Längslinien = Tunnelkanten (verbinden gleiche Ecken über alle Rahmen)
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(177, 159, 251, 0.16)';
+            ctx.strokeStyle = 'rgba(177, 159, 251,' + (0.16 * tunnelDim) + ')';
             for (let k = 0; k < RING_POINTS; k++) {
                 ctx.beginPath();
                 ringPts.forEach((rp, i) => {
@@ -842,28 +868,48 @@
                 ctx.stroke();
             }
 
-            // 5) Die Ringe (Rippen) selbst zeichnen - nah = heller
+            // 5) Pro Rahmen ZWEI gekreuzte Quadrate zeichnen (durchkreuzte Quadrate -> 4D-Andeutung)
             ringPts.forEach(rp => {
-                if (rp.alpha <= 0.02) return;
-                ctx.strokeStyle = 'rgba(' + rp.color + ',' + rp.alpha + ')';
-                ctx.lineWidth = 1.6;
+                const rpAlpha = rp.alpha * tunnelDim;
+                if (rpAlpha <= 0.02) return;
+                ctx.lineWidth = 1.5;
+                // Quadrat A: Ecken 0-2-4-6
+                ctx.strokeStyle = 'rgba(' + rp.cA + ',' + rpAlpha + ')';
                 ctx.beginPath();
-                rp.pts.forEach((pt, k) => {
-                    if (k === 0) ctx.moveTo(pt.x, pt.y);
+                [0, 2, 4, 6].forEach((k, i) => {
+                    const pt = rp.pts[k];
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else         ctx.lineTo(pt.x, pt.y);
+                });
+                ctx.closePath();
+                ctx.stroke();
+                // Quadrat B: Ecken 1-3-5-7 (um 45° versetzt -> kreuzt Quadrat A)
+                ctx.strokeStyle = 'rgba(' + rp.cB + ',' + (rpAlpha * 0.85) + ')';
+                ctx.beginPath();
+                [1, 3, 5, 7].forEach((k, i) => {
+                    const pt = rp.pts[k];
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
                     else         ctx.lineTo(pt.x, pt.y);
                 });
                 ctx.closePath();
                 ctx.stroke();
             });
 
-            // 6) DNA-Doppelhelix schimmert in der Mitte des Fluges kurz durch
-            if (phase === 'wormhole' && progress > 0.30 && progress < 0.60) {
-                const t = (progress - 0.30) / 0.30;            // 0..1 innerhalb des Fensters
-                const dnaAlpha = Math.sin(t * Math.PI) * 0.9;  // sanft ein- und ausblenden
-                drawDNA(dnaAlpha, elapsed * 0.004);
+            // 6) Kurzes, subtiles Durchschimmern der DNA-Doppelhelix (früh im Flug)
+            if (phase === 'wormhole' && progress > 0.12 && progress < 0.32) {
+                const t = (progress - 0.12) / 0.20;
+                drawDNA(Math.sin(t * Math.PI) * 0.5, elapsed * 0.004);
             }
 
-            // 7) Flug zu Ende -> sanft ins Menü übergehen
+            // 7) Der Tesserakt (4D-Würfel) fliegt in der Mitte durch und dreht sich
+            //    in der vierten Dimension -> Andeutung der 4D-Realität.
+            if (phase === 'wormhole' && progress > 0.38 && progress < 0.82) {
+                const t = (progress - 0.38) / 0.44;
+                const tessZ = 1150 - t * 900;   // fliegt von fern nach nah
+                drawTesseract(Math.sin(t * Math.PI), elapsed * 0.0016, tessZ);
+            }
+
+            // 8) Flug zu Ende -> sanft ins Menü übergehen
             if (phase === 'wormhole' && progress >= 1) {
                 finishWormhole();
             }
@@ -904,6 +950,52 @@
             }
         }
 
+        // Zeichnet den Tesserakt: 4D-Ecken drehen, dann nach 3D und 2D projizieren.
+        // Der "Würfel-im-Würfel"-Effekt entsteht durch die Perspektive entlang der 4. Achse.
+        function drawTesseract(alpha, rot, z) {
+            if (alpha <= 0.02) return;
+            const c = tunnelCenter(z);
+            const screen = 380 * (WH_FOCAL / z);   // nah = groß
+            const a = rot, b = rot * 0.65;
+            const proj = TESS_V.map(v => {
+                let x = v[0], y = v[1], zz = v[2], w = v[3];
+                // echte 4D-Drehung in der X-W-Ebene (Bewegung durch die 4. Dimension)
+                let nx = x * Math.cos(a) - w * Math.sin(a);
+                let nw = x * Math.sin(a) + w * Math.cos(a);
+                x = nx; w = nw;
+                // 3D-Taumeln in der X-Z-Ebene
+                let mx = x * Math.cos(b) - zz * Math.sin(b);
+                let mz = x * Math.sin(b) + zz * Math.cos(b);
+                x = mx; zz = mz;
+                // 4D -> 3D: Perspektive entlang der vierten Achse w (Würfel-im-Würfel)
+                const k4 = 1 / (2.6 - w);
+                x *= k4; y *= k4; zz *= k4;
+                // 3D -> 2D: Perspektive entlang z -> echte räumliche Tiefe
+                const k3 = 1 / (2.2 - zz);
+                return { x: c.x + x * k3 * screen, y: c.y + y * k3 * screen };
+            });
+            // Kanten des Hyperwürfels - mit goldenem Leuchten, damit er hervortritt
+            ctx.lineWidth = 1.8;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(212, 175, 55, ' + alpha + ')';
+            ctx.strokeStyle = 'rgba(255, 235, 180,' + (alpha * 0.9) + ')';
+            TESS_E.forEach(e => {
+                const p = proj[e[0]], q = proj[e[1]];
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(q.x, q.y);
+                ctx.stroke();
+            });
+            ctx.shadowBlur = 0;   // Leuchten wieder ausschalten (sonst leuchtet alles)
+            // Ecken als kleine Lichtpunkte
+            ctx.fillStyle = 'rgba(177, 159, 251,' + alpha + ')';
+            proj.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
         function finishWormhole() {
             phase = 'menu';
             // sanfter goldener Lichtschein beim "Austritt" aus dem Tunnel
@@ -918,9 +1010,9 @@
             portalEl.addEventListener('click', () => {
                 const target = portalEl.getAttribute('data-target');
                 if (target === 'chapter-one') {
-                    // Erstes Tor führt zu Kapitel I (Die Illusion der Zeit)
+                    // Erstes Tor führt zu Kapitel I (Die Illusion der Zeit) - langsam öffnen
                     menuScreen.classList.remove('active');
-                    setTimeout(() => chapterOne.classList.add('active'), 500);
+                    setTimeout(() => chapterOne.classList.add('active'), 800);
                 } else {
                     // Die übrigen Kapitel entstehen noch
                     menuStatus.textContent = 'Dieses Tor öffnet sich bald …';
