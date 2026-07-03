@@ -204,19 +204,23 @@
             margin: 0 auto;
         }
 
-        /* WEISSER BLITZ beim Austritt aus dem Wurmloch */
-        #flash {
+        /* SANFTER GOLDENER LICHTSCHEIN beim Austritt aus dem Wurmloch */
+        #bloom {
             position: absolute;
             inset: 0;
             z-index: 7;
-            background: #ffffff;
-            opacity: 0;
             pointer-events: none;
-            transition: opacity 0.9s ease;
+            opacity: 0;
+            background: radial-gradient(circle at center,
+                        rgba(255, 244, 214, 0.95) 0%,
+                        rgba(212, 175, 55, 0.45) 22%,
+                        rgba(177, 159, 251, 0.15) 45%,
+                        rgba(3, 3, 8, 0) 65%);
+            transition: opacity 0.8s ease;
         }
-        #flash.on {
-            opacity: 0.85;
-            transition: opacity 0.12s ease;
+        #bloom.on {
+            opacity: 1;
+            transition: opacity 0.25s ease;
         }
 
         /* MENÜ: VIER SCHWEBENDE PORTALE */
@@ -231,8 +235,8 @@
             padding: 30px;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 2.5s ease;
-            background: radial-gradient(circle at center, rgba(8, 8, 25, 0.45) 0%, rgba(1, 1, 6, 0.85) 100%);
+            transition: opacity 1.2s ease;
+            background: radial-gradient(circle at center, rgba(6, 6, 20, 0.74) 0%, rgba(1, 1, 6, 0.94) 100%);
         }
         #menu-screen.active {
             opacity: 1;
@@ -272,8 +276,17 @@
             align-items: center;
             gap: 16px;
             cursor: pointer;
-            animation: portalFloat 6s ease-in-out infinite;
+            opacity: 0; /* startet unsichtbar, bis das Menü sich öffnet */
         }
+        /* Portale kommen nach dem Flug nacheinander verspielt hereingeschwebt */
+        #menu-screen.active .portal-grid .portal {
+            animation: portalEnter 1s cubic-bezier(0.2, 0.9, 0.25, 1) forwards,
+                       portalFloat 6s ease-in-out infinite;
+        }
+        #menu-screen.active .portal-grid .portal:nth-child(1) { animation-delay: 0.15s, 1.15s; }
+        #menu-screen.active .portal-grid .portal:nth-child(2) { animation-delay: 0.35s, 1.35s; }
+        #menu-screen.active .portal-grid .portal:nth-child(3) { animation-delay: 0.55s, 1.55s; }
+        #menu-screen.active .portal-grid .portal:nth-child(4) { animation-delay: 0.75s, 1.75s; }
 
         .portal-orb {
             width: clamp(88px, 22vw, 150px);
@@ -318,6 +331,12 @@
             50%      { transform: translateY(-14px); }
         }
 
+        @keyframes portalEnter {
+            0%   { opacity: 0; transform: scale(0.35) translateY(45px); }
+            60%  { opacity: 1; }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         #menu-status {
             margin-top: clamp(24px, 5vh, 50px);
             min-height: 1.2em;
@@ -335,10 +354,13 @@
 </head>
 <body>
 
+    <!-- Der Partikel-Canvas liegt IMMER im Hintergrund - auch während des
+         Wurmloch-Fluges. Deshalb steht er AUSSERHALB von #intro-screen,
+         das später ausgeblendet wird. -->
+    <canvas id="quantum-canvas"></canvas>
+
     <!-- INTERAKTIVES INTRO -->
     <div id="intro-screen">
-        <canvas id="quantum-canvas"></canvas>
-        
         <div id="portal-container">
             <svg id="progress-ring" viewBox="0 0 150 150">
                 <circle class="bg" cx="75" cy="75" r="70"></circle>
@@ -362,26 +384,26 @@
         </div>
     </div>
 
-    <!-- WEISSER BLITZ beim Austritt aus dem Wurmloch -->
-    <div id="flash"></div>
+    <!-- SANFTER GOLDENER LICHTSCHEIN beim Austritt aus dem Wurmloch -->
+    <div id="bloom"></div>
 
     <!-- MENÜ: VIER SCHWEBENDE PORTALE (Zunächst verborgen) -->
     <div id="menu-screen">
         <h2 id="menu-title">Vier Tore der Erkenntnis</h2>
         <div class="portal-grid">
-            <div class="portal" data-target="chapter-one" style="animation-delay: 0s">
+            <div class="portal" data-target="chapter-one">
                 <div class="portal-orb"><span class="portal-roman">I</span></div>
                 <div class="portal-label">Die Illusion der Zeit</div>
             </div>
-            <div class="portal" data-target="chapter-two" style="animation-delay: -1.5s">
+            <div class="portal" data-target="chapter-two">
                 <div class="portal-orb"><span class="portal-roman">II</span></div>
                 <div class="portal-label">Außerirdische Intelligenz</div>
             </div>
-            <div class="portal" data-target="chapter-three" style="animation-delay: -3s">
+            <div class="portal" data-target="chapter-three">
                 <div class="portal-orb"><span class="portal-roman">III</span></div>
                 <div class="portal-label">Realität als Projektion</div>
             </div>
-            <div class="portal" data-target="chapter-four" style="animation-delay: -4.5s">
+            <div class="portal" data-target="chapter-four">
                 <div class="portal-orb"><span class="portal-roman">IV</span></div>
                 <div class="portal-label">Wachstum durch KI</div>
             </div>
@@ -574,7 +596,10 @@
 
         // Haupt-Render-Schleife
         function loop() {
-            ctx.fillStyle = 'rgba(3, 3, 8, 0.2)'; // Bewegungspfad-Effekt (Motion Blur)
+            // Nachzieh-Effekt (Motion Blur): im Tunnel etwas kürzer für klarere Ringe
+            ctx.fillStyle = (phase === 'wormhole' || phase === 'menu')
+                ? 'rgba(3, 3, 8, 0.30)'
+                : 'rgba(3, 3, 8, 0.2)';
             ctx.fillRect(0, 0, width, height);
 
             // Ab der Wurmloch-Phase übernimmt der Tunnel die Darstellung
@@ -689,90 +714,156 @@
 
         /* =========================================================
            WURMLOCH-FLUG
-           Die Partikel formen einen Tunnel mit Perspektiv-Effekt:
-           weit entfernte Punkte sind klein und nah an der Mitte,
-           nahe Punkte groß und am Rand -> Sog-Gefühl.
-           In der Mitte des Fluges schimmert eine DNA-Doppelhelix durch.
+           Ein echter Tunnel: Ringe ("Rippen") rasen aus der Tiefe auf
+           dich zu, verbunden durch Längslinien = die Tunnelwand.
+           Die Tunnelmitte schlängelt sich seitlich -> Wurmloch-Gefühl.
+           Mittendrin schimmert kurz eine DNA-Doppelhelix durch.
+           Am Ende bremst der Flug ab und mündet sanft ins Menü.
            ========================================================= */
         const menuScreen = document.getElementById('menu-screen');
         const menuStatus = document.getElementById('menu-status');
-        const flash = document.getElementById('flash');
+        const bloom = document.getElementById('bloom');
 
-        const WH_DURATION = 6000;   // Dauer des Fluges in Millisekunden (6 Sekunden)
-        const WH_FOCAL = 300;       // "Brennweite" - steuert die Stärke des 3D-Eindrucks
-        const WH_MAXZ = 1400;       // größte Tiefe (am weitesten entfernt)
-        let wormholeParticles = [];
+        const WH_DURATION  = 8500;   // Dauer des Fluges in ms (langsamer, ruhiger)
+        const WH_FOCAL     = 340;    // "Brennweite" - Stärke des 3D-Eindrucks
+        const RING_COUNT   = 24;     // Anzahl der Tunnel-Ringe (Rippen)
+        const RING_POINTS  = 26;     // Punkte pro Ring
+        const RING_SPACING = 130;    // Tiefen-Abstand zwischen zwei Ringen
+        const TUBE_RADIUS  = 300;    // Radius der Tunnelröhre
+        const NEAR_Z       = 40;     // ab hier ist ein Ring "vorbeigeflogen"
+        const WH_PALETTE   = ['212, 175, 55', '177, 159, 251', '255, 255, 255'];
+
+        let rings = [];
+        let dust  = [];
         let wormholeStart = 0;
-        let twist = 0;              // Drehung des Tunnels (Sog-Effekt)
 
-        // Erzeugt ein einzelnes Tunnel-Partikel in einer bestimmten Tiefe z
-        function makeTunnelParticle(z) {
-            const rand = Math.random();
-            let color;
-            if (rand < 0.4)       color = '212, 175, 55';   // Gold
-            else if (rand < 0.75) color = '177, 159, 251';  // Violett
-            else                  color = '255, 255, 255';  // Sternenweiß
+        // Die Mittelachse des Tunnels schlängelt sich in der Tiefe -> aus einer
+        // geraden Röhre wird ein "Wurmloch", durch das man sich windet.
+        function tunnelCenter(z) {
             return {
-                angle: Math.random() * Math.PI * 2,        // Position rund um den Tunnel
-                radius: 160 + Math.random() * 280,          // Abstand von der Tunnelmitte
-                z: z,                                        // Tiefe
-                size: 1.5 + Math.random() * 3,
-                color: color
+                x: width / 2  + Math.sin(z * 0.006) * 95 + Math.sin(z * 0.013) * 45,
+                y: height / 2 + Math.cos(z * 0.008) * 75
             };
+        }
+        // Verdrehung des Tunnels entlang der Tiefe (leichter Drall)
+        function tunnelTwist(z) {
+            return z * 0.004;
         }
 
         function startWormhole() {
             phase = 'wormhole';
-            wormholeParticles = [];
-            for (let i = 0; i < 340; i++) {
-                wormholeParticles.push(makeTunnelParticle(Math.random() * WH_MAXZ));
+            const maxZ = NEAR_Z + RING_COUNT * RING_SPACING;
+            rings = [];
+            for (let i = 0; i < RING_COUNT; i++) {
+                rings.push({ z: NEAR_Z + i * RING_SPACING, color: WH_PALETTE[i % 3] });
+            }
+            dust = [];
+            for (let i = 0; i < 130; i++) {
+                dust.push({
+                    angle: Math.random() * Math.PI * 2,
+                    radius: TUBE_RADIUS * (0.3 + Math.random() * 0.8),
+                    z: NEAR_Z + Math.random() * (maxZ - NEAR_Z),
+                    size: 1 + Math.random() * 2.5,
+                    color: WH_PALETTE[Math.floor(Math.random() * 3)]
+                });
             }
             wormholeStart = Date.now();
         }
 
+        // Geschwindigkeit: beschleunigt sanft, bremst zum Ende hin wieder ab
+        // (so fühlt es sich wie ein "Ankommen" an, kein harter Stopp).
+        function warpSpeed(progress) {
+            if (phase === 'menu') return 3.5;   // hinter dem Menü ruhig weitertreiben
+            let warp;
+            if (progress < 0.65) warp = progress / 0.65;                    // 0 -> 1 beschleunigen
+            else                 warp = 1 - (progress - 0.65) / 0.35 * 0.82; // 1 -> ~0.18 abbremsen
+            return 4 + warp * warp * 30;
+        }
+
         function updateWormhole() {
-            const elapsed = Date.now() - wormholeStart;
+            const elapsed  = Date.now() - wormholeStart;
             const progress = Math.min(elapsed / WH_DURATION, 1); // 0 = Start, 1 = Ende
+            const speed    = warpSpeed(progress);
+            const maxZ     = NEAR_Z + RING_COUNT * RING_SPACING;
 
-            // Geschwindigkeit: beschleunigt während des Fluges, im Menü nur ruhiges Treiben
-            let speed;
-            if (phase === 'menu') {
-                speed = 3;
-            } else {
-                speed = 6 + progress * progress * 34;
-            }
-            twist += 0.004 + progress * 0.02;
-
-            const cx = width / 2;
-            const cy = height / 2;
-
-            wormholeParticles.forEach(p => {
-                p.z -= speed;                 // Partikel kommt auf uns zu
-                if (p.z < 1) {                // vorbeigeflogen -> hinten neu einsetzen
-                    p.z = WH_MAXZ;
-                    p.angle = Math.random() * Math.PI * 2;
-                }
-                const scale = WH_FOCAL / p.z; // Perspektive: nah = groß, fern = klein
-                const a = p.angle + twist;
-                const sx = cx + Math.cos(a) * p.radius * scale;
-                const sy = cy + Math.sin(a) * p.radius * scale;
-                const sr = p.size * scale;
-                const alpha = (1 - p.z / WH_MAXZ) * 0.9; // näher = heller
-                if (alpha <= 0.01) return;
+            // 1) Staub-Partikel bewegen und zeichnen (Textur zwischen den Ringen)
+            dust.forEach(p => {
+                p.z -= speed;
+                if (p.z < NEAR_Z) { p.z = maxZ; p.angle = Math.random() * Math.PI * 2; }
+                const c = tunnelCenter(p.z);
+                const scale = WH_FOCAL / p.z;
+                const a = p.angle + tunnelTwist(p.z);
+                const sx = c.x + Math.cos(a) * p.radius * scale;
+                const sy = c.y + Math.sin(a) * p.radius * scale;
+                const alpha = Math.min(1, (1 - p.z / maxZ) * 1.3) * 0.65;
+                if (alpha <= 0.02) return;
                 ctx.beginPath();
-                ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+                ctx.arc(sx, sy, p.size * scale, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(' + p.color + ',' + alpha + ')';
                 ctx.fill();
             });
 
-            // DNA-Doppelhelix schimmert in der Mitte des Fluges kurz durch
-            if (phase === 'wormhole' && progress > 0.32 && progress < 0.68) {
-                const t = (progress - 0.32) / 0.36;          // 0..1 innerhalb des Fensters
-                const dnaAlpha = Math.sin(t * Math.PI) * 0.85; // sanft ein- und ausblenden
+            // 2) Ringe in der Tiefe nach vorne bewegen; vorbei -> ganz nach hinten
+            rings.forEach(r => {
+                r.z -= speed;
+                if (r.z < NEAR_Z) {
+                    r.z += RING_COUNT * RING_SPACING;
+                    r.color = WH_PALETTE[Math.floor(Math.random() * 3)];
+                }
+            });
+
+            // 3) Für jeden Ring die projizierten Punkte berechnen (von hinten nach vorne)
+            const ordered = rings.slice().sort((a, b) => b.z - a.z);
+            const ringPts = ordered.map(r => {
+                const c = tunnelCenter(r.z);
+                const scale = WH_FOCAL / r.z;
+                const off = tunnelTwist(r.z);
+                const pts = [];
+                for (let k = 0; k < RING_POINTS; k++) {
+                    const a = (k / RING_POINTS) * Math.PI * 2 + off;
+                    pts.push({
+                        x: c.x + Math.cos(a) * TUBE_RADIUS * scale,
+                        y: c.y + Math.sin(a) * TUBE_RADIUS * scale
+                    });
+                }
+                return { pts: pts, alpha: Math.min(1, (1 - r.z / maxZ) * 1.5), color: r.color };
+            });
+
+            // 4) Längslinien = Tunnelwand (verbinden gleiche Punkte über alle Ringe)
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(177, 159, 251, 0.16)';
+            for (let k = 0; k < RING_POINTS; k++) {
+                ctx.beginPath();
+                ringPts.forEach((rp, i) => {
+                    const pt = rp.pts[k];
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else         ctx.lineTo(pt.x, pt.y);
+                });
+                ctx.stroke();
+            }
+
+            // 5) Die Ringe (Rippen) selbst zeichnen - nah = heller
+            ringPts.forEach(rp => {
+                if (rp.alpha <= 0.02) return;
+                ctx.strokeStyle = 'rgba(' + rp.color + ',' + rp.alpha + ')';
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                rp.pts.forEach((pt, k) => {
+                    if (k === 0) ctx.moveTo(pt.x, pt.y);
+                    else         ctx.lineTo(pt.x, pt.y);
+                });
+                ctx.closePath();
+                ctx.stroke();
+            });
+
+            // 6) DNA-Doppelhelix schimmert in der Mitte des Fluges kurz durch
+            if (phase === 'wormhole' && progress > 0.30 && progress < 0.60) {
+                const t = (progress - 0.30) / 0.30;            // 0..1 innerhalb des Fensters
+                const dnaAlpha = Math.sin(t * Math.PI) * 0.9;  // sanft ein- und ausblenden
                 drawDNA(dnaAlpha, elapsed * 0.004);
             }
 
-            // Flug zu Ende -> Menü öffnen
+            // 7) Flug zu Ende -> sanft ins Menü übergehen
             if (phase === 'wormhole' && progress >= 1) {
                 finishWormhole();
             }
@@ -815,10 +906,10 @@
 
         function finishWormhole() {
             phase = 'menu';
-            // kurzer heller Blitz beim "Austritt" aus dem Tunnel
-            flash.classList.add('on');
-            setTimeout(() => flash.classList.remove('on'), 180);
-            // Menü mit den vier Portalen erscheinen lassen
+            // sanfter goldener Lichtschein beim "Austritt" aus dem Tunnel
+            bloom.classList.add('on');
+            setTimeout(() => bloom.classList.remove('on'), 650);
+            // Menü öffnen - die Portale schweben danach gestaffelt herein (per CSS)
             menuScreen.classList.add('active');
         }
 
