@@ -24,3 +24,8 @@ Die Explosion soll nicht mehr direkt zu Kapitel I führen, sondern in einen anim
 - Ordner später in `cognizance-world` umbenennen
 - `script.js` anlegen
 - Jeden Arbeitsschritt mit Git-Commit sichern
+
+## Pflege
+- Nach jeder größeren Änderung die Datei `PROJEKT-ZUSAMMENFASSUNG.md` mit aktualisieren
+  und mit committen. Sie dient Ronny als teilbarer Kontext (z. B. für das claude.ai-Projekt
+  „cognizance").
