@@ -203,6 +203,134 @@
             max-width: 650px;
             margin: 0 auto;
         }
+
+        /* WEISSER BLITZ beim Austritt aus dem Wurmloch */
+        #flash {
+            position: absolute;
+            inset: 0;
+            z-index: 7;
+            background: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.9s ease;
+        }
+        #flash.on {
+            opacity: 0.85;
+            transition: opacity 0.12s ease;
+        }
+
+        /* MENÜ: VIER SCHWEBENDE PORTALE */
+        #menu-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2.5s ease;
+            background: radial-gradient(circle at center, rgba(8, 8, 25, 0.45) 0%, rgba(1, 1, 6, 0.85) 100%);
+        }
+        #menu-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* Auf dem Menü wieder einen normalen Mauszeiger erlauben */
+        #menu-screen.active,
+        #menu-screen.active * {
+            cursor: default;
+        }
+        #menu-screen.active .portal,
+        #menu-screen.active .portal * {
+            cursor: pointer;
+        }
+
+        #menu-title {
+            font-size: clamp(1.1rem, 4vw, 1.8rem);
+            font-weight: 100;
+            letter-spacing: clamp(4px, 2vw, 12px);
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 0 25px rgba(177, 159, 251, 0.3);
+            margin-bottom: clamp(30px, 7vh, 70px);
+            text-align: center;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: clamp(24px, 6vw, 70px);
+            justify-items: center;
+        }
+
+        .portal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            animation: portalFloat 6s ease-in-out infinite;
+        }
+
+        .portal-orb {
+            width: clamp(88px, 22vw, 150px);
+            height: clamp(88px, 22vw, 150px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 32% 28%, rgba(177, 159, 251, 0.28), rgba(4, 4, 20, 0.65) 72%);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            box-shadow: 0 0 30px rgba(177, 159, 251, 0.15), inset 0 0 30px rgba(177, 159, 251, 0.12);
+            transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+        }
+
+        .portal:hover .portal-orb {
+            transform: scale(1.08);
+            border-color: #d4af37;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 40px rgba(177, 159, 251, 0.22);
+        }
+
+        .portal-roman {
+            font-size: clamp(1.4rem, 5vw, 2.3rem);
+            font-weight: 100;
+            letter-spacing: 2px;
+            color: #d4af37;
+            text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+        }
+
+        .portal-label {
+            font-size: clamp(0.68rem, 2.4vw, 0.9rem);
+            font-weight: 200;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.72);
+            max-width: 170px;
+            line-height: 1.5;
+        }
+
+        @keyframes portalFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-14px); }
+        }
+
+        #menu-status {
+            margin-top: clamp(24px, 5vh, 50px);
+            min-height: 1.2em;
+            font-size: 0.78rem;
+            letter-spacing: 3px;
+            font-weight: 200;
+            text-align: center;
+            color: rgba(212, 175, 55, 0);
+            transition: color 1s ease;
+        }
+        #menu-status.show {
+            color: rgba(212, 175, 55, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -234,6 +362,33 @@
         </div>
     </div>
 
+    <!-- WEISSER BLITZ beim Austritt aus dem Wurmloch -->
+    <div id="flash"></div>
+
+    <!-- MENÜ: VIER SCHWEBENDE PORTALE (Zunächst verborgen) -->
+    <div id="menu-screen">
+        <h2 id="menu-title">Vier Tore der Erkenntnis</h2>
+        <div class="portal-grid">
+            <div class="portal" data-target="chapter-one" style="animation-delay: 0s">
+                <div class="portal-orb"><span class="portal-roman">I</span></div>
+                <div class="portal-label">Die Illusion der Zeit</div>
+            </div>
+            <div class="portal" data-target="chapter-two" style="animation-delay: -1.5s">
+                <div class="portal-orb"><span class="portal-roman">II</span></div>
+                <div class="portal-label">Außerirdische Intelligenz</div>
+            </div>
+            <div class="portal" data-target="chapter-three" style="animation-delay: -3s">
+                <div class="portal-orb"><span class="portal-roman">III</span></div>
+                <div class="portal-label">Realität als Projektion</div>
+            </div>
+            <div class="portal" data-target="chapter-four" style="animation-delay: -4.5s">
+                <div class="portal-orb"><span class="portal-roman">IV</span></div>
+                <div class="portal-label">Wachstum durch KI</div>
+            </div>
+        </div>
+        <div id="menu-status"></div>
+    </div>
+
     <!-- UNSICHTBARER INTERAKTIVER CURSOR -->
     <div id="quantum-cursor"></div>
 
@@ -260,6 +415,8 @@
         let charge = 0;
         let isMouseDown = false;
         let exploded = false;
+        // Phase merkt sich den aktuellen Zustand: 'intro' -> 'exploding' -> 'wormhole' -> 'menu'
+        let phase = 'intro';
 
         // Progress-Ring Setup (Umfang = 2 * PI * r = 2 * PI * 70 ≈ 440)
         const ringCircumference = 440;
@@ -273,15 +430,24 @@
         });
 
         window.addEventListener('touchmove', (e) => {
-            realMouseX = e.touches.clientX;
-            realMouseY = e.touches.clientY;
+            realMouseX = e.touches[0].clientX;
+            realMouseY = e.touches[0].clientY;
             mouseMoving = true;
             idleTimer = 0;
         }, { passive: true });
 
         window.addEventListener('mousedown', () => { isMouseDown = true; });
         window.addEventListener('mouseup', () => { isMouseDown = false; });
-        window.addEventListener('touchstart', () => { isMouseDown = true; });
+        window.addEventListener('touchstart', (e) => {
+            isMouseDown = true;
+            // Beim Antippen sofort die Berührungsposition übernehmen (wichtig fürs Handy)
+            if (e.touches[0]) {
+                realMouseX = e.touches[0].clientX;
+                realMouseY = e.touches[0].clientY;
+                mouseMoving = true;
+                idleTimer = 0;
+            }
+        }, { passive: true });
         window.addEventListener('touchend', () => { isMouseDown = false; });
 
         window.addEventListener('resize', () => {
@@ -411,6 +577,13 @@
             ctx.fillStyle = 'rgba(3, 3, 8, 0.2)'; // Bewegungspfad-Effekt (Motion Blur)
             ctx.fillRect(0, 0, width, height);
 
+            // Ab der Wurmloch-Phase übernimmt der Tunnel die Darstellung
+            if (phase === 'wormhole' || phase === 'menu') {
+                updateWormhole();
+                requestAnimationFrame(loop);
+                return;
+            }
+
             // Flüssige Cursor-Verfolgung (Trägheit)
             let cdx = realMouseX - mouseX;
             let cdy = realMouseY - mouseY;
@@ -488,6 +661,7 @@
         // Die Quanten-Explosion auslösen
         function triggerExplosion() {
             exploded = true;
+            phase = 'exploding';
             cursor.style.display = 'none';
             portal.classList.remove('visible');
             subtitle.style.opacity = '0';
@@ -503,15 +677,166 @@
                 p.vy = (dy / dist) * force * (1 + Math.random() * 1.5);
             });
 
-            // Transition zum ersten Kapitel einleiten
+            // Übergang in den Wurmloch-Flug einleiten
             setTimeout(() => {
                 introScreen.style.opacity = '0';
                 setTimeout(() => {
                     introScreen.style.display = 'none';
-                    chapterOne.classList.add('active');
-                }, 2000);
-            }, 1000);
+                    startWormhole();
+                }, 800);
+            }, 900);
         }
+
+        /* =========================================================
+           WURMLOCH-FLUG
+           Die Partikel formen einen Tunnel mit Perspektiv-Effekt:
+           weit entfernte Punkte sind klein und nah an der Mitte,
+           nahe Punkte groß und am Rand -> Sog-Gefühl.
+           In der Mitte des Fluges schimmert eine DNA-Doppelhelix durch.
+           ========================================================= */
+        const menuScreen = document.getElementById('menu-screen');
+        const menuStatus = document.getElementById('menu-status');
+        const flash = document.getElementById('flash');
+
+        const WH_DURATION = 6000;   // Dauer des Fluges in Millisekunden (6 Sekunden)
+        const WH_FOCAL = 300;       // "Brennweite" - steuert die Stärke des 3D-Eindrucks
+        const WH_MAXZ = 1400;       // größte Tiefe (am weitesten entfernt)
+        let wormholeParticles = [];
+        let wormholeStart = 0;
+        let twist = 0;              // Drehung des Tunnels (Sog-Effekt)
+
+        // Erzeugt ein einzelnes Tunnel-Partikel in einer bestimmten Tiefe z
+        function makeTunnelParticle(z) {
+            const rand = Math.random();
+            let color;
+            if (rand < 0.4)       color = '212, 175, 55';   // Gold
+            else if (rand < 0.75) color = '177, 159, 251';  // Violett
+            else                  color = '255, 255, 255';  // Sternenweiß
+            return {
+                angle: Math.random() * Math.PI * 2,        // Position rund um den Tunnel
+                radius: 160 + Math.random() * 280,          // Abstand von der Tunnelmitte
+                z: z,                                        // Tiefe
+                size: 1.5 + Math.random() * 3,
+                color: color
+            };
+        }
+
+        function startWormhole() {
+            phase = 'wormhole';
+            wormholeParticles = [];
+            for (let i = 0; i < 340; i++) {
+                wormholeParticles.push(makeTunnelParticle(Math.random() * WH_MAXZ));
+            }
+            wormholeStart = Date.now();
+        }
+
+        function updateWormhole() {
+            const elapsed = Date.now() - wormholeStart;
+            const progress = Math.min(elapsed / WH_DURATION, 1); // 0 = Start, 1 = Ende
+
+            // Geschwindigkeit: beschleunigt während des Fluges, im Menü nur ruhiges Treiben
+            let speed;
+            if (phase === 'menu') {
+                speed = 3;
+            } else {
+                speed = 6 + progress * progress * 34;
+            }
+            twist += 0.004 + progress * 0.02;
+
+            const cx = width / 2;
+            const cy = height / 2;
+
+            wormholeParticles.forEach(p => {
+                p.z -= speed;                 // Partikel kommt auf uns zu
+                if (p.z < 1) {                // vorbeigeflogen -> hinten neu einsetzen
+                    p.z = WH_MAXZ;
+                    p.angle = Math.random() * Math.PI * 2;
+                }
+                const scale = WH_FOCAL / p.z; // Perspektive: nah = groß, fern = klein
+                const a = p.angle + twist;
+                const sx = cx + Math.cos(a) * p.radius * scale;
+                const sy = cy + Math.sin(a) * p.radius * scale;
+                const sr = p.size * scale;
+                const alpha = (1 - p.z / WH_MAXZ) * 0.9; // näher = heller
+                if (alpha <= 0.01) return;
+                ctx.beginPath();
+                ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(' + p.color + ',' + alpha + ')';
+                ctx.fill();
+            });
+
+            // DNA-Doppelhelix schimmert in der Mitte des Fluges kurz durch
+            if (phase === 'wormhole' && progress > 0.32 && progress < 0.68) {
+                const t = (progress - 0.32) / 0.36;          // 0..1 innerhalb des Fensters
+                const dnaAlpha = Math.sin(t * Math.PI) * 0.85; // sanft ein- und ausblenden
+                drawDNA(dnaAlpha, elapsed * 0.004);
+            }
+
+            // Flug zu Ende -> Menü öffnen
+            if (phase === 'wormhole' && progress >= 1) {
+                finishWormhole();
+            }
+        }
+
+        // Zeichnet die DNA-Doppelhelix (zwei verdrehte Stränge mit Sprossen)
+        function drawDNA(alpha, scroll) {
+            const cx = width / 2;
+            const amp = Math.min(width, height) * 0.14; // Breite der Helix
+            const steps = 64;
+            const top = -20;
+            const bottom = height + 20;
+            for (let i = 0; i <= steps; i++) {
+                const p = i / steps;
+                const y = top + p * (bottom - top);
+                const ph = p * Math.PI * 6 + scroll;    // 3 Windungen, scrollt vorbei
+                const x1 = cx + Math.sin(ph) * amp;
+                const x2 = cx + Math.sin(ph + Math.PI) * amp;
+                const depth = (Math.cos(ph) + 1) / 2;   // 0..1: vorne oder hinten
+                // Sprosse zwischen den Strängen
+                if (i % 2 === 0) {
+                    ctx.strokeStyle = 'rgba(177, 159, 251,' + (alpha * 0.35) + ')';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y);
+                    ctx.lineTo(x2, y);
+                    ctx.stroke();
+                }
+                // Knotenpunkte auf beiden Strängen (Gold und Weiß)
+                ctx.fillStyle = 'rgba(212, 175, 55,' + (alpha * (0.35 + depth * 0.65)) + ')';
+                ctx.beginPath();
+                ctx.arc(x1, y, 2.6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255,' + (alpha * (0.35 + (1 - depth) * 0.65)) + ')';
+                ctx.beginPath();
+                ctx.arc(x2, y, 2.6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function finishWormhole() {
+            phase = 'menu';
+            // kurzer heller Blitz beim "Austritt" aus dem Tunnel
+            flash.classList.add('on');
+            setTimeout(() => flash.classList.remove('on'), 180);
+            // Menü mit den vier Portalen erscheinen lassen
+            menuScreen.classList.add('active');
+        }
+
+        // Klick auf ein Portal
+        document.querySelectorAll('.portal').forEach(portalEl => {
+            portalEl.addEventListener('click', () => {
+                const target = portalEl.getAttribute('data-target');
+                if (target === 'chapter-one') {
+                    // Erstes Tor führt zu Kapitel I (Die Illusion der Zeit)
+                    menuScreen.classList.remove('active');
+                    setTimeout(() => chapterOne.classList.add('active'), 500);
+                } else {
+                    // Die übrigen Kapitel entstehen noch
+                    menuStatus.textContent = 'Dieses Tor öffnet sich bald …';
+                    menuStatus.classList.add('show');
+                }
+            });
+        });
 
         // Start
         loop();
