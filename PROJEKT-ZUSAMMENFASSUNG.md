@@ -14,7 +14,7 @@ Ein interaktives digitales **Kunstwerk über Wahrnehmung, Quantenphysik und Bewu
 Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment automatisch
 bei jedem Push zu GitHub).
 
-- **Neue Haupt-Adresse (live):** **theholographicme.com** (mit „z"-Alternativen `.de` und `.global`, die dorthin umleiten)
+- **Neue Haupt-Adresse (live):** **theholographicme.com** (mit den Varianten `.de` und `.global`, die dorthin umleiten)
 - **Früher:** cognizance.world (wird abgelöst / soll aufgeräumt werden)
 - **Aktuell NICHT öffentlich:** Die Seite ist per Cloudflare Access hinter einem Login verborgen (siehe Abschnitt 7), bis der Aufbau fertig ist.
 - **GitHub:** github.com/gordongeggo/cognisance-website · **Ordner:** `cognisance-website` (die „s/z"-Schreibweise ist rein kosmetisch)
@@ -102,4 +102,4 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 - Wurmloch **neu gestaltet** (geometrisch + 4D-Tesserakt statt runder Ringe/Staub-Vortex), Auge & Kapitel-Einblendung **langsamer**.
 - **DMARC** auf allen drei neuen Domains repariert (p=reject).
 - Website **privat** geschaltet (Cloudflare Access).
-- Diese Datei **vereint** die frühere Zusammenfassung und die Holodeck-Übergabe (`UEBERGABE-HOLODECK.md` wurde gelöscht, Inhalt hier integriert).
+- Diese Datei **vereint** die frühere Zusammenfassung und die Holodeck-Übergabe (`UEBERGABE-HOLODECK.md` kann gelöscht werden, Inhalt ist hier integriert).
