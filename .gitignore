@@ -1,2 +1,7 @@
 # Lokale Werkzeug-Einstellungen (Vorschau-Server usw.) - nicht hochladen
 .claude/
+# macOS-Finder-Metadaten
+.DS_Store
+# Bildschirmfotos (nur zum Zeigen, gehören nicht ins Projekt)
+Bildschirmfoto*.png
+Bildschirmfoto*.jpeg

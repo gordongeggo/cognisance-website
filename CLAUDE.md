@@ -1,31 +1,36 @@
 # CLAUDE.md
 
-**Projekt:** cognizance.world – ein interaktives digitales Kunstwerk über Wahrnehmung, Quantenphysik und Bewusstsein. Live via Cloudflare Pages (Deployment automatisch bei Push zu GitHub).
+**Projekt:** TheHolographicMe (früher „cognizance.world") – ein interaktives digitales
+Kunstwerk über Wahrnehmung, Quantenphysik und Bewusstsein. Vanilla JS + HTML5-Canvas,
+kein WebGL, mobilkompatibel; alles in `index.html`. Live über Cloudflare Pages
+(Deployment automatisch bei Push zu GitHub).
+
+👉 **Vollständige, aktuelle Projekt-Übersicht: siehe `PROJEKT-ZUSAMMENFASSUNG.md`** (Stand, Domains, Infrastruktur, Drehbücher, offene Aufgaben). Diese Datei hier ist nur die Kurzfassung.
 
 ## Über den Entwickler
-Ronny ist absoluter Anfänger. Erkläre jeden Schritt in einfachem Deutsch, bevor du ihn ausführst. Keine Fachbegriffe ohne Erklärung.
+Ronny ist **absoluter Anfänger**. Jeden Schritt VORHER in einfachem Deutsch erklären,
+keine Fachbegriffe ohne Erklärung, Aktionen bestätigen lassen. Kleine Schritte, nach jedem
+ein sichtbares Ergebnis. Git-Identität: Ronny Hammer / ronny.hammer1@icloud.com
 
-Git-Identität: Ronny Hammer / ronny.hammer1@icloud.com.
+## Design-Identität (verbindlich)
+Präzise und **mathematisch statt verspielt**, exakte Geometrie, möglichst kein zufälliger
+„Staub". Typografie scharf, dünn (font-weight 100–300), weit gesperrt, Titel in Großbuchstaben.
+Farbwelt: Schwarz-Blau (#030308/#080815), Gold #d4af37, Violett #b19ffb, Sternenweiß.
+Leitmotiv „Holodeck-Gitter": perspektivisches Liniengitter als „Struktur hinter der Realität".
 
-## Aktueller Stand
-Die `index.html` enthält die fertige Startseite: 400 Canvas-Partikel formen ein „Auge des Beobachters", das dem Cursor folgt. Click-and-Hold auf „ERKENNE" lädt einen Ring auf und löst eine Partikel-Explosion aus, danach erscheint Kapitel I („Die Illusion der Zeit").
+## Aktueller Stand (Kurz)
+Startseite mit „Auge des Beobachters" → „ERKENNE" gedrückt halten → Explosion →
+geometrischer **Wurmloch-Flug mit 4D-Tesserakt** → Menü „Vier Tore der Erkenntnis" →
+Kapitel I fertig (Einstein). Portale II–IV noch offen.
+Live auf **theholographicme.com** (`.de`/`.global` leiten dorthin um), DMARC auf allen
+dreien = `p=reject`. Seite ist per **Cloudflare Access privat** geschaltet bis zum Launch.
 
-## Nächstes großes Ziel
-Die Explosion soll nicht mehr direkt zu Kapitel I führen, sondern in einen animierten Wurmloch-Flug übergehen (Partikel werden zum Tunnel, Perspektiv-Effekt auf 2D-Canvas, kurzes Durchschimmern einer DNA-Doppelhelix), an dessen Ende sich ein Menü mit vier schwebenden Portalen öffnet:
-
-1. Die Illusion der Zeit
-2. Außerirdische Intelligenz
-3. Realität als Projektion
-4. Wachstum durch KI
-
-**Stil:** Dark-Tech, samtiges Schwarz-Blau, Gold (#d4af37), Violett (#b19ffb), Sternenweiß. Kein WebGL, nur Vanilla JS + Canvas, mobilkompatibel.
-
-## Offene Aufgaben
-- Ordner später in `cognizance-world` umbenennen
-- `script.js` anlegen
+## Offene Aufgaben (Details in der Zusammenfassung)
+- Portal III „Realität als Projektion" (Holodeck) bauen
+- Inhalte für Portale II & IV
+- cognizance.world aufräumen; ggf. Ordner in `TheHolographicMe` umbenennen; evtl. `script.js`
 - Jeden Arbeitsschritt mit Git-Commit sichern
 
 ## Pflege
-- Nach jeder größeren Änderung die Datei `PROJEKT-ZUSAMMENFASSUNG.md` mit aktualisieren
-  und mit committen. Sie dient Ronny als teilbarer Kontext (z. B. für das claude.ai-Projekt
-  „cognizance").
+Nach jeder größeren Änderung `PROJEKT-ZUSAMMENFASSUNG.md` mit aktualisieren und committen
+(sie ist Ronnys teilbarer Kontext fürs claude.ai-Projekt).
