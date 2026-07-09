@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognizance | Die Realität der Wahrnehmung</title>
+    <title>TheHolographicMe | Die Realität der Wahrnehmung</title>
     <style>
-        /* Globales Setup */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none; /* Versteckt den Standard-Cursor */
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body, html {
             width: 100%;
             height: 100%;
@@ -23,31 +17,19 @@
             user-select: none;
         }
 
-        /* Intro-Bildschirm */
-        #intro-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1), visibility 2s;
-        }
-
-        #quantum-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* WebGL-Leinwand für das Intro (Schwarzes Loch -> Flug -> Tunnel) */
+        #gl {
+            position: fixed;
+            inset: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
+            display: block;
+            transition: opacity 1.6s ease;
         }
 
-        /* Minimalistischer Untertitel */
-        .subtitle {
+        /* Dezenter Hinweistext */
+        #hint {
             position: absolute;
             bottom: 8%;
             width: 100%;
@@ -58,104 +40,21 @@
             color: rgba(255, 255, 255, 0.4);
             z-index: 5;
             pointer-events: none;
-            transition: opacity 1s ease;
+            transition: opacity 1.2s ease;
         }
 
-        /* Das interaktive Portal im Zentrum */
-        #portal-container {
-            position: relative;
-            width: 160px;
-            height: 160px;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
-            pointer-events: none;
+        #fallback {
+            position: absolute; inset: 0; display: none;
+            color: #9ab; font-weight: 200; letter-spacing: 2px;
+            align-items: center; justify-content: center; text-align: center; z-index: 20;
         }
 
-        #portal-container.visible {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-        }
-
-        /* SVG-Ladering */
-        #progress-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        #progress-ring circle {
-            fill: none;
-            stroke-width: 2;
-        }
-
-        #progress-ring .bg {
-            stroke: rgba(212, 175, 55, 0.1);
-        }
-
-        #progress-ring .progress {
-            stroke: #d4af37; /* Gold */
-            stroke-dasharray: 440;
-            stroke-dashoffset: 440;
-            transition: stroke-dashoffset 0.1s linear;
-        }
-
-        #portal-text {
-            font-size: 0.85rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #d4af37;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-            text-indent: 8px; /* Zentrierungs-Ausgleich */
-            transition: color 0.5s ease, text-shadow 0.5s ease;
-        }
-
-        /* Der Quantum Cursor */
-        #quantum-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #quantum-cursor::after {
-            content: '';
-            width: 4px;
-            height: 4px;
-            background-color: #b19ffb; /* Violett */
-            border-radius: 50%;
-        }
-
-        .cursor-charging {
-            width: 40px !important;
-            height: 40px !important;
-            background-color: rgba(212, 175, 55, 0.1);
-            border-color: #d4af37 !important;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-        }
-
-        /* KAPITEL I: DIE ILLUSION DER ZEIT (Nach der Explosion) */
+        /* KAPITEL I: DIE ILLUSION DER ZEIT */
         #chapter-one {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 8;
             opacity: 0;
             visibility: hidden;
             display: flex;
@@ -166,51 +65,26 @@
             transition: opacity 4.5s ease;
             padding: 20px;
         }
+        #chapter-one.active { opacity: 1; visibility: visible; }
 
-        #chapter-one.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .chapter-header {
-            text-align: center;
-            max-width: 800px;
-        }
-
+        .chapter-header { text-align: center; max-width: 800px; }
         .chapter-num {
-            font-size: 0.9rem;
-            letter-spacing: 12px;
-            color: #b19ffb;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            opacity: 0.8;
+            font-size: 0.9rem; letter-spacing: 12px; color: #b19ffb;
+            text-transform: uppercase; margin-bottom: 20px; opacity: 0.8;
         }
-
         .chapter-title {
-            font-size: 3rem;
-            font-weight: 100;
-            letter-spacing: 16px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
+            font-size: 3rem; font-weight: 100; letter-spacing: 16px;
+            text-transform: uppercase; margin-bottom: 40px;
             text-shadow: 0 0 30px rgba(177, 159, 251, 0.2);
         }
-
         .chapter-quote {
-            font-size: 1.2rem;
-            font-weight: 200;
-            line-height: 2.2;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 650px;
-            margin: 0 auto;
+            font-size: 1.2rem; font-weight: 200; line-height: 2.2;
+            color: rgba(255, 255, 255, 0.7); max-width: 650px; margin: 0 auto;
         }
 
-        /* SANFTER GOLDENER LICHTSCHEIN beim Austritt aus dem Wurmloch */
+        /* HELLER LICHTSCHEIN (Durchbruch beim Eintauchen / Austritt) */
         #bloom {
-            position: absolute;
-            inset: 0;
-            z-index: 7;
-            pointer-events: none;
-            opacity: 0;
+            position: absolute; inset: 0; z-index: 7; pointer-events: none; opacity: 0;
             background: radial-gradient(circle at center,
                         rgba(255, 244, 214, 0.95) 0%,
                         rgba(212, 175, 55, 0.45) 22%,
@@ -218,161 +92,106 @@
                         rgba(3, 3, 8, 0) 65%);
             transition: opacity 0.8s ease;
         }
-        #bloom.on {
-            opacity: 1;
-            transition: opacity 0.25s ease;
-        }
+        #bloom.on { opacity: 1; transition: opacity 0.25s ease; }
 
-        /* MENÜ: VIER SCHWEBENDE PORTALE */
+        /* MENÜ: die 2D-PROJEKTION, die sich geradedreht und zum Portal-Menü wird */
         #menu-screen {
-            position: absolute;
-            inset: 0;
-            z-index: 6;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: absolute; inset: 0; z-index: 6;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             padding: 30px;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 1.2s ease;
-            background: radial-gradient(circle at center, rgba(6, 6, 20, 0.74) 0%, rgba(1, 1, 6, 0.94) 100%);
+            /* Startet schräg im Raum (Blick von außen auf die flache Projektion) ... */
+            transform: perspective(1400px) rotateX(72deg) scale(1.15);
+            transform-origin: center 64%;
+            transition: opacity 1.6s ease, transform 1.9s cubic-bezier(0.18, 0.82, 0.2, 1);
+            /* Projektionsoberfläche: feines Holo-Gitter über samtigem Schwarz-Blau */
+            background:
+                repeating-linear-gradient(0deg,  rgba(130,175,245,0.05) 0 1px, transparent 1px 44px),
+                repeating-linear-gradient(90deg, rgba(130,175,245,0.05) 0 1px, transparent 1px 44px),
+                radial-gradient(circle at center, rgba(6, 6, 20, 0.86) 0%, rgba(1, 1, 6, 0.97) 100%);
         }
+        /* ... und dreht sich beim Aktivieren gerade, füllt den Schirm */
         #menu-screen.active {
             opacity: 1;
             visibility: visible;
-        }
-        /* Auf dem Menü wieder einen normalen Mauszeiger erlauben */
-        #menu-screen.active,
-        #menu-screen.active * {
+            transform: perspective(1400px) rotateX(0deg) scale(1);
             cursor: default;
         }
         #menu-screen.active .portal,
-        #menu-screen.active .portal * {
-            cursor: pointer;
-        }
+        #menu-screen.active .portal * { cursor: pointer; }
 
         #menu-title {
-            font-size: clamp(1.1rem, 4vw, 1.8rem);
-            font-weight: 100;
-            letter-spacing: clamp(4px, 2vw, 12px);
-            text-transform: uppercase;
+            font-size: clamp(1.1rem, 4vw, 1.8rem); font-weight: 100;
+            letter-spacing: clamp(4px, 2vw, 12px); text-transform: uppercase;
             color: rgba(255, 255, 255, 0.85);
             text-shadow: 0 0 25px rgba(177, 159, 251, 0.3);
-            margin-bottom: clamp(30px, 7vh, 70px);
-            text-align: center;
+            margin-bottom: clamp(30px, 7vh, 70px); text-align: center;
         }
 
         .portal-grid {
-            display: grid;
-            grid-template-columns: repeat(2, auto);
-            gap: clamp(24px, 6vw, 70px);
-            justify-items: center;
+            display: grid; grid-template-columns: repeat(2, auto);
+            gap: clamp(24px, 6vw, 70px); justify-items: center;
         }
-
         .portal {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            opacity: 0; /* startet unsichtbar, bis das Menü sich öffnet */
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            cursor: pointer; opacity: 0;
         }
-        /* Portale kommen nach dem Flug nacheinander verspielt hereingeschwebt */
         #menu-screen.active .portal-grid .portal {
             animation: portalEnter 1s cubic-bezier(0.2, 0.9, 0.25, 1) forwards,
                        portalFloat 6s ease-in-out infinite;
         }
-        #menu-screen.active .portal-grid .portal:nth-child(1) { animation-delay: 0.15s, 1.15s; }
-        #menu-screen.active .portal-grid .portal:nth-child(2) { animation-delay: 0.35s, 1.35s; }
-        #menu-screen.active .portal-grid .portal:nth-child(3) { animation-delay: 0.55s, 1.55s; }
-        #menu-screen.active .portal-grid .portal:nth-child(4) { animation-delay: 0.75s, 1.75s; }
+        #menu-screen.active .portal-grid .portal:nth-child(1) { animation-delay: 0.9s, 1.9s; }
+        #menu-screen.active .portal-grid .portal:nth-child(2) { animation-delay: 1.1s, 2.1s; }
+        #menu-screen.active .portal-grid .portal:nth-child(3) { animation-delay: 1.3s, 2.3s; }
+        #menu-screen.active .portal-grid .portal:nth-child(4) { animation-delay: 1.5s, 2.5s; }
 
         .portal-orb {
-            width: clamp(88px, 22vw, 150px);
-            height: clamp(88px, 22vw, 150px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: clamp(88px, 22vw, 150px); height: clamp(88px, 22vw, 150px);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
             background: radial-gradient(circle at 32% 28%, rgba(177, 159, 251, 0.28), rgba(4, 4, 20, 0.65) 72%);
             border: 1px solid rgba(212, 175, 55, 0.35);
             box-shadow: 0 0 30px rgba(177, 159, 251, 0.15), inset 0 0 30px rgba(177, 159, 251, 0.12);
             transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
         }
-
         .portal:hover .portal-orb {
-            transform: scale(1.08);
-            border-color: #d4af37;
+            transform: scale(1.08); border-color: #d4af37;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 40px rgba(177, 159, 251, 0.22);
         }
-
         .portal-roman {
-            font-size: clamp(1.4rem, 5vw, 2.3rem);
-            font-weight: 100;
-            letter-spacing: 2px;
-            color: #d4af37;
-            text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+            font-size: clamp(1.4rem, 5vw, 2.3rem); font-weight: 100; letter-spacing: 2px;
+            color: #d4af37; text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
         }
-
         .portal-label {
-            font-size: clamp(0.68rem, 2.4vw, 0.9rem);
-            font-weight: 200;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.72);
-            max-width: 170px;
-            line-height: 1.5;
+            font-size: clamp(0.68rem, 2.4vw, 0.9rem); font-weight: 200; letter-spacing: 3px;
+            text-transform: uppercase; text-align: center;
+            color: rgba(255, 255, 255, 0.72); max-width: 170px; line-height: 1.5;
         }
-
-        @keyframes portalFloat {
-            0%, 100% { transform: translateY(0); }
-            50%      { transform: translateY(-14px); }
-        }
-
+        @keyframes portalFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
         @keyframes portalEnter {
             0%   { opacity: 0; transform: scale(0.35) translateY(45px); }
             60%  { opacity: 1; }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
         #menu-status {
-            margin-top: clamp(24px, 5vh, 50px);
-            min-height: 1.2em;
-            font-size: 0.78rem;
-            letter-spacing: 3px;
-            font-weight: 200;
-            text-align: center;
-            color: rgba(212, 175, 55, 0);
-            transition: color 1s ease;
+            margin-top: clamp(24px, 5vh, 50px); min-height: 1.2em;
+            font-size: 0.78rem; letter-spacing: 3px; font-weight: 200; text-align: center;
+            color: rgba(212, 175, 55, 0); transition: color 1s ease;
         }
-        #menu-status.show {
-            color: rgba(212, 175, 55, 0.8);
-        }
+        #menu-status.show { color: rgba(212, 175, 55, 0.8); }
     </style>
 </head>
 <body>
+    <!-- INTRO: Schwarzes Loch -> Flug -> Gitter-Tunnel (WebGL) -->
+    <canvas id="gl"></canvas>
+    <div id="hint">Nähere dich dem Zentrum.</div>
+    <div id="fallback">Dieser Browser unterstützt kein WebGL.</div>
 
-    <!-- Der Partikel-Canvas liegt IMMER im Hintergrund - auch während des
-         Wurmloch-Fluges. Deshalb steht er AUSSERHALB von #intro-screen,
-         das später ausgeblendet wird. -->
-    <canvas id="quantum-canvas"></canvas>
+    <!-- Durchbruch-/Austritts-Lichtschein -->
+    <div id="bloom"></div>
 
-    <!-- INTERAKTIVES INTRO -->
-    <div id="intro-screen">
-        <div id="portal-container">
-            <svg id="progress-ring" viewBox="0 0 150 150">
-                <circle class="bg" cx="75" cy="75" r="70"></circle>
-                <circle class="progress" cx="75" cy="75" r="70" id="loader-circle"></circle>
-            </svg>
-            <div id="portal-text">ERKENNE</div>
-        </div>
-
-        <div class="subtitle" id="intro-subtitle">Realität existiert erst, wenn du sie ansiehst. Tritt ein.</div>
-    </div>
-
-    <!-- KAPITEL I (Zunächst verborgen) -->
+    <!-- KAPITEL I (zunächst verborgen) -->
     <div id="chapter-one">
         <div class="chapter-header">
             <div class="chapter-num">Kapitel I</div>
@@ -384,10 +203,7 @@
         </div>
     </div>
 
-    <!-- SANFTER GOLDENER LICHTSCHEIN beim Austritt aus dem Wurmloch -->
-    <div id="bloom"></div>
-
-    <!-- MENÜ: VIER SCHWEBENDE PORTALE (Zunächst verborgen) -->
+    <!-- MENÜ: VIER TORE (die 2D-Projektion, die zum Menü wird) -->
     <div id="menu-screen">
         <h2 id="menu-title">Vier Tore der Erkenntnis</h2>
         <div class="portal-grid">
@@ -411,598 +227,281 @@
         <div id="menu-status"></div>
     </div>
 
-    <!-- UNSICHTBARER INTERAKTIVER CURSOR -->
-    <div id="quantum-cursor"></div>
+    <!-- ===================== SHADER ===================== -->
+    <script id="vert" type="x-shader/x-vertex">
+        attribute vec2 p;
+        void main() { gl_Position = vec4(p, 0.0, 1.0); }
+    </script>
 
+    <script id="frag" type="x-shader/x-fragment">
+        precision highp float;
+        uniform vec2  u_res;
+        uniform float u_time;
+        uniform vec2  u_mouse;   // Mausposition, -1..1 (0,0 = Bildmitte)
+        uniform float u_pull;    // Sog-Stärke 0..1 (0 = ruhig/fern, 1 = Cursor mittig)
+        uniform float u_travel;  // Flug-Fortschritt 0..1 (0 = fern, 1 = mitten im Loch)
+        uniform float u_tunnel;  // Tunnel-Fortschritt 0..1 (nach dem Eintauchen)
+
+        float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+        float noise(vec2 p){
+            vec2 i = floor(p), f = fract(p);
+            float a = hash(i), b = hash(i+vec2(1,0)), c = hash(i+vec2(0,1)), d = hash(i+vec2(1,1));
+            vec2 u = f*f*(3.0-2.0*f);
+            return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+        }
+        float fbm(vec2 p){
+            float s = 0.0, a = 0.5;
+            for(int i=0;i<5;i++){ s += a*noise(p); p *= 2.02; a *= 0.5; }
+            return s;
+        }
+
+        vec3 starField(vec3 dir){
+            vec3 c = vec3(0.0);
+            vec2 uv = vec2(atan(dir.z, dir.x), asin(clamp(dir.y,-1.0,1.0)));
+            for(int i=0;i<3;i++){
+                float scale = 90.0 + float(i)*130.0;
+                vec2 g = uv*scale;
+                vec2 id = floor(g);
+                float h = hash(id + float(i)*19.0);
+                if(h > 0.986){
+                    vec2 f = fract(g)-0.5;
+                    float b = smoothstep(0.5, 0.0, length(f)) * (h-0.986)/0.014;
+                    vec3 tint = mix(vec3(0.75,0.85,1.0), vec3(1.0), hash(id+3.0));
+                    c += tint * b * 0.9;
+                }
+            }
+            c += vec3(0.02,0.04,0.09) * fbm(uv*2.5);
+            return c;
+        }
+
+        // Gitter-Tunnel (Nachbau von Bild 3): Ringe + Speichen, die sich als
+        // Wurmloch zum hellen Schlund drehen; Binärcode-Schimmer über den Linien.
+        vec3 gridTunnel(vec2 uv, float t){
+            float r = max(length(uv), 0.0015);
+            float a = atan(uv.y, uv.x);
+            float depth = 0.5 / r + t * 1.3;
+            float ang   = a / 6.2831853 + 0.5 + depth * 0.05;
+            float ringD  = abs(fract(depth) - 0.5) * 2.0;
+            float spokeD = abs(fract(ang * 24.0) - 0.5) * 2.0;
+            float fw = 0.12;
+            float ring  = 1.0 - smoothstep(0.0, fw, ringD);
+            float spoke = 1.0 - smoothstep(0.0, fw, spokeD);
+            float grid = max(ring, spoke);
+            float code = 0.55 + 0.45 * step(0.5, hash(vec2(floor(ang*24.0), floor(depth*2.0) + floor(t*3.0))));
+            float rim = smoothstep(1.8, 0.35, r);
+            vec3 line = mix(vec3(0.45,0.65,1.0), vec3(0.90,0.96,1.0), grid);
+            vec3 col  = line * grid * rim * code;
+            col += vec3(0.35,0.60,1.0) * smoothstep(0.16, 0.0, r) * 1.3;
+            return col;
+        }
+
+        void main(){
+            vec2 uv = (gl_FragCoord.xy - 0.5*u_res) / u_res.y;
+            float t = u_time;
+
+            float tr   = clamp(u_travel, 0.0, 1.0);
+            float trE  = tr*tr*(3.0 - 2.0*tr);
+            float dist = mix(21.0, 2.0, trE);
+            float camH = mix(3.0, 0.35, trE);
+            float par  = 1.0 - trE;
+            vec3 ro  = vec3(u_mouse.x*2.2*par, camH + u_mouse.y*1.6*par, -dist);
+            vec3 ta  = vec3(0.0, 0.0, 0.0);
+            vec3 fwd = normalize(ta - ro);
+            vec3 rgt = normalize(cross(fwd, vec3(0.0,1.0,0.0)));
+            vec3 upv = cross(rgt, fwd);
+            vec3 rd  = normalize(fwd + 1.0*(uv.x*rgt + uv.y*upv));
+
+            float pull = u_pull;
+            float breathe = 1.0 + (0.05 + 0.06*pull)*sin(t*(0.55 + pull*0.9)) + 0.02*sin(t*1.3 + 1.7);
+            float bend = (0.9 + 0.55*pull) * breathe;
+
+            vec3 pos = ro;
+            vec3 dir = rd;
+            vec3 col = vec3(0.0);
+            float transmit = 1.0;
+            float rmin = 1e9;
+            bool escaped = false;
+            bool captured = false;
+            vec3 capPos = vec3(0.0), capDir = vec3(0.0);
+
+            for(int i=0;i<200;i++){
+                float r = length(pos);
+                rmin = min(rmin, r);
+                if(r < 1.0){ captured = true; capPos = pos; capDir = dir; break; }
+                if(r > 32.0){ escaped = true; break; }
+                float dt = clamp(0.12 + 0.04*r, 0.12, 0.55);
+                dir = normalize(dir - (pos/r) * (bend/(r*r)) * dt);
+                float prevY = pos.y;
+                pos += dir*dt;
+                if(prevY*pos.y < 0.0){
+                    float f = prevY/(prevY - pos.y);
+                    vec3 hp = pos - dir*dt*(1.0-f);
+                    float rd2 = length(hp.xz);
+                    if(rd2 > 2.4 && rd2 < 8.6){
+                        float ang  = atan(hp.z, hp.x);
+                        float spin = t * 1.3 / pow(rd2, 1.25);
+                        float gas  = fbm(vec2(ang*3.0 + spin*6.0, rd2*1.1 + spin));
+                        float band = smoothstep(8.6,3.2,rd2) * smoothstep(2.4,3.3,rd2);
+                        float graze = smoothstep(0.02, 0.14, abs(dir.y));
+                        float bright = band * graze * (0.30 + 0.85*gas);
+                        vec3 vel = normalize(vec3(-hp.z, 0.0, hp.x));
+                        float dop = clamp(0.65 + 0.75*dot(vel, normalize(ro-hp)), 0.3, 1.7);
+                        vec3 dcol = mix(vec3(0.30,0.52,0.95), vec3(0.90,0.96,1.0), gas);
+                        col += transmit * dcol * bright * dop * 1.25;
+                        transmit *= 0.82;
+                    }
+                }
+            }
+
+            if(escaped){ col += transmit * starField(dir); }
+
+            if(captured){
+                vec3 n0 = normalize(capPos);
+                float w1 = fbm(vec2(n0.x*4.5 + t*0.30, n0.y*4.5 - t*0.24));
+                float w2 = fbm(vec2(n0.z*4.5 - t*0.27, n0.x*4.5 + t*0.32));
+                vec3 n = normalize(n0 + 0.15*vec3(w1-0.5, w2-0.5, (w1-w2)*0.5));
+                vec3 view = -capDir;
+                vec3 refl = reflect(capDir, n);
+                vec3 env = starField(refl);
+                float diskEnv = smoothstep(0.32, 0.0, abs(refl.y));
+                env += vec3(0.42, 0.62, 1.0) * diskEnv * 0.7;
+                float fres = pow(1.0 - max(dot(n0, view), 0.0), 3.0);
+                float mir  = clamp(0.18 + 0.82*fres, 0.0, 1.0);
+                float ph = dot(n0, view)*3.5 + t*0.30;
+                vec3 irid = 0.5 + 0.5*cos(vec3(0.0,2.2,4.4) + ph);
+                vec3 sheen = mix(vec3(0.30,0.45,0.90), vec3(0.60,0.40,0.95), irid.r);
+                vec3 bubble = env*mir*1.3 + sheen*fres*0.30;
+                vec3  L    = normalize(vec3(-0.55, 0.72, -0.60));
+                float diff = max(dot(n0, L), 0.0);
+                vec3  Hh   = normalize(L + view);
+                float spec = pow(max(dot(n0, Hh), 0.0), 48.0);
+                bubble += vec3(0.10, 0.17, 0.38) * pow(diff, 1.3) * 0.75;
+                bubble += vec3(0.90, 0.95, 1.0) * spec * 1.2;
+                bubble += vec3(0.55, 0.72, 1.0) * pow(fres, 1.5) * 0.35;
+                col += transmit * bubble;
+            }
+
+            float ring = smoothstep(0.40, 0.0, abs(rmin - 1.45));
+            col += vec3(0.55,0.74,1.0) * ring * 0.7;
+
+            if(u_tunnel > 0.0){
+                vec3 tcol = gridTunnel(uv, u_time);
+                col = mix(col, tcol, smoothstep(0.0, 0.18, u_tunnel));
+                float flash = 1.0 - smoothstep(0.0, 0.22, u_tunnel);
+                col += vec3(0.85, 0.92, 1.0) * flash * flash;
+            }
+
+            col *= 1.0 - 0.28*length(uv);
+            col = pow(clamp(col, 0.0, 1.0), vec3(0.85));
+            gl_FragColor = vec4(col, 1.0);
+        }
+    </script>
+
+    <!-- ===================== STEUERUNG ===================== -->
     <script>
-        const canvas = document.getElementById('quantum-canvas');
-        const ctx = canvas.getContext('2d');
-        const cursor = document.getElementById('quantum-cursor');
-        const portal = document.getElementById('portal-container');
-        const loaderCircle = document.getElementById('loader-circle');
-        const introScreen = document.getElementById('intro-screen');
-        const chapterOne = document.getElementById('chapter-one');
-        const subtitle = document.getElementById('intro-subtitle');
-
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-
-        // Zustandssystem
-        let mouseX = width / 2;
-        let mouseY = height / 2;
-        let realMouseX = mouseX;
-        let realMouseY = mouseY;
-        let mouseMoving = false;
-        let idleTimer = 0;
-        let charge = 0;
-        let isMouseDown = false;
-        let exploded = false;
-        // Phase merkt sich den aktuellen Zustand: 'intro' -> 'exploding' -> 'wormhole' -> 'menu'
-        let phase = 'intro';
-
-        // Progress-Ring Setup (Umfang = 2 * PI * r = 2 * PI * 70 ≈ 440)
-        const ringCircumference = 440;
-
-        // Event-Listeners für Maus und Touch
-        window.addEventListener('mousemove', (e) => {
-            realMouseX = e.clientX;
-            realMouseY = e.clientY;
-            mouseMoving = true;
-            idleTimer = 0;
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            realMouseX = e.touches[0].clientX;
-            realMouseY = e.touches[0].clientY;
-            mouseMoving = true;
-            idleTimer = 0;
-        }, { passive: true });
-
-        window.addEventListener('mousedown', () => { isMouseDown = true; });
-        window.addEventListener('mouseup', () => { isMouseDown = false; });
-        window.addEventListener('touchstart', (e) => {
-            isMouseDown = true;
-            // Beim Antippen sofort die Berührungsposition übernehmen (wichtig fürs Handy)
-            if (e.touches[0]) {
-                realMouseX = e.touches[0].clientX;
-                realMouseY = e.touches[0].clientY;
-                mouseMoving = true;
-                idleTimer = 0;
-            }
-        }, { passive: true });
-        window.addEventListener('touchend', () => { isMouseDown = false; });
-
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            generateEyeCoordinates();
-        });
-
-        // Partikel-Definition
-        const particleCount = 400;
-        const particles = [];
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.destX = this.x;
-                this.destY = this.y;
-                this.vx = 0;
-                this.vy = 0;
-                this.size = 1 + Math.random() * 2;
-                this.alpha = 0.1 + Math.random() * 0.7;
-                this.baseAlpha = this.alpha;
-                this.angle = Math.random() * Math.PI * 2;
-                this.speed = 0.5 + Math.random() * 1.5;
-                
-                // Farbmischung (Gold, Violett, Weiß)
-                const rand = Math.random();
-                if (rand < 0.4) {
-                    this.color = `rgba(212, 175, 55, `; // Gold
-                } else if (rand < 0.8) {
-                    this.color = `rgba(177, 159, 251, `; // Violett
-                } else {
-                    this.color = `rgba(255, 255, 255, `; // Weiß
-                }
-            }
-
-            update() {
-                if (exploded) {
-                    // Explosionsphysik: Partikel schießen vom Zentrum weg
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.alpha -= 0.01; // Verblassen
-                    return;
-                }
-
-                if (mouseMoving) {
-                    // LERP zum Ziel (Auge formen)
-                    let dx = this.destX - this.x;
-                    let dy = this.destY - this.y;
-                    
-                    // Während des Drückens vibrieren die Partikel vor Energie
-                    if (isMouseDown && charge > 0) {
-                        this.x += dx * 0.05 + (Math.random() - 0.5) * (charge * 12);
-                        this.y += dy * 0.05 + (Math.random() - 0.5) * (charge * 12);
-                    } else {
-                        // langsameres, gemächlicheres Formen des Auges
-                        this.x += dx * 0.035;
-                        this.y += dy * 0.035;
-                    }
-                } else {
-                    // Superposition: Flüssiges, zielloses Treiben im Raum
-                    this.x += Math.sin(this.angle) * this.speed * 0.4;
-                    this.y += Math.cos(this.angle) * this.speed * 0.4;
-                    this.angle += (Math.random() - 0.5) * 0.1;
-
-                    // Grenzen einhalten
-                    if (this.x < 0 || this.x > width) this.angle += Math.PI;
-                    if (this.y < 0 || this.y > height) this.angle += Math.PI;
-                }
-            }
-
-            draw() {
-                if (this.alpha <= 0) return;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ")";
-                ctx.fill();
-            }
-        }
-
-        // Mathematische Erzeugung der Augen-Struktur
-        const eyePoints = [];
-        function generateEyeCoordinates() {
-            eyePoints.length = 0;
-            const centerX = 0; // relativ zum Augenzentrum
-            const centerY = 0;
-
-            // 1. Augenlider (Oben und Unten) - 150 Punkte
-            for (let i = 0; i < 150; i++) {
-                let pct = (i / 150) * 2 - 1; // -1 bis 1
-                let x = pct * 180;
-                // Formelschnitt für die Augenform
-                let yUpper = -Math.sin(Math.acos(pct)) * 65;
-                let yLower = Math.sin(Math.acos(pct)) * 65;
-                
-                eyePoints.push({ x: x, y: yUpper });
-                eyePoints.push({ x: x, y: yLower });
-            }
-
-            // 2. Iris (Kreisstruktur im Auge) - 150 Punkte
-            for (let i = 0; i < 150; i++) {
-                let angle = (i / 150) * Math.PI * 2;
-                let r = 25 + Math.random() * 30; // Ringbreite der Iris
-                let x = Math.cos(angle) * r;
-                let y = Math.sin(angle) * r;
-                eyePoints.push({ x: x, y: y });
-            }
-
-            // 3. Pupille (Dichter innerer Kern) - 100 Punkte
-            for (let i = 0; i < 100; i++) {
-                let angle = Math.random() * Math.PI * 2;
-                let r = Math.random() * 18;
-                let x = Math.cos(angle) * r;
-                let y = Math.sin(angle) * r;
-                eyePoints.push({ x: x, y: y });
-            }
-        }
-
-        // Initialisierung
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        generateEyeCoordinates();
-
-        // Haupt-Render-Schleife
-        function loop() {
-            // Nachzieh-Effekt (Motion Blur): im Tunnel etwas kürzer für klarere Ringe
-            ctx.fillStyle = (phase === 'wormhole' || phase === 'menu')
-                ? 'rgba(3, 3, 8, 0.30)'
-                : 'rgba(3, 3, 8, 0.2)';
-            ctx.fillRect(0, 0, width, height);
-
-            // Ab der Wurmloch-Phase übernimmt der Tunnel die Darstellung
-            if (phase === 'wormhole' || phase === 'menu') {
-                updateWormhole();
-                requestAnimationFrame(loop);
-                return;
-            }
-
-            // Flüssige Cursor-Verfolgung (Trägheit)
-            let cdx = realMouseX - mouseX;
-            let cdy = realMouseY - mouseY;
-            mouseX += cdx * 0.12;
-            mouseY += cdy * 0.12;
-
-            cursor.style.left = mouseX + 'px';
-            cursor.style.top = mouseY + 'px';
-
-            // Idle-Detektion (Wann wechselt die Seite wieder in Superposition?)
-            idleTimer++;
-            if (idleTimer > 180) { // ca. 3 Sekunden Inaktivität
-                mouseMoving = false;
-                portal.classList.remove('visible');
-            } else if (!exploded) {
-                portal.classList.add('visible');
-            }
-
-            // Augen-Tracking-Berechnung
-            // Die Pupille weicht leicht in Richtung der echten Maus ab (Blickkontakt-Effekt)
-            let eyeCenterX = width / 2 + (mouseX - width / 2) * 0.08;
-            let eyeCenterY = height / 2 + (mouseY - height / 2) * 0.08;
-
-            // Update der Partikelziele
-            if (mouseMoving && !exploded) {
-                particles.forEach((p, index) => {
-                    if (index < eyePoints.length) {
-                        p.destX = eyeCenterX + eyePoints[index].x;
-                        p.destY = eyeCenterY + eyePoints[index].y;
-                        p.alpha = p.baseAlpha;
-                    } else {
-                        // Überschüssige Partikel umkreisen das Auge sanft
-                        let angle = (index * 0.05) + (Date.now() * 0.001);
-                        p.destX = eyeCenterX + Math.cos(angle) * 240;
-                        p.destY = eyeCenterY + Math.sin(angle) * 100;
-                        p.alpha = 0.2;
-                    }
-                });
-            }
-
-            // Click and Hold Steuerung
-            if (isMouseDown && mouseMoving && !exploded) {
-                // Distanz zum Zentrum prüfen
-                let distToCenter = Math.hypot(mouseX - width / 2, mouseY - height / 2);
-                if (distToCenter < 120) {
-                    charge += 0.015; // Aufladegeschwindigkeit
-                    cursor.classList.add('cursor-charging');
-                    if (charge >= 1) {
-                        charge = 1;
-                        triggerExplosion();
-                    }
-                } else {
-                    charge -= 0.02;
-                    cursor.classList.remove('cursor-charging');
-                }
-            } else {
-                charge -= 0.02;
-                cursor.classList.remove('cursor-charging');
-            }
-            if (charge < 0) charge = 0;
-
-            // SVG Lade-Ring aktualisieren
-            const offset = ringCircumference - (charge * ringCircumference);
-            loaderCircle.style.strokeDashoffset = offset;
-
-            // Partikel updaten und zeichnen
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            requestAnimationFrame(loop);
-        }
-
-        // Die Quanten-Explosion auslösen
-        function triggerExplosion() {
-            exploded = true;
-            phase = 'exploding';
-            cursor.style.display = 'none';
-            portal.classList.remove('visible');
-            subtitle.style.opacity = '0';
-            
-            // Druckwellen-Vektoren für alle Partikel berechnen
-            particles.forEach(p => {
-                let dx = p.x - width / 2;
-                let dy = p.y - height / 2;
-                let dist = Math.hypot(dx, dy) || 1;
-                // Kraft ist umgekehrt proportional zur Distanz
-                let force = (120 / dist) + 12;
-                p.vx = (dx / dist) * force * (1 + Math.random() * 1.5);
-                p.vy = (dy / dist) * force * (1 + Math.random() * 1.5);
-            });
-
-            // Übergang in den Wurmloch-Flug einleiten
-            setTimeout(() => {
-                introScreen.style.opacity = '0';
-                setTimeout(() => {
-                    introScreen.style.display = 'none';
-                    startWormhole();
-                }, 800);
-            }, 900);
-        }
-
-        /* =========================================================
-           WURMLOCH-FLUG
-           Ein geometrischer Tunnel: quadratische Rahmen mit gekreuzten
-           Quadraten rasen als gerade Linien aus der Tiefe auf dich zu.
-           Die Tunnelmitte schlängelt sich seitlich -> Wurmloch-Gefühl.
-           Mittendrin dreht sich ein Tesserakt (4D-Würfel) und deutet die
-           vierte Dimension an. Am Ende bremst der Flug ab -> Menü.
-           ========================================================= */
+        const canvas = document.getElementById('gl');
+        const hint = document.getElementById('hint');
+        const bloom = document.getElementById('bloom');
         const menuScreen = document.getElementById('menu-screen');
         const menuStatus = document.getElementById('menu-status');
-        const bloom = document.getElementById('bloom');
+        const chapterOne = document.getElementById('chapter-one');
 
-        const WH_DURATION  = 6500;   // Dauer des Fluges in ms (kürzer, knackiger)
-        const WH_FOCAL     = 340;    // "Brennweite" - Stärke des 3D-Eindrucks
-        const RING_COUNT   = 16;     // Anzahl der Tunnel-Rahmen (luftiger)
-        const RING_POINTS  = 8;      // 8 Ecken = zwei gekreuzte Quadrate pro Rahmen
-        const RING_SPACING = 175;    // Tiefen-Abstand zwischen zwei Rahmen
-        const TUBE_RADIUS  = 300;    // Radius der Tunnelröhre
-        const NEAR_Z       = 40;     // ab hier ist ein Rahmen "vorbeigeflogen"
-        const WH_PALETTE   = ['212, 175, 55', '177, 159, 251', '255, 255, 255'];
-
-        // Tesserakt (4D-Hyperwürfel): 16 Ecken in 4D + seine Kanten. Er deutet die
-        // vierte Dimension an, die wir in unserer 3D-Welt nicht direkt sehen können.
-        const TESS_V = [];
-        for (let x = -1; x <= 1; x += 2)
-        for (let y = -1; y <= 1; y += 2)
-        for (let z = -1; z <= 1; z += 2)
-        for (let w = -1; w <= 1; w += 2) TESS_V.push([x, y, z, w]);
-        const TESS_E = [];
-        for (let i = 0; i < TESS_V.length; i++)
-        for (let j = i + 1; j < TESS_V.length; j++) {
-            let d = 0;
-            for (let k = 0; k < 4; k++) if (TESS_V[i][k] !== TESS_V[j][k]) d++;
-            if (d === 1) TESS_E.push([i, j]);  // Kante = Unterschied in genau einer Achse
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) {
+            document.getElementById('fallback').style.display = 'flex';
+            canvas.style.display = 'none';
+        } else {
+            runIntro();
         }
 
-        let rings = [];
-        let dust  = [];
-        let wormholeStart = 0;
-
-        // Die Mittelachse des Tunnels schlängelt sich in der Tiefe -> aus einer
-        // geraden Röhre wird ein "Wurmloch", durch das man sich windet.
-        function tunnelCenter(z) {
-            return {
-                x: width / 2  + Math.sin(z * 0.006) * 95 + Math.sin(z * 0.013) * 45,
-                y: height / 2 + Math.cos(z * 0.008) * 75
-            };
-        }
-        // Verdrehung des Tunnels entlang der Tiefe (leichter Drall)
-        function tunnelTwist(z) {
-            return z * 0.004;
-        }
-
-        function startWormhole() {
-            phase = 'wormhole';
-            const maxZ = NEAR_Z + RING_COUNT * RING_SPACING;
-            rings = [];
-            for (let i = 0; i < RING_COUNT; i++) {
-                rings.push({ z: NEAR_Z + i * RING_SPACING, cA: WH_PALETTE[i % 3], cB: WH_PALETTE[(i + 1) % 3] });
+        function runIntro() {
+            function compile(type, src) {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, src);
+                gl.compileShader(s);
+                if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error('Shader:', gl.getShaderInfoLog(s));
+                return s;
             }
-            dust = [];
-            for (let i = 0; i < 130; i++) {
-                dust.push({
-                    angle: Math.random() * Math.PI * 2,
-                    radius: TUBE_RADIUS * (0.3 + Math.random() * 0.8),
-                    z: NEAR_Z + Math.random() * (maxZ - NEAR_Z),
-                    size: 1 + Math.random() * 2.5,
-                    color: WH_PALETTE[Math.floor(Math.random() * 3)]
-                });
-            }
-            wormholeStart = Date.now();
-        }
+            const prog = gl.createProgram();
+            gl.attachShader(prog, compile(gl.VERTEX_SHADER,   document.getElementById('vert').textContent));
+            gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, document.getElementById('frag').textContent));
+            gl.linkProgram(prog);
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) console.error('Link:', gl.getProgramInfoLog(prog));
+            gl.useProgram(prog);
 
-        // Geschwindigkeit: beschleunigt sanft, bremst zum Ende hin wieder ab
-        // (so fühlt es sich wie ein "Ankommen" an, kein harter Stopp).
-        function warpSpeed(progress) {
-            if (phase === 'menu') return 3.5;   // hinter dem Menü ruhig weitertreiben
-            let warp;
-            if (progress < 0.65) warp = progress / 0.65;                    // 0 -> 1 beschleunigen
-            else                 warp = 1 - (progress - 0.65) / 0.35 * 0.82; // 1 -> ~0.18 abbremsen
-            return 4 + warp * warp * 30;
-        }
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+            const locP = gl.getAttribLocation(prog, 'p');
+            gl.enableVertexAttribArray(locP);
+            gl.vertexAttribPointer(locP, 2, gl.FLOAT, false, 0, 0);
 
-        function updateWormhole() {
-            const elapsed  = Date.now() - wormholeStart;
-            const progress = Math.min(elapsed / WH_DURATION, 1); // 0 = Start, 1 = Ende
-            const speed    = warpSpeed(progress);
-            const maxZ     = NEAR_Z + RING_COUNT * RING_SPACING;
+            const uRes = gl.getUniformLocation(prog, 'u_res');
+            const uTime = gl.getUniformLocation(prog, 'u_time');
+            const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+            const uPull = gl.getUniformLocation(prog, 'u_pull');
+            const uTravel = gl.getUniformLocation(prog, 'u_travel');
+            const uTunnel = gl.getUniformLocation(prog, 'u_tunnel');
 
-            // Während der Tesserakt durchfliegt, tritt der Tunnel etwas zurück,
-            // damit der 4D-Würfel klar hervortritt.
-            let tunnelDim = 1;
-            if (progress > 0.38 && progress < 0.82) {
-                const td = (progress - 0.38) / 0.44;
-                tunnelDim = 1 - Math.sin(td * Math.PI) * 0.55;
-            }
+            let falling = false, travel = 0, tunnel = 0, revealed = false;
+            let mX = 0, mY = 0, tX = 0, tY = 0, pull = 0, hasMoved = false;
+            function sstep(a, b, x){ x = Math.min(1, Math.max(0, (x-a)/(b-a))); return x*x*(3-2*x); }
 
-            // 1) Staub-Partikel bewegen und zeichnen (Textur zwischen den Rahmen)
-            dust.forEach(p => {
-                p.z -= speed;
-                if (p.z < NEAR_Z) { p.z = maxZ; p.angle = Math.random() * Math.PI * 2; }
-                const c = tunnelCenter(p.z);
-                const scale = WH_FOCAL / p.z;
-                const a = p.angle + tunnelTwist(p.z);
-                const sx = c.x + Math.cos(a) * p.radius * scale;
-                const sy = c.y + Math.sin(a) * p.radius * scale;
-                const alpha = Math.min(1, (1 - p.z / maxZ) * 1.3) * 0.65 * tunnelDim;
-                if (alpha <= 0.02) return;
-                ctx.beginPath();
-                ctx.arc(sx, sy, p.size * scale, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(' + p.color + ',' + alpha + ')';
-                ctx.fill();
+            window.addEventListener('mousemove', e => {
+                tX = (e.clientX / window.innerWidth) * 2 - 1;
+                tY = -((e.clientY / window.innerHeight) * 2 - 1);
+                hasMoved = true;
             });
-
-            // 2) Rahmen in der Tiefe nach vorne bewegen; vorbei -> ganz nach hinten
-            rings.forEach(r => {
-                r.z -= speed;
-                if (r.z < NEAR_Z) {
-                    r.z += RING_COUNT * RING_SPACING;
-                    const i = Math.floor(Math.random() * 3);
-                    r.cA = WH_PALETTE[i];
-                    r.cB = WH_PALETTE[(i + 1) % 3];
+            window.addEventListener('touchmove', e => {
+                if (e.touches[0]) {
+                    tX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+                    tY = -((e.touches[0].clientY / window.innerHeight) * 2 - 1);
+                    hasMoved = true;
                 }
-            });
+            }, { passive: true });
 
-            // 3) Für jeden Rahmen die 8 projizierten Eckpunkte berechnen (hinten -> vorne)
-            const ordered = rings.slice().sort((a, b) => b.z - a.z);
-            const ringPts = ordered.map(r => {
-                const c = tunnelCenter(r.z);
-                const scale = WH_FOCAL / r.z;
-                const off = tunnelTwist(r.z);
-                const pts = [];
-                for (let k = 0; k < RING_POINTS; k++) {
-                    const a = (k / RING_POINTS) * Math.PI * 2 + off;
-                    pts.push({
-                        x: c.x + Math.cos(a) * TUBE_RADIUS * scale,
-                        y: c.y + Math.sin(a) * TUBE_RADIUS * scale
-                    });
-                }
-                return { pts: pts, alpha: Math.min(1, (1 - r.z / maxZ) * 1.5), cA: r.cA, cB: r.cB };
-            });
+            function resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                canvas.width  = Math.floor(window.innerWidth  * dpr);
+                canvas.height = Math.floor(window.innerHeight * dpr);
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+            window.addEventListener('resize', resize);
+            resize();
 
-            // 4) Gerade Längslinien = Tunnelkanten (verbinden gleiche Ecken über alle Rahmen)
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(177, 159, 251,' + (0.16 * tunnelDim) + ')';
-            for (let k = 0; k < RING_POINTS; k++) {
-                ctx.beginPath();
-                ringPts.forEach((rp, i) => {
-                    const pt = rp.pts[k];
-                    if (i === 0) ctx.moveTo(pt.x, pt.y);
-                    else         ctx.lineTo(pt.x, pt.y);
-                });
-                ctx.stroke();
+            // Übergang zur Portalseite: Blitz -> Flug ausblenden -> Menü dreht sich gerade herein
+            function finishIntro() {
+                if (revealed) return;
+                revealed = true;
+                hint.style.opacity = '0';
+                bloom.classList.add('on');
+                setTimeout(() => bloom.classList.remove('on'), 700);
+                canvas.style.opacity = '0';
+                setTimeout(() => menuScreen.classList.add('active'), 500);
             }
 
-            // 5) Pro Rahmen ZWEI gekreuzte Quadrate zeichnen (durchkreuzte Quadrate -> 4D-Andeutung)
-            ringPts.forEach(rp => {
-                const rpAlpha = rp.alpha * tunnelDim;
-                if (rpAlpha <= 0.02) return;
-                ctx.lineWidth = 1.5;
-                // Quadrat A: Ecken 0-2-4-6
-                ctx.strokeStyle = 'rgba(' + rp.cA + ',' + rpAlpha + ')';
-                ctx.beginPath();
-                [0, 2, 4, 6].forEach((k, i) => {
-                    const pt = rp.pts[k];
-                    if (i === 0) ctx.moveTo(pt.x, pt.y);
-                    else         ctx.lineTo(pt.x, pt.y);
-                });
-                ctx.closePath();
-                ctx.stroke();
-                // Quadrat B: Ecken 1-3-5-7 (um 45° versetzt -> kreuzt Quadrat A)
-                ctx.strokeStyle = 'rgba(' + rp.cB + ',' + (rpAlpha * 0.85) + ')';
-                ctx.beginPath();
-                [1, 3, 5, 7].forEach((k, i) => {
-                    const pt = rp.pts[k];
-                    if (i === 0) ctx.moveTo(pt.x, pt.y);
-                    else         ctx.lineTo(pt.x, pt.y);
-                });
-                ctx.closePath();
-                ctx.stroke();
-            });
+            const start = performance.now();
+            function loop() {
+                mX += (tX - mX) * 0.05;
+                mY += (tY - mY) * 0.05;
+                const targetPull = hasMoved ? sstep(0.9, 0.05, Math.hypot(tX, tY)) : 0;
+                pull += (targetPull - pull) * 0.05;
 
-            // 6) Kurzes, subtiles Durchschimmern der DNA-Doppelhelix (früh im Flug)
-            if (phase === 'wormhole' && progress > 0.12 && progress < 0.32) {
-                const t = (progress - 0.12) / 0.20;
-                drawDNA(Math.sin(t * Math.PI) * 0.5, elapsed * 0.004);
+                if (falling) hint.style.opacity = '0';
+                if (!falling && pull > 0.9) falling = true;
+                if (falling) { travel += 0.0016 + travel * 0.022; if (travel > 1) travel = 1; }
+                if (travel >= 1) { tunnel += 0.0016; if (tunnel > 1) tunnel = 1; if (tunnel > 0.5) finishIntro(); }
+
+                gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.uniform1f(uTime, (performance.now() - start) / 1000);
+                gl.uniform2f(uMouse, mX, mY);
+                gl.uniform1f(uPull, pull);
+                gl.uniform1f(uTravel, travel);
+                gl.uniform1f(uTunnel, tunnel);
+                gl.drawArrays(gl.TRIANGLES, 0, 3);
+                requestAnimationFrame(loop);
             }
-
-            // 7) Der Tesserakt (4D-Würfel) fliegt in der Mitte durch und dreht sich
-            //    in der vierten Dimension -> Andeutung der 4D-Realität.
-            if (phase === 'wormhole' && progress > 0.38 && progress < 0.82) {
-                const t = (progress - 0.38) / 0.44;
-                const tessZ = 1150 - t * 900;   // fliegt von fern nach nah
-                drawTesseract(Math.sin(t * Math.PI), elapsed * 0.0016, tessZ);
-            }
-
-            // 8) Flug zu Ende -> sanft ins Menü übergehen
-            if (phase === 'wormhole' && progress >= 1) {
-                finishWormhole();
-            }
-        }
-
-        // Zeichnet die DNA-Doppelhelix (zwei verdrehte Stränge mit Sprossen)
-        function drawDNA(alpha, scroll) {
-            const cx = width / 2;
-            const amp = Math.min(width, height) * 0.14; // Breite der Helix
-            const steps = 64;
-            const top = -20;
-            const bottom = height + 20;
-            for (let i = 0; i <= steps; i++) {
-                const p = i / steps;
-                const y = top + p * (bottom - top);
-                const ph = p * Math.PI * 6 + scroll;    // 3 Windungen, scrollt vorbei
-                const x1 = cx + Math.sin(ph) * amp;
-                const x2 = cx + Math.sin(ph + Math.PI) * amp;
-                const depth = (Math.cos(ph) + 1) / 2;   // 0..1: vorne oder hinten
-                // Sprosse zwischen den Strängen
-                if (i % 2 === 0) {
-                    ctx.strokeStyle = 'rgba(177, 159, 251,' + (alpha * 0.35) + ')';
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y);
-                    ctx.lineTo(x2, y);
-                    ctx.stroke();
-                }
-                // Knotenpunkte auf beiden Strängen (Gold und Weiß)
-                ctx.fillStyle = 'rgba(212, 175, 55,' + (alpha * (0.35 + depth * 0.65)) + ')';
-                ctx.beginPath();
-                ctx.arc(x1, y, 2.6, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(255, 255, 255,' + (alpha * (0.35 + (1 - depth) * 0.65)) + ')';
-                ctx.beginPath();
-                ctx.arc(x2, y, 2.6, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Zeichnet den Tesserakt: 4D-Ecken drehen, dann nach 3D und 2D projizieren.
-        // Der "Würfel-im-Würfel"-Effekt entsteht durch die Perspektive entlang der 4. Achse.
-        function drawTesseract(alpha, rot, z) {
-            if (alpha <= 0.02) return;
-            const c = tunnelCenter(z);
-            const screen = 380 * (WH_FOCAL / z);   // nah = groß
-            const a = rot, b = rot * 0.65;
-            const proj = TESS_V.map(v => {
-                let x = v[0], y = v[1], zz = v[2], w = v[3];
-                // echte 4D-Drehung in der X-W-Ebene (Bewegung durch die 4. Dimension)
-                let nx = x * Math.cos(a) - w * Math.sin(a);
-                let nw = x * Math.sin(a) + w * Math.cos(a);
-                x = nx; w = nw;
-                // 3D-Taumeln in der X-Z-Ebene
-                let mx = x * Math.cos(b) - zz * Math.sin(b);
-                let mz = x * Math.sin(b) + zz * Math.cos(b);
-                x = mx; zz = mz;
-                // 4D -> 3D: Perspektive entlang der vierten Achse w (Würfel-im-Würfel)
-                const k4 = 1 / (2.6 - w);
-                x *= k4; y *= k4; zz *= k4;
-                // 3D -> 2D: Perspektive entlang z -> echte räumliche Tiefe
-                const k3 = 1 / (2.2 - zz);
-                return { x: c.x + x * k3 * screen, y: c.y + y * k3 * screen };
-            });
-            // Kanten des Hyperwürfels - mit goldenem Leuchten, damit er hervortritt
-            ctx.lineWidth = 1.8;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(212, 175, 55, ' + alpha + ')';
-            ctx.strokeStyle = 'rgba(255, 235, 180,' + (alpha * 0.9) + ')';
-            TESS_E.forEach(e => {
-                const p = proj[e[0]], q = proj[e[1]];
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(q.x, q.y);
-                ctx.stroke();
-            });
-            ctx.shadowBlur = 0;   // Leuchten wieder ausschalten (sonst leuchtet alles)
-            // Ecken als kleine Lichtpunkte
-            ctx.fillStyle = 'rgba(177, 159, 251,' + alpha + ')';
-            proj.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-        }
-
-        function finishWormhole() {
-            phase = 'menu';
-            // sanfter goldener Lichtschein beim "Austritt" aus dem Tunnel
-            bloom.classList.add('on');
-            setTimeout(() => bloom.classList.remove('on'), 650);
-            // Menü öffnen - die Portale schweben danach gestaffelt herein (per CSS)
-            menuScreen.classList.add('active');
+            loop();
         }
 
         // Klick auf ein Portal
@@ -1010,19 +509,14 @@
             portalEl.addEventListener('click', () => {
                 const target = portalEl.getAttribute('data-target');
                 if (target === 'chapter-one') {
-                    // Erstes Tor führt zu Kapitel I (Die Illusion der Zeit) - langsam öffnen
                     menuScreen.classList.remove('active');
                     setTimeout(() => chapterOne.classList.add('active'), 800);
                 } else {
-                    // Die übrigen Kapitel entstehen noch
                     menuStatus.textContent = 'Dieses Tor öffnet sich bald …';
                     menuStatus.classList.add('show');
                 }
             });
         });
-
-        // Start
-        loop();
     </script>
 </body>
 </html>
