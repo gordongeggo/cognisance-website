@@ -179,6 +179,32 @@
             color: rgba(212, 175, 55, 0); transition: color 1s ease;
         }
         #menu-status.show { color: rgba(212, 175, 55, 0.8); }
+
+        /* Navigations-Buttons (dünn, gold, gesperrt – im Stil der Seite) */
+        .navbtn {
+            position: fixed; z-index: 12;
+            font-family: inherit; font-size: 0.7rem; font-weight: 200;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(212, 175, 55, 0.75);
+            background: rgba(6, 6, 20, 0.35);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 40px; padding: 10px 20px; cursor: pointer;
+            -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+            transition: color .3s, border-color .3s, background .3s, opacity .8s;
+        }
+        .navbtn:hover {
+            color: #d4af37; border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.08);
+            box-shadow: 0 0 22px rgba(212, 175, 55, 0.18);
+        }
+        /* „Von vorn" – oben rechts, erst ab dem Menü sichtbar */
+        #restart { top: 22px; right: 22px; opacity: 0; pointer-events: none; }
+        #restart.show { opacity: 1; pointer-events: auto; }
+        /* „Zu den Toren" – oben links, erscheint mit der Kapitelseite */
+        #back-to-menu { top: 22px; left: 22px; }
+
+        /* Kapitelseite: langsam herein (poetisch), aber schnell wieder hinaus */
+        #chapter-one.leaving { transition: opacity 0.8s ease; }
     </style>
 </head>
 <body>
@@ -187,11 +213,15 @@
     <div id="hint">Nähere dich dem Zentrum.</div>
     <div id="fallback">Dieser Browser unterstützt kein WebGL.</div>
 
+    <!-- Navigation: Intro neu starten (ab Menü sichtbar) -->
+    <button id="restart" class="navbtn">↻ Von vorn</button>
+
     <!-- Durchbruch-/Austritts-Lichtschein -->
     <div id="bloom"></div>
 
     <!-- KAPITEL I (zunächst verborgen) -->
     <div id="chapter-one">
+        <button id="back-to-menu" class="navbtn">← Zu den Toren</button>
         <div class="chapter-header">
             <div class="chapter-num">Kapitel I</div>
             <h1 class="chapter-title">Die Illusion der Zeit</h1>
@@ -531,7 +561,10 @@
                 bloom.classList.add('on');
                 setTimeout(() => bloom.classList.remove('on'), 700);
                 canvas.style.opacity = '0';
-                setTimeout(() => menuScreen.classList.add('active'), 500);
+                setTimeout(() => {
+                    menuScreen.classList.add('active');
+                    document.getElementById('restart').classList.add('show');
+                }, 500);
             }
 
             const start = performance.now();
@@ -572,6 +605,21 @@
                     menuStatus.classList.add('show');
                 }
             });
+        });
+
+        // Zurück von der Kapitelseite zum Portal-Menü (schnell ausblenden)
+        document.getElementById('back-to-menu').addEventListener('click', () => {
+            chapterOne.classList.add('leaving');
+            chapterOne.classList.remove('active');
+            setTimeout(() => {
+                menuScreen.classList.add('active');
+                chapterOne.classList.remove('leaving');
+            }, 850);
+        });
+
+        // „Von vorn": das ganze Intro neu starten
+        document.getElementById('restart').addEventListener('click', () => {
+            window.location.reload();
         });
     </script>
 </body>
