@@ -32,6 +32,7 @@
         uniform vec2  u_mouse;   // Mausposition, -1..1 (0,0 = Bildmitte)
         uniform float u_pull;    // Sog-Stärke 0..1 (0 = ruhig/fern, 1 = Cursor mittig)
         uniform float u_travel;  // Flug-Fortschritt 0..1 (0 = fern, 1 = mitten im Loch)
+        uniform float u_tunnel;  // Tunnel-Fortschritt 0..1 (nach dem Eintauchen)
 
         // ---------- Zufall & Rauschen (für Gas-Textur + Sterne) ----------
         float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
@@ -66,6 +67,30 @@
             float neb = fbm(uv*2.5);
             c += vec3(0.02,0.04,0.09) * neb;   // ganz zarter Nebel
             return c;
+        }
+
+        // ---------- Gitter-Tunnel (Nachbau von Bild 3) ----------
+        // Ein weißes Gitter-Netz aus Ringen + Speichen, das sich als Trichter in
+        // die Tiefe dreht und zu einem hellen Schlund zusammenläuft. Der Binärcode
+        // schimmert als „digitales Flackern" über die Linien (dein Code von allem).
+        vec3 gridTunnel(vec2 uv, float t){
+            float r = max(length(uv), 0.0015);
+            float a = atan(uv.y, uv.x);
+            float depth = 0.5 / r + t * 1.3;                 // Flug nach vorn (Zentrum = Schlund)
+            float ang   = a / 6.2831853 + 0.5 + depth * 0.05; // Verdrehung mit der Tiefe -> Wurmloch
+            float ringD  = abs(fract(depth) - 0.5) * 2.0;      // Abstand zur nächsten Ring-Linie
+            float spokeD = abs(fract(ang * 24.0) - 0.5) * 2.0; // 24 Längs-Speichen
+            float fw = 0.12;
+            float ring  = 1.0 - smoothstep(0.0, fw, ringD);
+            float spoke = 1.0 - smoothstep(0.0, fw, spokeD);
+            float grid = max(ring, spoke);
+            // Binärcode-Schimmer: einzelne Gitter-Felder flackern digital auf
+            float code = 0.55 + 0.45 * step(0.5, hash(vec2(floor(ang*24.0), floor(depth*2.0) + floor(t*3.0))));
+            float rim = smoothstep(1.8, 0.35, r);              // außen abdunkeln
+            vec3 line = mix(vec3(0.45,0.65,1.0), vec3(0.90,0.96,1.0), grid);
+            vec3 col  = line * grid * rim * code;
+            col += vec3(0.35,0.60,1.0) * smoothstep(0.16, 0.0, r) * 1.3; // heller Schlund im Zentrum
+            return col;
         }
 
         void main(){
@@ -186,6 +211,14 @@
             float ring = smoothstep(0.40, 0.0, abs(rmin - 1.45));
             col += vec3(0.55,0.74,1.0) * ring * 0.7;
 
+            // Nach dem Eintauchen: Übergang in den Gitter-Tunnel mit hellem Durchbruch-Blitz
+            if(u_tunnel > 0.0){
+                vec3 tcol = gridTunnel(uv, u_time);
+                col = mix(col, tcol, smoothstep(0.0, 0.18, u_tunnel));
+                float flash = 1.0 - smoothstep(0.0, 0.22, u_tunnel);
+                col += vec3(0.85, 0.92, 1.0) * flash * flash;
+            }
+
             col *= 1.0 - 0.28*length(uv);            // sanfte Vignette
             col = pow(clamp(col, 0.0, 1.0), vec3(0.85));
             gl_FragColor = vec4(col, 1.0);
@@ -231,7 +264,8 @@
         const uMouse  = gl.getUniformLocation(prog, 'u_mouse');
         const uPull   = gl.getUniformLocation(prog, 'u_pull');
         const uTravel = gl.getUniformLocation(prog, 'u_travel');
-        let falling = false, travel = 0;   // Flug-Zustand
+        const uTunnel = gl.getUniformLocation(prog, 'u_tunnel');
+        let falling = false, travel = 0, tunnel = 0;   // Flug-Zustand
 
         // Maus/Touch verfolgen: Zielwerte tX/tY, weich nachgezogen zu mX/mY.
         // pull = Sog-Stärke (0 bis erste Bewegung, dann je nach Cursor-Nähe zur Mitte).
@@ -274,12 +308,18 @@
                 travel += 0.0016 + travel * 0.022;   // beschleunigt: erst langsam, dann Sturz
                 if (travel > 1) travel = 1;
             }
+            // Nach dem Eintauchen: in den Gitter-Tunnel übergehen und hindurchfliegen
+            if (travel >= 1) {
+                tunnel += 0.0016;
+                if (tunnel > 1) tunnel = 1;
+            }
 
             gl.uniform2f(uRes, canvas.width, canvas.height);
             gl.uniform1f(uTime, (performance.now() - start) / 1000);
             gl.uniform2f(uMouse, mX, mY);
             gl.uniform1f(uPull, pull);
             gl.uniform1f(uTravel, travel);
+            gl.uniform1f(uTunnel, tunnel);
             gl.drawArrays(gl.TRIANGLES, 0, 3);
             requestAnimationFrame(loop);
         }
