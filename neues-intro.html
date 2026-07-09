@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neues Intro – Schwarzes Loch (WebGL)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; background: #030308; overflow: hidden; }
+        #gl { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+        /* Falls WebGL fehlt: Hinweis */
+        #fallback {
+            position: absolute; inset: 0; display: none;
+            color: #9ab; font-family: Helvetica, Arial, sans-serif; font-weight: 200;
+            letter-spacing: 2px; align-items: center; justify-content: center; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gl"></canvas>
+    <div id="fallback">Dieser Browser unterstützt kein WebGL.</div>
+
+    <script id="vert" type="x-shader/x-vertex">
+        attribute vec2 p;
+        void main() { gl_Position = vec4(p, 0.0, 1.0); }
+    </script>
+
+    <script id="frag" type="x-shader/x-fragment">
+        precision highp float;
+        uniform vec2  u_res;
+        uniform float u_time;
+
+        // ---------- Zufall & Rauschen (für Gas-Textur + Sterne) ----------
+        float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+        float noise(vec2 p){
+            vec2 i = floor(p), f = fract(p);
+            float a = hash(i), b = hash(i+vec2(1,0)), c = hash(i+vec2(0,1)), d = hash(i+vec2(1,1));
+            vec2 u = f*f*(3.0-2.0*f);
+            return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+        }
+        float fbm(vec2 p){
+            float s = 0.0, a = 0.5;
+            for(int i=0;i<5;i++){ s += a*noise(p); p *= 2.02; a *= 0.5; }
+            return s;
+        }
+
+        // ---------- Sternenhimmel in Blickrichtung ----------
+        vec3 starField(vec3 dir){
+            vec3 c = vec3(0.0);
+            vec2 uv = vec2(atan(dir.z, dir.x), asin(clamp(dir.y,-1.0,1.0)));
+            for(int i=0;i<3;i++){
+                float scale = 90.0 + float(i)*130.0;
+                vec2 g = uv*scale;
+                vec2 id = floor(g);
+                float h = hash(id + float(i)*19.0);
+                if(h > 0.986){
+                    vec2 f = fract(g)-0.5;
+                    float b = smoothstep(0.5, 0.0, length(f)) * (h-0.986)/0.014;
+                    vec3 tint = mix(vec3(0.75,0.85,1.0), vec3(1.0), hash(id+3.0));
+                    c += tint * b * 0.9;
+                }
+            }
+            float neb = fbm(uv*2.5);
+            c += vec3(0.02,0.04,0.09) * neb;   // ganz zarter Nebel
+            return c;
+        }
+
+        void main(){
+            vec2 uv = (gl_FragCoord.xy - 0.5*u_res) / u_res.y;
+            float t = u_time;
+
+            // Kamera: weit weg (fernes Loch, Schritt 1) und leicht oberhalb der
+            // Scheibenebene -> flacher Blick (Interstellar). Später fährt sie nach vorn.
+            vec3 ro  = vec3(0.0, 3.0, -21.0);
+            vec3 ta  = vec3(0.0, 0.0, 0.0);
+            vec3 fwd = normalize(ta - ro);
+            vec3 rgt = normalize(cross(fwd, vec3(0.0,1.0,0.0)));
+            vec3 upv = cross(rgt, fwd);
+            float fov = 1.0;
+            vec3 rd  = normalize(fwd + fov*(uv.x*rgt + uv.y*upv));
+
+            // "Atmen wie eine Blase im Wasser": die Lichtbiegung pulsiert ganz sanft,
+            // dadurch wogt der gespiegelte Sternenhimmel leicht.
+            float breathe = 1.0 + 0.05*sin(t*0.55) + 0.02*sin(t*1.3 + 1.7);
+            float bend = 0.9 * breathe;
+
+            vec3 pos = ro;
+            vec3 dir = rd;
+            vec3 col = vec3(0.0);
+            float transmit = 1.0;
+            float rmin = 1e9;
+            bool escaped = false;
+
+            for(int i=0;i<200;i++){
+                float r = length(pos);
+                rmin = min(rmin, r);
+                if(r < 1.0){ break; }            // hinter dem Ereignishorizont -> verschluckt
+                if(r > 32.0){ escaped = true; break; }
+
+                float dt = clamp(0.12 + 0.04*r, 0.12, 0.55);
+
+                // Licht zum Zentrum hin biegen (Gravitationslinse)
+                dir = normalize(dir - (pos/r) * (bend/(r*r)) * dt);
+
+                float prevY = pos.y;
+                pos += dir*dt;
+
+                // Durchgang durch die Scheibenebene (y=0) -> leuchtendes Gas
+                if(prevY*pos.y < 0.0){
+                    float f = prevY/(prevY - pos.y);
+                    vec3 hp = pos - dir*dt*(1.0-f);
+                    float rd2 = length(hp.xz);
+                    if(rd2 > 2.4 && rd2 < 8.6){
+                        float ang  = atan(hp.z, hp.x);
+                        float spin = t * 1.3 / pow(rd2, 1.25);              // innen schneller
+                        float gas  = fbm(vec2(ang*3.0 + spin*6.0, rd2*1.1 + spin));
+                        float band = smoothstep(8.6,3.2,rd2) * smoothstep(2.4,3.3,rd2);
+                        // streifende Strahlen (fast parallel zur Scheibe) weich ausblenden
+                        // -> verhindert die harte waagerechte Linie am Bildrand
+                        float graze = smoothstep(0.02, 0.14, abs(dir.y));
+                        float bright = band * graze * (0.30 + 0.85*gas);
+                        // Doppler: die auf uns zu rotierende Seite leuchtet heller
+                        vec3 vel = normalize(vec3(-hp.z, 0.0, hp.x));
+                        float dop = clamp(0.65 + 0.75*dot(vel, normalize(ro-hp)), 0.3, 1.7);
+                        vec3 dcol = mix(vec3(0.30,0.52,0.95), vec3(0.90,0.96,1.0), gas);
+                        col += transmit * dcol * bright * dop * 1.25;
+                        transmit *= 0.82;
+                    }
+                }
+            }
+
+            if(escaped){
+                col += transmit * starField(dir);   // gespiegelter/gelinster Sternenhimmel
+            }
+
+            // Photonenring: heller Lichtsaum dort, wo Strahlen den Rand streifen
+            float ring = smoothstep(0.40, 0.0, abs(rmin - 1.45));
+            col += vec3(0.55,0.74,1.0) * ring * 0.7;
+
+            col *= 1.0 - 0.28*length(uv);            // sanfte Vignette
+            col = pow(clamp(col, 0.0, 1.0), vec3(0.85));
+            gl_FragColor = vec4(col, 1.0);
+        }
+    </script>
+
+    <script>
+        const canvas = document.getElementById('gl');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) {
+            document.getElementById('fallback').style.display = 'flex';
+            throw new Error('WebGL nicht verfügbar');
+        }
+
+        function compile(type, src) {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+                console.error('Shader-Fehler:', gl.getShaderInfoLog(s));
+            }
+            return s;
+        }
+        const prog = gl.createProgram();
+        gl.attachShader(prog, compile(gl.VERTEX_SHADER,   document.getElementById('vert').textContent));
+        gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, document.getElementById('frag').textContent));
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+            console.error('Programm-Link-Fehler:', gl.getProgramInfoLog(prog));
+        }
+        gl.useProgram(prog);
+
+        // Vollbild-Dreieck
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+        const locP = gl.getAttribLocation(prog, 'p');
+        gl.enableVertexAttribArray(locP);
+        gl.vertexAttribPointer(locP, 2, gl.FLOAT, false, 0, 0);
+
+        const uRes  = gl.getUniformLocation(prog, 'u_res');
+        const uTime = gl.getUniformLocation(prog, 'u_time');
+
+        function resize() {
+            // Desktop-Qualität: Auflösung x Pixeldichte (auf 1.5 gedeckelt für Tempo)
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            canvas.width  = Math.floor(window.innerWidth  * dpr);
+            canvas.height = Math.floor(window.innerHeight * dpr);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const start = performance.now();
+        function loop() {
+            gl.uniform2f(uRes, canvas.width, canvas.height);
+            gl.uniform1f(uTime, (performance.now() - start) / 1000);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+</html>
