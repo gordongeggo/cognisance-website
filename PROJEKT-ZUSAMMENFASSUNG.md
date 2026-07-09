@@ -35,7 +35,7 @@ Der normale claude.ai-Chat hat keinen Datei-Zugriff – dafür ist genau dieses 
 
 ## 3. Technik
 
-- **Vanilla JavaScript + HTML5-Canvas**, **kein** WebGL, keine Frameworks, `requestAnimationFrame`, mobilkompatibel.
+- **Vanilla JavaScript + HTML5-Canvas**, keine Frameworks, `requestAnimationFrame`. **Ausnahme (neu, 9. Juli 2026):** Das neue Intro (Schwarzes-Loch-Flug) nutzt **WebGL-Shader** für die echte Gravitationslinse und ist **Desktop-fokussiert** (nicht mehr handytauglich). Menü + Kapitel bleiben Canvas/HTML und mobilkompatibel.
 - Aktuell steckt **alles in einer Datei**: `index.html` (HTML + CSS + JavaScript zusammen).
 - **Farbwelt:** samtiges Schwarz-Blau (#030308 / #080815), Gold **#d4af37**, Violett **#b19ffb**, Sternenweiß.
 
@@ -67,9 +67,12 @@ Das Menü nach dem Wurmloch und die Kapitel-I-Seite definieren die visuelle Iden
 
 ## 5a. GEPLANTER Umbau des Intros: „Flug durchs Schwarze Loch" (noch NICHT gebaut)
 
-> **Status:** Vision steht, ein Prompt für Claude Code ist vorbereitet. **Noch nichts umgesetzt,
-> noch nichts technisch geprüft.** Ersetzt nach Fertigstellung die Schritte 1–5 aus Abschnitt 5
-> (Auge → Aufladen → Explosion → bisheriges Wurmloch). Das **Portal-Menü (Schritt 6) bleibt** und ist das Endziel.
+> **Status (9. Juli 2026): Bau läuft.** Schritt 1 – das ferne, sanft „atmende" Schwarze Loch –
+> ist als **WebGL-Shader** umgesetzt und getestet (Prototyp `neues-intro.html`, echte
+> Gravitationslinse mit gespiegeltem/verzerrtem Sternenhimmel). Technik damit bestätigt.
+> Als Nächstes: Maus-Annäherung (Schritt 2) und Kamera-Flug ins Loch. Ersetzt nach Fertigstellung
+> die Schritte 1–5 aus Abschnitt 5 (Auge → Aufladen → Explosion → bisheriges Wurmloch).
+> Das **Portal-Menü (Schritt 6) bleibt** und ist das Endziel.
 
 **Grundlage:** Fünf Referenzbilder (`1`–`5`) liegen im Schreibtisch-Ordner. Die Zahlen geben die grobe Reihenfolge vor. Diese Bilder sind nur in **Claude Code** sichtbar (der claude.ai-Chat sieht sie nicht).
 
@@ -120,6 +123,7 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Was sich gegenüber dem letzten Stand geändert hat (Changelog)
 
+- **9. Juli 2026:** Intro-Bau **gestartet**. **Grundsatz-Entscheidung (Ronny):** Das Intro-Schwarze-Loch wird als **WebGL-Shader** gebaut – echte Gravitationslinse, gespiegelter/verzerrter Sternenhimmel, sanftes „Atmen" (Blase-im-Wasser-Gefühl), Interstellar-Look. Damit ist es **Desktop-fokussiert**; „kein WebGL / mobilkompatibel" gilt nur noch für Menü + Kapitel. Schritt 1 (fernes, atmendes Loch) fertig & getestet im Prototyp `neues-intro.html`.
 - **9. Juli 2026:** Alle drei `theholographicme`-Domains aus Cloudflare **entfernt**; 5 neue Domains vorhanden, Auswahl offen. Infrastruktur-Abschnitt (7) auf „im Umbruch" gesetzt; DMARC- und Access-Status als **zu prüfen** markiert (nicht mehr als erledigt behauptet). Live-Zugang läuft aktuell über die `…pages.dev`-Adresse.
 - **9. Juli 2026:** Neuer **Intro-Plan „Flug durchs Schwarze Loch"** als Abschnitt 5a aufgenommen (geplant, noch nicht gebaut). Ersetzt nach Fertigstellung Schritte 1–5 des bisherigen Ablaufs; Portal-Menü bleibt Endziel.
 - *(früher)* Haupt-Domain cognizance.world → theholographicme.com (+ `.de`/`.global`); Wurmloch geometrisch neu gestaltet (4D-Tesserakt); Auge & Kapitel-Einblendung langsamer; DMARC repariert; Website privat via Access. Diese Datei vereint frühere Zusammenfassung + Holodeck-Übergabe.
