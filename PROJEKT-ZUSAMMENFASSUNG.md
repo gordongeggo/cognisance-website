@@ -22,9 +22,10 @@ bei jedem Push zu GitHub).
 ## 2. Über den Entwickler & Arbeitsweise (WICHTIG)
 
 **Ronny ist absoluter Programmier-Anfänger.** Für jede Zusammenarbeit gilt:
-- Jeden Schritt **VORHER in einfachem Deutsch erklären**, keine Fachbegriffe ohne Erklärung, Aktionen bestätigen lassen.
-- **Kleine Schritte**, nach jedem ein sichtbares Ergebnis.
-- Jede Änderung mit **Git-Commit** sichern.
+- Jeden Schritt **VORHER in einfachem Deutsch erklären**, keine Fachbegriffe ohne Erklärung.
+- **Qualität vor Tempo — „Hier gibt es kein schnell, nur Qualität."** Kein Zeitdruck; eine einzelne Sequenz darf ruhig einen Tag oder eine Woche dauern. **Nie heimlich abkürzen** – wenn etwas länger dauert, **vorher** ehrlich sagen.
+- **Immer auf ein ausdrückliches „Go" warten:** erst erklären → Rückfragen → Ronnys Go → **DANN** bauen. **Keine eigenmächtigen kreativen oder Scope-Entscheidungen.**
+- **Kleine Schritte**, nach jedem ein sichtbares Ergebnis; jede Änderung mit **Git-Commit** sichern.
 - **Git-Identität:** Ronny Hammer / ronny.hammer1@icloud.com
 
 **Veröffentlichen:** Änderung an `index.html` → committen → zu GitHub pushen →
@@ -64,9 +65,18 @@ alte Auge/„ERKENNE"/Explosion/Wurmloch **komplett**. Alles in `index.html`.
 5. **Projektionsfläche:** das Menü erscheint als flache Fläche, die zuerst **schräg** im Raum liegt (Blick von außen auf die 2D-Projektion) und sich **geradedreht** – mit feinem Holo-Gitter als Oberfläche.
 6. **Menü „Vier Tore der Erkenntnis"** – vier Portale erscheinen gestaffelt:
    - **I. Die Illusion der Zeit** → Kapitel I fertig (Einstein-Zitat), öffnet sich langsam (4,5 Sek.)
-   - **II. Außerirdische Intelligenz** → Inhalt folgt
-   - **III. Realität als Projektion** → Inhalt folgt (Drehbuch siehe Abschnitt 6)
-   - **IV. Wachstum durch KI** → Inhalt folgt
+   - **II. Außerirdische Intelligenz** → Platzhalter-Seite (Inhalt folgt)
+   - **III. Realität als Projektion** → Platzhalter-Seite (Inhalt folgt; Drehbuch siehe Abschnitt 6)
+   - **IV. Wachstum durch KI** → Platzhalter-Seite (Inhalt folgt)
+
+**Navigation (fertig):** „← Zu den Toren" auf jeder Kapitel-/Platzhalterseite (zurück zum Menü),
+„Andere Tore: I II III IV"-Sprunglinks (direkt zwischen den Toren), „↻ Von vorn" (Intro neu).
+
+> ⚠️ **Wichtig – das wird noch ersetzt:** Schritt **4 (Wurmloch-Tunnel)** und Schritt **5
+> (Projektionsfläche, die sich geradedreht)** sowie die **Übergänge dazwischen** gefallen Ronny
+> **nicht** (das Ende „aus dem Nichts ein Bild, das sich geradedreht" ist ausdrücklich abgelehnt).
+> Sie werden durch das **Platinen-/Chip-Konzept in Abschnitt 5b** ersetzt. Das Schwarze Loch
+> (Schritte 1–3) und das Portal-Menü (Schritt 6) **bleiben**.
 
 ## 5a. Umbau des Intros „Flug durchs Schwarze Loch" — UMGESETZT (9. Juli 2026)
 
@@ -90,6 +100,45 @@ alte Auge/„ERKENNE"/Explosion/Wurmloch **komplett**. Alles in `index.html`.
 6. Bild 5 steht zunächst **schräg** im Raum → dreht sich **gerade** und füllt den Bildschirm → **diese Fläche IST das Portal-Menü (Seite 2)**. Übergang nahtlos.
 
 **Verbindliche Vorgaben:** Farbwelt und Typografie der bestehenden Seiten bleiben (siehe Abschnitt 3 + 4); die Bilder werden als Nachbau in genau diesen Stil (Blau-Weiß, Schwarz-Blau) gewandelt. Referenzbilder sind Adobe-Stock (Wasserzeichen) → **nur Vorlage, nie ins Repo** (in `.gitignore`). Technik: WebGL-Shader, **Desktop-fokussiert** (das Intro ist bewusst nichts fürs Handy).
+
+## 5b. Die BEDEUTUNG der Reise + neuer Plan fürs „Innere" (Platine/Chip) — VEREINBART, noch NICHT gebaut
+
+> **Status (9. Juli 2026):** Richtung mit Ronny **vereinbart, noch nichts gebaut.** Ersetzt den
+> aktuellen Wurmloch-Tunnel (Schritt 4) UND das aktuelle Ende (Schritt 5), die beide **abgelehnt**
+> sind. Wird **in Ruhe, in mehreren Sitzungen** gebaut – Qualität vor Tempo, jeweils erst nach Ronnys Go.
+
+**Die Bedeutung (warum die Reise so ist) — Ronnys Worten nach:**
+Es gibt eine Kette: **Hardware (Platine/Chip) → Programm (Code) → Projektion (wir, die 3D-Welt / das Leben).**
+Normalerweise läuft alles in *diese* Richtung. **Wir sind das Ende dieser Kette – die Projektion.**
+Die Reise geht den **umgekehrten Weg („Flug rückwärts")**: Wir starten *als* Projektion (das ferne
+Schwarze Loch), werden **ins Wurmloch gesogen** und nähern uns damit **dem Ursprung**. Das Wurmloch
+ist der **Tunnel zwischen Programm und Hardware**. Am anderen Ende kommen wir bei der **Hardware** an
+– der **Platine** – und erkennen: **auch wir sind dort nur Code**, auf einer **flachen, 2-dimensionalen
+Fläche** (der holografische Kern: 3D-Realität, eingeschrieben in eine 2D-Oberfläche → passt zu *theholographicme*).
+
+**Der neue Ablauf fürs Innere + Ende:**
+- **Das „Innere" IST eine Platine:** man fliegt durch leuchtende **Leiterbahnen** (blau), über die
+  **Code** läuft (nicht zwingend binär, aber vermutlich), vorbei an Bauteilen/Lötpunkten.
+- **Übergang REIN** (statt „plötzlich blau"): die zu Streifen gezogenen Sterne/die Scheibe des Lochs
+  **werden zu den ersten Leiterbahnen** – ein *Verwandeln*, kein Schnitt.
+- **Übergang RAUS** (statt „Bild, das sich geradedreht"): ein **durchgehender FLUG auf die Platine** –
+  wir schießen aus dem Schlund, **bremsen ab** und kommen an einem **zentralen Chip** (mit goldenen
+  Kontakten – Gold passt zur Farbwelt) zur Ruhe.
+- **Der Chip wird zum Portal-Menü:** die vier Tore als Kontaktflächen/Pads auf dem Chip.
+- Vorteil: Weil alles **ein** sich verwandelnder Flug ist, verschwinden die „billigen" Schnitte.
+
+**Noch offen (mit Ronny zu klären, BEVOR gebaut wird):**
+1. „Rückwärts" nur *sinngemäß* (Reise zum Ursprung) – oder soll die **Kamera** auch *bildlich* rückwärts fliegen / zurückblicken?
+2. Ankunft an der Platine: **von oben** auf die flache Platine schauen (Kamera senkt sich, Chip in der Mitte = Menü)? Oder ein anderes Bild?
+3. Material: liefert Ronny eine **Platinen-Vorlage** (Firefly-Bild / eigenes Video / Lottie) – oder komplett im Code nachbauen?
+
+**Zu Material/Videos (Ronny hat Adobe-Abos: Firefly, Premiere, Stock):**
+- Ein **selbst erstelltes Video** ist sein Eigentum → lizenzfrei nutzbar. Ich baue es als `<video>` ein
+  und steuere **Timing/Übergänge drumherum** – das *Innere* des Videos kann ich aber nicht ändern.
+- Für **im Code anpassbare** Animation (Tempo/Farbe/Timing justierbar) ist **Lottie** der Weg
+  (After Effects → `.json`; müsste Ronny abonnieren). Gut für Linien-Grafik (z. B. Leiterbahnen).
+- **Adobe-Stock-Bilder** kann Ronny lizenzieren (dann ohne Wasserzeichen) → als Vorlage/Textur nutzbar.
+- Das **interaktive Schwarze Loch bleibt WebGL** – ein Video kann nicht auf die Maus reagieren.
 
 ## 6. Drehbuch: Portal III „Realität als Projektion" (Holodeck) — noch zu bauen
 
@@ -118,7 +167,7 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 8. Offene Aufgaben / nächste Ziele
 
-- **Intro-Umbau „Schwarzes Loch"** (Abschnitt 5a) — Prompt liegt bereit, Claude Code soll zuerst **Feedback** geben, dann bauen.
+- **NÄCHSTES GROSSES ZIEL: „Inneres" + Ende als Platine/Chip bauen** (Abschnitt 5b) — ersetzt den abgelehnten Wurmloch-Tunnel + das Projektionsflächen-Ende, inkl. **besserer Übergänge** (rein & raus). In mehreren Sitzungen, Qualität vor Tempo, **jeweils erst nach Ronnys Go**. Das Schwarze-Loch-Intro (Abschnitt 5a) ist fertig und bleibt.
 - **Portal III (Holodeck)** bauen — Drehbuch in Abschnitt 6.
 - Inhalte für **Portale II & IV**.
 - **Domain-Entscheidung:** eine der 5 neuen Domains auswählen und dem Pages-Projekt zuweisen.
@@ -128,6 +177,8 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Was sich gegenüber dem letzten Stand geändert hat (Changelog)
 
+- **9. Juli 2026:** **Vision fürs „Innere" + Ende festgelegt (Platine/Chip).** Bedeutung: Kette Hardware→Programm→Projektion; wir sind die Projektion; die Reise ist ein „Flug rückwärts" zum Ursprung (Details Abschnitt 5b). Der aktuelle **Wurmloch-Tunnel UND das Projektionsflächen-Ende sind abgelehnt** und werden durch einen durchgehenden **Flug durch eine Platine auf einen Chip (= Menü)** ersetzt. **Neue Arbeitsregel (Ronny): kein „schnell", nur Qualität; kein Zeitdruck; immer erst erklären und auf ausdrückliches „Go" warten, keine eigenmächtigen Entscheidungen.**
+- **9. Juli 2026:** Navigations-Buttons + Platzhalter-Seiten für Tore II–IV gebaut (Zurück zum Menü, Sprünge zwischen den Toren, „Von vorn").
 - **9. Juli 2026:** **Neues Intro fertig & in `index.html` integriert.** Kompletter Bogen: fernes gelinstes Schwarzes Loch (spiegelnde 3D-Blase, atmet) → Maus-Sog → Auto-Flug ins Loch → Durchbruch-Blitz → Gitter-Tunnel (Bild 3, Binärcode-Schimmer) → Projektionsfläche dreht sich gerade → nahtlos ins bestehende Portal-Menü. Altes Auge/„ERKENNE"/Explosion/Wurmloch **entfernt**. Menü + Kapitel I unverändert.
 - **9. Juli 2026:** Intro-Bau **gestartet**. **Grundsatz-Entscheidung (Ronny):** Das Intro-Schwarze-Loch wird als **WebGL-Shader** gebaut – echte Gravitationslinse, gespiegelter/verzerrter Sternenhimmel, sanftes „Atmen" (Blase-im-Wasser-Gefühl), Interstellar-Look. Damit ist es **Desktop-fokussiert**; „kein WebGL / mobilkompatibel" gilt nur noch für Menü + Kapitel. Schritt 1 (fernes, atmendes Loch) fertig & getestet im Prototyp `neues-intro.html`.
 - **9. Juli 2026:** Alle drei `theholographicme`-Domains aus Cloudflare **entfernt**; 5 neue Domains vorhanden, Auswahl offen. Infrastruktur-Abschnitt (7) auf „im Umbruch" gesetzt; DMARC- und Access-Status als **zu prüfen** markiert (nicht mehr als erledigt behauptet). Live-Zugang läuft aktuell über die `…pages.dev`-Adresse.
