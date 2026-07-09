@@ -31,6 +31,7 @@
         uniform float u_time;
         uniform vec2  u_mouse;   // Mausposition, -1..1 (0,0 = Bildmitte)
         uniform float u_pull;    // Sog-Stärke 0..1 (0 = ruhig/fern, 1 = Cursor mittig)
+        uniform float u_travel;  // Flug-Fortschritt 0..1 (0 = fern, 1 = mitten im Loch)
 
         // ---------- Zufall & Rauschen (für Gas-Textur + Sterne) ----------
         float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
@@ -71,10 +72,14 @@
             vec2 uv = (gl_FragCoord.xy - 0.5*u_res) / u_res.y;
             float t = u_time;
 
-            // Kamera: weit weg (fernes Loch), leicht oberhalb der Scheibenebene.
-            // Sie verschiebt sich sanft mit der Maus -> Parallax (das Loch wirkt
-            // wie ein echter Körper im Raum). Später fährt sie nach vorn.
-            vec3 ro  = vec3(u_mouse.x*2.2, 3.0 + u_mouse.y*1.6, -21.0);
+            // Flug: die Kamera fährt von fern (21) bis mitten ins Loch (2). Der Blick
+            // richtet sich dabei gerade ins Zentrum, die Maus-Parallax verschwindet.
+            float tr   = clamp(u_travel, 0.0, 1.0);
+            float trE  = tr*tr*(3.0 - 2.0*tr);
+            float dist = mix(21.0, 2.0, trE);
+            float camH = mix(3.0, 0.35, trE);
+            float par  = 1.0 - trE;
+            vec3 ro  = vec3(u_mouse.x*2.2*par, camH + u_mouse.y*1.6*par, -dist);
             vec3 ta  = vec3(0.0, 0.0, 0.0);
             vec3 fwd = normalize(ta - ro);
             vec3 rgt = normalize(cross(fwd, vec3(0.0,1.0,0.0)));
@@ -223,8 +228,10 @@
 
         const uRes   = gl.getUniformLocation(prog, 'u_res');
         const uTime  = gl.getUniformLocation(prog, 'u_time');
-        const uMouse = gl.getUniformLocation(prog, 'u_mouse');
-        const uPull  = gl.getUniformLocation(prog, 'u_pull');
+        const uMouse  = gl.getUniformLocation(prog, 'u_mouse');
+        const uPull   = gl.getUniformLocation(prog, 'u_pull');
+        const uTravel = gl.getUniformLocation(prog, 'u_travel');
+        let falling = false, travel = 0;   // Flug-Zustand
 
         // Maus/Touch verfolgen: Zielwerte tX/tY, weich nachgezogen zu mX/mY.
         // pull = Sog-Stärke (0 bis erste Bewegung, dann je nach Cursor-Nähe zur Mitte).
@@ -260,10 +267,19 @@
             // Sog wächst, je näher der Cursor zur Mitte kommt (erst nach erster Bewegung)
             const targetPull = hasMoved ? smoothstep(0.9, 0.05, Math.hypot(tX, tY)) : 0.0;
             pull += (targetPull - pull) * 0.05;
+
+            // Kipp-Punkt: ist der Sog stark genug, übernimmt er -> Flug startet von selbst
+            if (!falling && pull > 0.9) falling = true;
+            if (falling) {
+                travel += 0.0016 + travel * 0.022;   // beschleunigt: erst langsam, dann Sturz
+                if (travel > 1) travel = 1;
+            }
+
             gl.uniform2f(uRes, canvas.width, canvas.height);
             gl.uniform1f(uTime, (performance.now() - start) / 1000);
             gl.uniform2f(uMouse, mX, mY);
             gl.uniform1f(uPull, pull);
+            gl.uniform1f(uTravel, travel);
             gl.drawArrays(gl.TRIANGLES, 0, 3);
             requestAnimationFrame(loop);
         }
