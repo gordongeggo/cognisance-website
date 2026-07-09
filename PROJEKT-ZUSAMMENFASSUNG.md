@@ -4,7 +4,7 @@
 > Es vereint und ersetzt die früheren Dateien `PROJEKT-ZUSAMMENFASSUNG.md` (alt) und
 > `UEBERGABE-HOLODECK.md`. Du kannst es in einen anderen Claude-Chat oder als
 > Wissensquelle in dein claude.ai-Projekt hochladen.
-> **Stand: 7. Juli 2026.**
+> **Stand: 9. Juli 2026.**
 
 ---
 
@@ -14,9 +14,9 @@ Ein interaktives digitales **Kunstwerk über Wahrnehmung, Quantenphysik und Bewu
 Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment automatisch
 bei jedem Push zu GitHub).
 
-- **Neue Haupt-Adresse (live):** **theholographicme.com** (mit den Varianten `.de` und `.global`, die dorthin umleiten)
-- **Früher:** cognizance.world (wird abgelöst / soll aufgeräumt werden)
-- **Aktuell NICHT öffentlich:** Die Seite ist per Cloudflare Access hinter einem Login verborgen (siehe Abschnitt 7), bis der Aufbau fertig ist.
+- **Live-Adresse aktuell:** die kostenlose Cloudflare-Pages-Adresse `…pages.dev` (das Pages-Projekt läuft weiter, unabhängig von Domains).
+- **Eigene Domain:** ⚠️ **im Umbruch** — siehe Abschnitt 7. Es ist aktuell **keine** eigene Domain zugewiesen.
+- **Früher:** cognizance.world (abgelöst) und danach theholographicme.com (siehe Changelog / Abschnitt 7).
 - **GitHub:** github.com/gordongeggo/cognisance-website · **Ordner:** `cognisance-website` (die „s/z"-Schreibweise ist rein kosmetisch)
 
 ## 2. Über den Entwickler & Arbeitsweise (WICHTIG)
@@ -49,9 +49,10 @@ Das Menü nach dem Wurmloch und die Kapitel-I-Seite definieren die visuelle Iden
 
 > ⚠️ **Offener Abgleich:** Das aktuelle Wurmloch enthält noch „Staub"-Partikel und wurde
 > teils „verspielter" gemacht – das widerspricht leicht der obigen strengeren Linie.
-> Später ggf. angleichen (Entscheidung offen).
+> Später ggf. angleichen (Entscheidung offen). **Hinweis:** Dieser Punkt wird durch den
+> geplanten Intro-Umbau (Abschnitt 5a) ohnehin berührt.
 
-## 5. Aktueller Ablauf der Website
+## 5. Aktueller Ablauf der Website (Ist-Zustand — das läuft heute wirklich)
 
 1. **Startbildschirm:** 400 Canvas-Partikel formen bei Mausbewegung **langsam** ein „Auge des Beobachters". Schriftzug „ERKENNE".
 2. **Aufladen:** Maustaste auf „ERKENNE" gedrückt halten → goldener Ring lädt sich auf.
@@ -63,6 +64,24 @@ Das Menü nach dem Wurmloch und die Kapitel-I-Seite definieren die visuelle Iden
    - **II. Außerirdische Intelligenz** → Inhalt folgt
    - **III. Realität als Projektion** → Inhalt folgt (Drehbuch siehe Abschnitt 6)
    - **IV. Wachstum durch KI** → Inhalt folgt
+
+## 5a. GEPLANTER Umbau des Intros: „Flug durchs Schwarze Loch" (noch NICHT gebaut)
+
+> **Status:** Vision steht, ein Prompt für Claude Code ist vorbereitet. **Noch nichts umgesetzt,
+> noch nichts technisch geprüft.** Ersetzt nach Fertigstellung die Schritte 1–5 aus Abschnitt 5
+> (Auge → Aufladen → Explosion → bisheriges Wurmloch). Das **Portal-Menü (Schritt 6) bleibt** und ist das Endziel.
+
+**Grundlage:** Fünf Referenzbilder (`1`–`5`) liegen im Schreibtisch-Ordner. Die Zahlen geben die grobe Reihenfolge vor. Diese Bilder sind nur in **Claude Code** sichtbar (der claude.ai-Chat sieht sie nicht).
+
+**Geplanter Ablauf:**
+1. Man kommt auf die Seite und sieht in der **Ferne ein Schwarzes Loch** (Bild 1).
+2. Das Loch **reagiert auf die Maus** (zwei Zonen): weit weg nur sanfte Drehung + leichte Anziehung Richtung Cursor; kommt der Cursor **nah genug ans Zentrum**, kippt es → der Sog übernimmt, der Flug startet **von selbst**, kein Entkommen mehr. (Kein Klick nötig — reine Nähe löst aus.)
+3. **Flug in den Trichter** (Bilder 2–3).
+4. Zwischendurch das **Konstrukt von außen** (Bild 4).
+5. **Projektion** (Bild 5): Das Schwarze Loch trägt sämtliche Informationen des Universums und projiziert sie auf eine 2D-Fläche (**holografisches Prinzip** — passt zum Namen theholographicme).
+6. Bild 5 steht zunächst **schräg** im Raum → dreht sich **gerade** und füllt den Bildschirm → **diese Fläche IST das Portal-Menü (Seite 2)**. Übergang nahtlos.
+
+**Verbindliche Vorgaben:** Farbwelt und Typografie der bestehenden Seiten bleiben (siehe Abschnitt 3 + 4); die Bilder müssen farblich in genau diesen Stil gewandelt werden. Technik wie bisher (Vanilla JS + Canvas, kein WebGL, mobilkompatibel).
 
 ## 6. Drehbuch: Portal III „Realität als Projektion" (Holodeck) — noch zu bauen
 
@@ -79,27 +98,28 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 - **Bau-Reihenfolge (inkrementell, je Schritt sichtbares Ergebnis + Git-Commit):**
   1. statisches perspektivisches Gitter · 2. Maus-Parallaxe · 3. „PROJIZIERE"-Kreis (von Startseite) · 4. Render-Übergang · 5. Durchschimmer-Effekt am Cursor · 6. Text-Fragmente
 
-## 7. Infrastruktur (Stand 7. Juli 2026 — heute eingerichtet)
+## 7. Infrastruktur (⚠️ IM UMBRUCH — Stand 9. Juli 2026)
 
-- **Domains & Weiterleitungen:** `theholographicme.com` ist die Haupt-Domain. `theholographicme.de` und `theholographicme.global` leiten per **Cloudflare Redirect Rule** (301, „Alle eingehenden Anforderungen" → `concat("https://theholographicme.com", http.request.uri.path)`) auf `.com` um. Dafür hat jede `.de`/`.global` einen **proxied Dummy-DNS-Eintrag** (A → 192.0.2.1, orange Wolke), damit der Verkehr Cloudflare erreicht.
-- **DMARC (E-Mail-Schutz):** Auf **allen drei** theholographicme-Domains steht jetzt ein **TXT-Eintrag `_dmarc` = `v=DMARC1; p=reject;`** (Nur DNS). Vorher war der von IONOS importierte `_dmarc`-CNAME fälschlich „proxied" (orange) → DMARC unsichtbar. Die drei Domains nutzen **keine** E-Mail, daher `p=reject` (stärkster Schutz).
-- **Privat bis Launch:** `theholographicme.com` ist durch **Cloudflare Access (Zero Trust)** geschützt. Anwendung „theholographicme.com", Richtlinie **„Nur ich"** = `ronny.hammer1@icloud.com`, Anmeldung per One-time PIN (oder „mit Cloudflare"), Sitzung 24 Std. Team-Domain: `lucky-lake-2a39.cloudflareaccess.com`. **Zum Öffentlich-Schalten: diese eine Access-Anwendung löschen.**
-- **Cloudflare-MCP:** `.mcp.json` im Projekt verbindet den Cloudflare-MCP-Server (`https://mcp.cloudflare.com/mcp`). Der „Cloudflare Development Platform"-Konnektor ist autorisiert (deckt aber v. a. Workers/Storage ab, **nicht** DNS/Zone-Settings).
+**Was sich geändert hat:** Die drei Domains `theholographicme.com`, `.de` und `.global` wurden **von Ronny aus Cloudflare entfernt** (`.de`/`.global` hatten per Redirect auf `.com` umgeleitet). Ronny hat inzwischen **5 neue Domains**; welche davon für das Projekt genutzt wird, ist **noch nicht entschieden**.
+
+- **Cloudflare-Pages-Projekt:** **läuft weiter** und ist unabhängig von den gelöschten Domains. Die Seite ist weiterhin über die kostenlose `…pages.dev`-Adresse erreichbar (im Cloudflare-Menü unter **„Workers & Pages"** → Projekt). Zum Weiterbauen/Testen reicht diese Adresse; eine eigene Domain ist dafür **nicht** nötig.
+- **Eigene Domain zuweisen:** noch offen. Kleiner, separater Schritt für später (neue Domain im Pages-Projekt als „Custom Domain" hinterlegen). **Kein Zeitdruck.**
+- **DMARC / E-Mail-Schutz:** Die alten `_dmarc`-TXT-Einträge hingen an den entfernten Domains. **Vermutlich mit-entfernt — zu prüfen**, sobald eine neue Domain gewählt ist. (Nicht als erledigt annehmen.)
+- **Cloudflare Access (Login-Schutz „Nur ich"):** war an `theholographicme.com` gebunden. **Vermutlich mit-entfernt — zu prüfen.** Falls die `…pages.dev`-Adresse ohne Login erreichbar ist, ist der Schutz weg; falls noch nach PIN gefragt wird, besteht er teilweise fort. (Ronny kommt aktuell ohne PIN drauf — evtl. aber nur, weil er bei Cloudflare eingeloggt ist. Unklar, daher: prüfen.)
+- **Cloudflare-MCP:** `.mcp.json` im Projekt verbindet den Cloudflare-MCP-Server. Der „Cloudflare Development Platform"-Konnektor deckt v. a. Workers/Storage ab, **nicht** DNS/Zone-Settings.
 
 ## 8. Offene Aufgaben / nächste Ziele
 
+- **Intro-Umbau „Schwarzes Loch"** (Abschnitt 5a) — Prompt liegt bereit, Claude Code soll zuerst **Feedback** geben, dann bauen.
 - **Portal III (Holodeck)** bauen — Drehbuch in Abschnitt 6.
 - Inhalte für **Portale II & IV**.
-- **Design-Abgleich:** Wurmloch ggf. an die strengere Identität anpassen (Staub?) — Entscheidung offen.
-- **cognizance.world aufräumen:** IONOS-E-Mail-Adressen löschen + Domain aus Cloudflare entfernen (Website läuft ja auf `.com`).
-- Optional/kosmetisch: Schreibtisch-Ordner in `TheHolographicMe` umbenennen (nur wenn keine Claude-Code-Sitzung läuft); Cloudflare-Pages-Projekt umbenennen.
+- **Domain-Entscheidung:** eine der 5 neuen Domains auswählen und dem Pages-Projekt zuweisen.
+- **Infrastruktur prüfen** (Abschnitt 7): Ist DMARC weg? Ist der Access-Schutz weg? Status nach Domain-Wahl klären.
+- **Design-Abgleich:** „Staub" im bisherigen Wurmloch — wird durch den Intro-Umbau ohnehin berührt.
 - Optional: JavaScript aus `index.html` in eine eigene `script.js` auslagern.
-- **Vor dem Launch:** die Cloudflare-Access-Anwendung löschen → Seite ist für alle offen.
 
-## 9. Was sich gegenüber den alten Protokollen geändert hat (Changelog)
+## 9. Was sich gegenüber dem letzten Stand geändert hat (Changelog)
 
-- Haupt-Domain **cognizance.world → theholographicme.com** (+ `.de`/`.global`-Weiterleitungen).
-- Wurmloch **neu gestaltet** (geometrisch + 4D-Tesserakt statt runder Ringe/Staub-Vortex), Auge & Kapitel-Einblendung **langsamer**.
-- **DMARC** auf allen drei neuen Domains repariert (p=reject).
-- Website **privat** geschaltet (Cloudflare Access).
-- Diese Datei **vereint** die frühere Zusammenfassung und die Holodeck-Übergabe (`UEBERGABE-HOLODECK.md` kann gelöscht werden, Inhalt ist hier integriert).
+- **9. Juli 2026:** Alle drei `theholographicme`-Domains aus Cloudflare **entfernt**; 5 neue Domains vorhanden, Auswahl offen. Infrastruktur-Abschnitt (7) auf „im Umbruch" gesetzt; DMARC- und Access-Status als **zu prüfen** markiert (nicht mehr als erledigt behauptet). Live-Zugang läuft aktuell über die `…pages.dev`-Adresse.
+- **9. Juli 2026:** Neuer **Intro-Plan „Flug durchs Schwarze Loch"** als Abschnitt 5a aufgenommen (geplant, noch nicht gebaut). Ersetzt nach Fertigstellung Schritte 1–5 des bisherigen Ablaufs; Portal-Menü bleibt Endziel.
+- *(früher)* Haupt-Domain cognizance.world → theholographicme.com (+ `.de`/`.global`); Wurmloch geometrisch neu gestaltet (4D-Tesserakt); Auge & Kapitel-Einblendung langsamer; DMARC repariert; Website privat via Access. Diese Datei vereint frühere Zusammenfassung + Holodeck-Übergabe.
