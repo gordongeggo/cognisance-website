@@ -83,7 +83,7 @@ alte Auge/„ERKENNE"/Explosion/Wurmloch **komplett**. Alles in `index.html`.
 > **Status: fertig und in `index.html` integriert** (siehe Abschnitt 5 für den Ist-Ablauf).
 > Als **WebGL-Shader** gebaut: echte Gravitationslinse, spiegelnde 3D-Blase, Maus-Sog,
 > Auto-Flug, Gitter-Tunnel (Bild 3) und geradedrehende Projektionsfläche → nahtlos ins
-> Portal-Menü. Prototyp-Datei `neues-intro.html` diente als Werkstatt (lokal, nicht nötig).
+> Portal-Menü. **`neues-intro.html`** ist inzwischen die **aktive Werkstatt-Preview** für den Umbau (Abschnitt 5b); `index.html` bleibt der stabile Live-Stand, bis der Umbau fertig ist.
 > **Enthält jetzt auch:** echten Binärcode (0=Ring, 1=Strich) als Ströme im Tunnel; den
 > **Blick von außen** auf die schräg schwebende Projektions-Tafel (Bild 4/5), die sich gerade
 > dreht und den Schirm füllt, bevor das Menü sanft darauf erscheint.
@@ -127,10 +127,34 @@ Fläche** (der holografische Kern: 3D-Realität, eingeschrieben in eine 2D-Oberf
 - **Der Chip wird zum Portal-Menü:** die vier Tore als Kontaktflächen/Pads auf dem Chip.
 - Vorteil: Weil alles **ein** sich verwandelnder Flug ist, verschwinden die „billigen" Schnitte.
 
-**Noch offen (mit Ronny zu klären, BEVOR gebaut wird):**
-1. „Rückwärts" nur *sinngemäß* (Reise zum Ursprung) – oder soll die **Kamera** auch *bildlich* rückwärts fliegen / zurückblicken?
-2. Ankunft an der Platine: **von oben** auf die flache Platine schauen (Kamera senkt sich, Chip in der Mitte = Menü)? Oder ein anderes Bild?
-3. Material: liefert Ronny eine **Platinen-Vorlage** (Firefly-Bild / eigenes Video / Lottie) – oder komplett im Code nachbauen?
+**Der große Rahmen – Unsterblichkeit als Kreislauf (Ronnys Erweiterung):**
+- **Schwarzes Loch = der Weg HINEIN** (verschluckt → zurück zum Ursprung / zur Platine).
+- **Weißes Loch = der Weg HINAUS** (gebiert / stößt aus → in eine **neue** Projektion). Idee: aus einem
+  **Tor** (Chip-Pad) wird man durch ein **weißes Loch** in die jeweilige Kapitel-Welt „geboren".
+- Ergibt einen **Kreislauf:** Projektion → schwarzes Loch → Ursprung/Chip (= Menü) → Tor/weißes Loch →
+  neue Projektion → … Der **Chip ist der ewige Nullpunkt**, aus dem alle Welten geboren werden. Das **ist Unsterblichkeit.**
+- (Größere Vision – wird in ruhigen Einzelstücken gebaut, jedes erst nach Ronnys Go.)
+
+**Kamera / „Rückkehr zum Ursprung" (mit Ronny geklärt):** Nicht die Flugrichtung erzählt die Rückkehr,
+sondern *was passiert*. Vereinbarter Weg (mein „Hybrid", von Ronny bestätigt): (1) **Blick zurück** – im
+Loch sieht man den **Eingang in die Ferne schrumpfen** (heller Ring mit der zurückbleibenden Welt darin),
+ringsum die Tunnelwand; (2) die **Welt ent-baut sich** in Code/Leiterbahnen; (3) am Ende **zieht die Kamera
+zurück** auf die Platine (Chip = Menü). „Contact"-Gefühl (Skalen) steckt im Schweif. Das **interaktive
+Schwarze Loch bleibt Herzstück**.
+
+**BAU-STATUS Hybrid (Preview in `neues-intro.html`, index.html noch NICHT angefasst):**
+- **Teil 1 – Übergang REIN = „Blick zurück auf schrumpfenden Eingang":** **gebaut** (WebGL: heller
+  Eingangsring mit Welt darin, schrumpft in die Ferne, Tunnelwand-Streifen ringsum). ⏳ Wartet auf Ronnys
+  Urteil zu **Streifen-Wucht/Tempo**. *(Die erste Version – symmetrisches Aufblitzen – war zu abrupt → verworfen.)*
+- **Teil 2 – Tunnelwand wird zu Code/Leiterbahnen:** noch nicht gebaut.
+- **Teil 3 – Ankunft/Flug auf die Platine + Kamera zieht zurück:** noch nicht gebaut.
+- **Teil 4 – Chip wird zum Portal-Menü:** noch nicht gebaut.
+- **Zwei Dateien:** `index.html` = stabiler **Live-Stand** (noch mit dem alten, abgelehnten Wurmloch + Ende);
+  `neues-intro.html` = **Werkstatt-Preview** des Hybrids. Erst wenn der Hybrid fertig & abgesegnet ist,
+  wandert er in `index.html`. Zum Ansehen: `neues-intro.html` doppelklicken.
+
+**Noch offen (BEVOR die späteren Teile gebaut werden):** genaue Ankunft an der Platine (Blick von oben?);
+Material (Firefly-Bild / eigenes Video / Lottie vs. reiner Code – **After Effects müsste Ronny erst abonnieren**).
 
 **Zu Material/Videos (Ronny hat Adobe-Abos: Firefly, Premiere, Stock):**
 - Ein **selbst erstelltes Video** ist sein Eigentum → lizenzfrei nutzbar. Ich baue es als `<video>` ein
@@ -177,6 +201,7 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Was sich gegenüber dem letzten Stand geändert hat (Changelog)
 
+- **9. Juli 2026 (Sitzungsende):** **Hybrid-Umbau begonnen** in der Preview `neues-intro.html`. **Teil 1** (Übergang REIN) gebaut: **„Blick zurück auf den schrumpfenden Eingang"** – die erste Version (symmetrisches Aufblitzen) war zu abrupt und wurde **verworfen**. Kamera-Konzept für die „Rückkehr zum Ursprung" **geklärt** (Blick zurück + Welt ent-baut sich + Kamera zieht am Ende zurück). **Unsterblichkeits-Kreislauf** ergänzt (schwarzes Loch = rein / weißes Loch = aus den Toren raus in neue Projektionen; Chip = ewiger Nullpunkt). **Nächster Schritt:** Teil 2 (Tunnelwand → Code/Leiterbahnen) – erst nach Ronnys Go. Hier haben wir für heute aufgehört.
 - **9. Juli 2026:** **Vision fürs „Innere" + Ende festgelegt (Platine/Chip).** Bedeutung: Kette Hardware→Programm→Projektion; wir sind die Projektion; die Reise ist ein „Flug rückwärts" zum Ursprung (Details Abschnitt 5b). Der aktuelle **Wurmloch-Tunnel UND das Projektionsflächen-Ende sind abgelehnt** und werden durch einen durchgehenden **Flug durch eine Platine auf einen Chip (= Menü)** ersetzt. **Neue Arbeitsregel (Ronny): kein „schnell", nur Qualität; kein Zeitdruck; immer erst erklären und auf ausdrückliches „Go" warten, keine eigenmächtigen Entscheidungen.**
 - **9. Juli 2026:** Navigations-Buttons + Platzhalter-Seiten für Tore II–IV gebaut (Zurück zum Menü, Sprünge zwischen den Toren, „Von vorn").
 - **9. Juli 2026:** **Neues Intro fertig & in `index.html` integriert.** Kompletter Bogen: fernes gelinstes Schwarzes Loch (spiegelnde 3D-Blase, atmet) → Maus-Sog → Auto-Flug ins Loch → Durchbruch-Blitz → Gitter-Tunnel (Bild 3, Binärcode-Schimmer) → Projektionsfläche dreht sich gerade → nahtlos ins bestehende Portal-Menü. Altes Auge/„ERKENNE"/Explosion/Wurmloch **entfernt**. Menü + Kapitel I unverändert.
