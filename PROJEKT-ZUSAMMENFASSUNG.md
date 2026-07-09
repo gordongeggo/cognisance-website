@@ -54,25 +54,28 @@ Das Menü nach dem Wurmloch und die Kapitel-I-Seite definieren die visuelle Iden
 
 ## 5. Aktueller Ablauf der Website (Ist-Zustand — das läuft heute wirklich)
 
-1. **Startbildschirm:** 400 Canvas-Partikel formen bei Mausbewegung **langsam** ein „Auge des Beobachters". Schriftzug „ERKENNE".
-2. **Aufladen:** Maustaste auf „ERKENNE" gedrückt halten → goldener Ring lädt sich auf.
-3. **Explosion** der Partikel.
-4. **Wurmloch-Flug (~6,5 Sek.):** geometrischer Tunnel aus **geraden Linien und durchkreuzten, rotierenden Quadraten**; die Achse schlängelt sich. Kurz schimmert eine **DNA-Doppelhelix** durch. In der Mitte fliegt ein **rotierender Tesserakt (4D-Hyperwürfel)** durch. Der Flug bremst sanft ab.
-5. **Austritt:** weicher goldener Lichtschein.
+**Neu (9. Juli 2026): Das Intro ist ein WebGL-Flug durch ein Schwarzes Loch** – es ersetzt das
+alte Auge/„ERKENNE"/Explosion/Wurmloch **komplett**. Alles in `index.html`.
+
+1. **Fernes Schwarzes Loch** im Sternenhimmel: gravitativ gelinst (verzerrter/gespiegelter Sternenhimmel), Interstellar-Akkretionsscheibe, der Kern eine dunkle, spiegelnde, sanft „atmende" 3D-Blase. Hinweis unten: „Nähere dich dem Zentrum."
+2. **Maus-Reaktion:** die Szene neigt sich mit der Maus (Parallax); je näher der Cursor zur Mitte, desto stärker der Sog (Linse verzieht sich, Atmen wird unruhig).
+3. **Kipp-Punkt:** ist der Sog stark genug, übernimmt er – die Kamera **fliegt von selbst ins Loch** und beschleunigt (kein Zurück).
+4. **Durchbruch** (heller Blitz) → **Gitter-Tunnel** (Wurmloch-Netz nach Bild 3) mit Binärcode-Schimmer.
+5. **Projektionsfläche:** das Menü erscheint als flache Fläche, die zuerst **schräg** im Raum liegt (Blick von außen auf die 2D-Projektion) und sich **geradedreht** – mit feinem Holo-Gitter als Oberfläche.
 6. **Menü „Vier Tore der Erkenntnis"** – vier Portale erscheinen gestaffelt:
    - **I. Die Illusion der Zeit** → Kapitel I fertig (Einstein-Zitat), öffnet sich langsam (4,5 Sek.)
    - **II. Außerirdische Intelligenz** → Inhalt folgt
    - **III. Realität als Projektion** → Inhalt folgt (Drehbuch siehe Abschnitt 6)
    - **IV. Wachstum durch KI** → Inhalt folgt
 
-## 5a. GEPLANTER Umbau des Intros: „Flug durchs Schwarze Loch" (noch NICHT gebaut)
+## 5a. Umbau des Intros „Flug durchs Schwarze Loch" — UMGESETZT (9. Juli 2026)
 
-> **Status (9. Juli 2026): Bau läuft.** Schritt 1 – das ferne, sanft „atmende" Schwarze Loch –
-> ist als **WebGL-Shader** umgesetzt und getestet (Prototyp `neues-intro.html`, echte
-> Gravitationslinse mit gespiegeltem/verzerrtem Sternenhimmel). Technik damit bestätigt.
-> Als Nächstes: Maus-Annäherung (Schritt 2) und Kamera-Flug ins Loch. Ersetzt nach Fertigstellung
-> die Schritte 1–5 aus Abschnitt 5 (Auge → Aufladen → Explosion → bisheriges Wurmloch).
-> Das **Portal-Menü (Schritt 6) bleibt** und ist das Endziel.
+> **Status: fertig und in `index.html` integriert** (siehe Abschnitt 5 für den Ist-Ablauf).
+> Als **WebGL-Shader** gebaut: echte Gravitationslinse, spiegelnde 3D-Blase, Maus-Sog,
+> Auto-Flug, Gitter-Tunnel (Bild 3) und geradedrehende Projektionsfläche → nahtlos ins
+> Portal-Menü. Prototyp-Datei `neues-intro.html` diente als Werkstatt (lokal, nicht nötig).
+> **Noch feinzuschleifen:** Timing/Tempo des Flugs, expliziterer „Blick von außen aufs
+> Konstrukt" (Bild 4), echte 0/1-Ziffern im Tunnel/auf der Fläche.
 
 **Grundlage:** Fünf Referenzbilder (`1`–`5`) liegen im Schreibtisch-Ordner. Die Zahlen geben die grobe Reihenfolge vor. Diese Bilder sind nur in **Claude Code** sichtbar (der claude.ai-Chat sieht sie nicht).
 
@@ -84,7 +87,7 @@ Das Menü nach dem Wurmloch und die Kapitel-I-Seite definieren die visuelle Iden
 5. **Projektion** (Bild 5): Das Schwarze Loch trägt sämtliche Informationen des Universums und projiziert sie auf eine 2D-Fläche (**holografisches Prinzip** — passt zum Namen theholographicme).
 6. Bild 5 steht zunächst **schräg** im Raum → dreht sich **gerade** und füllt den Bildschirm → **diese Fläche IST das Portal-Menü (Seite 2)**. Übergang nahtlos.
 
-**Verbindliche Vorgaben:** Farbwelt und Typografie der bestehenden Seiten bleiben (siehe Abschnitt 3 + 4); die Bilder müssen farblich in genau diesen Stil gewandelt werden. Technik wie bisher (Vanilla JS + Canvas, kein WebGL, mobilkompatibel).
+**Verbindliche Vorgaben:** Farbwelt und Typografie der bestehenden Seiten bleiben (siehe Abschnitt 3 + 4); die Bilder werden als Nachbau in genau diesen Stil (Blau-Weiß, Schwarz-Blau) gewandelt. Referenzbilder sind Adobe-Stock (Wasserzeichen) → **nur Vorlage, nie ins Repo** (in `.gitignore`). Technik: WebGL-Shader, **Desktop-fokussiert** (das Intro ist bewusst nichts fürs Handy).
 
 ## 6. Drehbuch: Portal III „Realität als Projektion" (Holodeck) — noch zu bauen
 
@@ -123,6 +126,7 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Was sich gegenüber dem letzten Stand geändert hat (Changelog)
 
+- **9. Juli 2026:** **Neues Intro fertig & in `index.html` integriert.** Kompletter Bogen: fernes gelinstes Schwarzes Loch (spiegelnde 3D-Blase, atmet) → Maus-Sog → Auto-Flug ins Loch → Durchbruch-Blitz → Gitter-Tunnel (Bild 3, Binärcode-Schimmer) → Projektionsfläche dreht sich gerade → nahtlos ins bestehende Portal-Menü. Altes Auge/„ERKENNE"/Explosion/Wurmloch **entfernt**. Menü + Kapitel I unverändert.
 - **9. Juli 2026:** Intro-Bau **gestartet**. **Grundsatz-Entscheidung (Ronny):** Das Intro-Schwarze-Loch wird als **WebGL-Shader** gebaut – echte Gravitationslinse, gespiegelter/verzerrter Sternenhimmel, sanftes „Atmen" (Blase-im-Wasser-Gefühl), Interstellar-Look. Damit ist es **Desktop-fokussiert**; „kein WebGL / mobilkompatibel" gilt nur noch für Menü + Kapitel. Schritt 1 (fernes, atmendes Loch) fertig & getestet im Prototyp `neues-intro.html`.
 - **9. Juli 2026:** Alle drei `theholographicme`-Domains aus Cloudflare **entfernt**; 5 neue Domains vorhanden, Auswahl offen. Infrastruktur-Abschnitt (7) auf „im Umbruch" gesetzt; DMARC- und Access-Status als **zu prüfen** markiert (nicht mehr als erledigt behauptet). Live-Zugang läuft aktuell über die `…pages.dev`-Adresse.
 - **9. Juli 2026:** Neuer **Intro-Plan „Flug durchs Schwarze Loch"** als Abschnitt 5a aufgenommen (geplant, noch nicht gebaut). Ersetzt nach Fertigstellung Schritte 1–5 des bisherigen Ablaufs; Portal-Menü bleibt Endziel.
