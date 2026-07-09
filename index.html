@@ -49,8 +49,8 @@
             align-items: center; justify-content: center; text-align: center; z-index: 20;
         }
 
-        /* KAPITEL I: DIE ILLUSION DER ZEIT */
-        #chapter-one {
+        /* KAPITEL-/PLATZHALTER-SEITEN */
+        #chapter-one, #placeholder {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -65,7 +65,26 @@
             transition: opacity 4.5s ease;
             padding: 20px;
         }
-        #chapter-one.active { opacity: 1; visibility: visible; }
+        #chapter-one.active, #placeholder.active { opacity: 1; visibility: visible; }
+        /* Platzhalter kommt zügiger herein als das poetische Kapitel I */
+        #placeholder { transition: opacity 1.2s ease; }
+
+        /* Sprung-Links zu den anderen Toren */
+        .tore-links {
+            margin-top: 48px; display: flex; gap: 14px;
+            justify-content: center; flex-wrap: wrap;
+        }
+        .tore-link {
+            font-family: inherit; font-size: 0.72rem; font-weight: 200;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(177, 159, 251, 0.8); background: transparent;
+            border: 1px solid rgba(177, 159, 251, 0.3);
+            border-radius: 40px; padding: 9px 18px; cursor: pointer; transition: all .3s;
+        }
+        .tore-link:hover {
+            color: #fff; border-color: #b19ffb;
+            box-shadow: 0 0 18px rgba(177, 159, 251, 0.25);
+        }
 
         .chapter-header { text-align: center; max-width: 800px; }
         .chapter-num {
@@ -73,7 +92,8 @@
             text-transform: uppercase; margin-bottom: 20px; opacity: 0.8;
         }
         .chapter-title {
-            font-size: 3rem; font-weight: 100; letter-spacing: 16px;
+            font-size: clamp(1.6rem, 6vw, 3rem); font-weight: 100;
+            letter-spacing: clamp(4px, 2vw, 16px);
             text-transform: uppercase; margin-bottom: 40px;
             text-shadow: 0 0 30px rgba(177, 159, 251, 0.2);
         }
@@ -200,11 +220,11 @@
         /* „Von vorn" – oben rechts, erst ab dem Menü sichtbar */
         #restart { top: 22px; right: 22px; opacity: 0; pointer-events: none; }
         #restart.show { opacity: 1; pointer-events: auto; }
-        /* „Zu den Toren" – oben links, erscheint mit der Kapitelseite */
-        #back-to-menu { top: 22px; left: 22px; }
+        /* „Zu den Toren" – oben links, erscheint mit der Kapitel-/Platzhalterseite */
+        #back-to-menu, #ph-back { top: 22px; left: 22px; }
 
-        /* Kapitelseite: langsam herein (poetisch), aber schnell wieder hinaus */
-        #chapter-one.leaving { transition: opacity 0.8s ease; }
+        /* Kapitel-/Platzhalterseite: schnell wieder hinaus beim Zurückgehen */
+        #chapter-one.leaving, #placeholder.leaving { transition: opacity 0.6s ease; }
     </style>
 </head>
 <body>
@@ -229,6 +249,18 @@
                 „Für uns gläubige Physiker hat die Scheidung zwischen Vergangenheit, Gegenwart und Zukunft nur die Bedeutung einer, wenn auch hartnäckigen, Illusion.“<br>
                 <span style="color: #d4af37; font-size: 0.95rem; letter-spacing: 3px; display: block; margin-top: 15px;">— Albert Einstein</span>
             </p>
+            <div class="tore-links" id="ch1-links"></div>
+        </div>
+    </div>
+
+    <!-- PLATZHALTER-SEITE für die Tore II–IV (wird je nach Tor gefüllt) -->
+    <div id="placeholder">
+        <button id="ph-back" class="navbtn">← Zu den Toren</button>
+        <div class="chapter-header">
+            <div class="chapter-num" id="ph-num">Kapitel</div>
+            <h1 class="chapter-title" id="ph-title"></h1>
+            <p class="chapter-quote" id="ph-text">Dieses Tor wird gerade geschrieben. Der Inhalt folgt bald.</p>
+            <div class="tore-links" id="ph-links"></div>
         </div>
     </div>
 
@@ -593,34 +625,66 @@
             loop();
         }
 
-        // Klick auf ein Portal
-        document.querySelectorAll('.portal').forEach(portalEl => {
-            portalEl.addEventListener('click', () => {
-                const target = portalEl.getAttribute('data-target');
-                if (target === 'chapter-one') {
-                    menuScreen.classList.remove('active');
-                    setTimeout(() => chapterOne.classList.add('active'), 800);
-                } else {
-                    menuStatus.textContent = 'Dieses Tor öffnet sich bald …';
-                    menuStatus.classList.add('show');
-                }
+        // ---- Navigation zwischen Menü, Kapitel I und den Platzhalter-Toren ----
+        const placeholder = document.getElementById('placeholder');
+        const TORE = [
+            { n: 'I',   label: 'Die Illusion der Zeit',     target: 'chapter-one' },
+            { n: 'II',  label: 'Außerirdische Intelligenz', target: 'chapter-two' },
+            { n: 'III', label: 'Realität als Projektion',   target: 'chapter-three' },
+            { n: 'IV',  label: 'Wachstum durch KI',         target: 'chapter-four' },
+        ];
+
+        // Baut die Sprung-Links „Andere Tore: II III IV" (aktuelles Tor ausgelassen)
+        function makeLinks(container, exclude) {
+            container.innerHTML = '';
+            const lbl = document.createElement('span');
+            lbl.textContent = 'Andere Tore:';
+            lbl.style.cssText = 'align-self:center; color:rgba(255,255,255,0.35); font-size:0.68rem; letter-spacing:3px; text-transform:uppercase; margin-right:4px;';
+            container.appendChild(lbl);
+            TORE.forEach(tor => {
+                if (tor.target === exclude) return;
+                const b = document.createElement('button');
+                b.className = 'tore-link';
+                b.textContent = tor.n;
+                b.title = tor.label;
+                b.addEventListener('click', () => navigate(tor.target));
+                container.appendChild(b);
             });
-        });
+        }
 
-        // Zurück von der Kapitelseite zum Portal-Menü (schnell ausblenden)
-        document.getElementById('back-to-menu').addEventListener('click', () => {
-            chapterOne.classList.add('leaving');
-            chapterOne.classList.remove('active');
+        // Blendet die aktuell offene Seite aus, dann Aktion (cb)
+        function hideAll(cb) {
+            let animating = false;
+            [chapterOne, placeholder].forEach(el => {
+                if (el.classList.contains('active')) { animating = true; el.classList.add('leaving'); el.classList.remove('active'); }
+            });
+            menuScreen.classList.remove('active');
             setTimeout(() => {
-                menuScreen.classList.add('active');
                 chapterOne.classList.remove('leaving');
-            }, 850);
-        });
+                placeholder.classList.remove('leaving');
+                cb();
+            }, animating ? 500 : 60);
+        }
 
-        // „Von vorn": das ganze Intro neu starten
-        document.getElementById('restart').addEventListener('click', () => {
-            window.location.reload();
-        });
+        function navigate(target) {
+            if (target === 'menu')        { hideAll(() => menuScreen.classList.add('active')); return; }
+            if (target === 'chapter-one') { hideAll(() => chapterOne.classList.add('active')); return; }
+            // Platzhalter-Seite für Tore II–IV
+            const tor = TORE.find(t => t.target === target);
+            hideAll(() => {
+                document.getElementById('ph-num').textContent = 'Kapitel ' + tor.n;
+                document.getElementById('ph-title').textContent = tor.label;
+                makeLinks(document.getElementById('ph-links'), tor.target);
+                placeholder.classList.add('active');
+            });
+        }
+
+        document.querySelectorAll('.portal').forEach(p =>
+            p.addEventListener('click', () => navigate(p.getAttribute('data-target'))));
+        document.getElementById('back-to-menu').addEventListener('click', () => navigate('menu'));
+        document.getElementById('ph-back').addEventListener('click', () => navigate('menu'));
+        document.getElementById('restart').addEventListener('click', () => window.location.reload());
+        makeLinks(document.getElementById('ch1-links'), 'chapter-one');
     </script>
 </body>
 </html>
