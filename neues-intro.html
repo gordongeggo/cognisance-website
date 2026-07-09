@@ -337,27 +337,31 @@
             return c;
         }
 
-        // Sternen-Schweif: der Sternenhimmel wird radial zu Streifen gezogen (Rückwärts-
-        // Rasen). Je größer amt, desto länger + heller die Streifen -> am Ende nur noch Schweif.
-        // Angedeutete „Contact"-Maßstäbe: die Streifen pulsen in Dichte, als flöge man durch Skalen.
+        // BLICK ZURÜCK: Wir sind im Loch und schauen auf den EINGANG, der in die Ferne
+        // schrumpft. Durch den hellen Ring sieht man die zurückbleibende Welt (Sterne).
+        // Drumherum die Tunnelwand mit Speed-Streifen, die zum Eingang hin fließen (Schweif).
         vec3 starWarp(vec2 uv, float amt, float t){
-            vec3 c = vec3(0.0);
-            float rr = max(length(uv), 0.001);
-            vec2 dir = uv / rr;
-            float len = 0.12 + amt * amt * 1.6;        // Streifenlänge wächst stark
-            const int N = 26;
-            for(int i = 0; i < N; i++){
-                float s = float(i) / float(N - 1);
-                vec2 p = uv - dir * s * len;            // zurück Richtung Zentrum abtasten
-                vec3 rd = normalize(vec3(p * 1.4, 1.0));
-                c += starField(rd) * (1.0 - s);
+            float r = length(uv);
+            float a = atan(uv.y, uv.x);
+            float e = amt * amt * (3.0 - 2.0 * amt);            // sanft, nicht abrupt
+            float Rentr = mix(0.82, 0.022, e);                  // der Eingang schrumpft in die Ferne
+
+            // Tunnelwand um den Eingang: Längs-Streifen, deren Helligkeit nach innen läuft
+            float spokes = 0.45 + 0.55 * sin(a * 30.0 + 6.0 * hash(vec2(floor(a * 30.0), 3.0)));
+            float run = fract((r - Rentr) * 2.2 - t * 1.7);      // läuft zum Eingang -> Tempo
+            float wall = smoothstep(Rentr, Rentr + 0.06, r)      // erst außerhalb des Eingangs
+                       * smoothstep(1.7, Rentr + 0.1, r)         // nach außen abdunkeln
+                       * (0.10 + 0.60 * spokes) * (0.20 + 0.80 * run);
+            vec3 col = vec3(0.28, 0.46, 0.95) * wall;
+
+            // Innen im Eingang: die Welt, die wir verlassen – Sterne + zarter Schein, schrumpft mit
+            if (r < Rentr) {
+                vec3 rd = normalize(vec3(uv / Rentr * 0.85, 1.0));
+                col = starField(rd) * 1.3 + vec3(0.22, 0.42, 0.9) * 0.45;
             }
-            c /= float(N) * 0.5;
-            // „Skalen"-Pulsieren (Contact): Helligkeit wogt, als kreuzten wir Größenordnungen
-            c *= 1.0 + amt * (2.2 + 0.8 * sin(t * 3.0 - rr * 6.0));
-            // heller, konvergierender Kern bei Höchstgeschwindigkeit
-            c += vec3(0.7, 0.82, 1.0) * amt * amt * smoothstep(0.5, 0.0, rr) * 1.4;
-            return c;
+            // heller Rand des Eingangs (die Grenze zur Welt)
+            col += vec3(0.78, 0.88, 1.0) * smoothstep(0.05, 0.0, abs(r - Rentr)) * 1.3;
+            return col;
         }
 
         // Eine Binärziffer in einer Zelle p(0..1):  0 = Ring, 1 = senkrechter Strich
@@ -640,7 +644,7 @@
                 if (falling) hint.style.opacity = '0';
                 if (!falling && pull > 0.9) falling = true;
                 if (falling) { travel += 0.0016 + travel * 0.022; if (travel > 1) travel = 1; }
-                if (travel >= 1) { warp += 0.009; if (warp > 1) warp = 1; }        // erst der Schweif
+                if (travel >= 1) { warp += 0.005; if (warp > 1) warp = 1; }        // erst der Schweif (langsam)
                 if (warp >= 1)   { tunnel += 0.0024; if (tunnel > 1) tunnel = 1; } // dann der Tunnel
                 if (tunnel > 0.55) { emerge += 0.006; if (emerge > 1) emerge = 1; if (emerge > 0.85) finishIntro(); }
 
