@@ -5,3 +5,9 @@
 # Bildschirmfotos (nur zum Zeigen, gehören nicht ins Projekt)
 Bildschirmfoto*.png
 Bildschirmfoto*.jpeg
+# Referenzbilder (Adobe Stock, mit Wasserzeichen) - nur Vorlage, dürfen NICHT ins Netz
+eins.jpeg
+zwei.png
+drei.png
+vier.jpeg
+fünf.jpeg
