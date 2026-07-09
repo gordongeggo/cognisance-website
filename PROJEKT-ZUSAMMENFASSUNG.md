@@ -74,8 +74,10 @@ alte Auge/„ERKENNE"/Explosion/Wurmloch **komplett**. Alles in `index.html`.
 > Als **WebGL-Shader** gebaut: echte Gravitationslinse, spiegelnde 3D-Blase, Maus-Sog,
 > Auto-Flug, Gitter-Tunnel (Bild 3) und geradedrehende Projektionsfläche → nahtlos ins
 > Portal-Menü. Prototyp-Datei `neues-intro.html` diente als Werkstatt (lokal, nicht nötig).
-> **Noch feinzuschleifen:** Timing/Tempo des Flugs, expliziterer „Blick von außen aufs
-> Konstrukt" (Bild 4), echte 0/1-Ziffern im Tunnel/auf der Fläche.
+> **Enthält jetzt auch:** echten Binärcode (0=Ring, 1=Strich) als Ströme im Tunnel; den
+> **Blick von außen** auf die schräg schwebende Projektions-Tafel (Bild 4/5), die sich gerade
+> dreht und den Schirm füllt, bevor das Menü sanft darauf erscheint.
+> **Noch feinzuschleifen:** Timing/Tempo des ganzen Flugs; Übergang Tafel→Menü ggf. noch nahtloser.
 
 **Grundlage:** Fünf Referenzbilder (`1`–`5`) liegen im Schreibtisch-Ordner. Die Zahlen geben die grobe Reihenfolge vor. Diese Bilder sind nur in **Claude Code** sichtbar (der claude.ai-Chat sieht sie nicht).
 
