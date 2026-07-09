@@ -90,11 +90,13 @@
             float transmit = 1.0;
             float rmin = 1e9;
             bool escaped = false;
+            bool captured = false;
+            vec3 capPos = vec3(0.0), capDir = vec3(0.0);
 
             for(int i=0;i<200;i++){
                 float r = length(pos);
                 rmin = min(rmin, r);
-                if(r < 1.0){ break; }            // hinter dem Ereignishorizont -> verschluckt
+                if(r < 1.0){ captured = true; capPos = pos; capDir = dir; break; } // trifft die Blasen-Oberfläche
                 if(r > 32.0){ escaped = true; break; }
 
                 float dt = clamp(0.12 + 0.04*r, 0.12, 0.55);
@@ -131,6 +133,42 @@
 
             if(escaped){
                 col += transmit * starField(dir);   // gespiegelter/gelinster Sternenhimmel
+            }
+
+            // Die Kugel ist keine tote schwarze Scheibe, sondern eine dunkle,
+            // spiegelnde BLASE: sie wirft die Umgebung verzerrt zurück, schimmert
+            // am Rand (Fresnel) und wogt wie eine Blase im Wasser.
+            if(captured){
+                vec3 n0 = normalize(capPos);          // echte Kugel-Normale (für Rundung + Glanz)
+                // Oberfläche wogt wie Wasser: eine leicht gestörte Normale nur für die Spiegelung
+                float w1 = fbm(vec2(n0.x*4.5 + t*0.30, n0.y*4.5 - t*0.24));
+                float w2 = fbm(vec2(n0.z*4.5 - t*0.27, n0.x*4.5 + t*0.32));
+                vec3 n = normalize(n0 + 0.15*vec3(w1-0.5, w2-0.5, (w1-w2)*0.5));
+
+                vec3 view = -capDir;                  // Richtung zur Kamera
+                vec3 refl = reflect(capDir, n);
+                // Gespiegelte Umgebung: Sterne PLUS der helle Scheibenkranz
+                vec3 env = starField(refl);
+                float diskEnv = smoothstep(0.32, 0.0, abs(refl.y));
+                env += vec3(0.42, 0.62, 1.0) * diskEnv * 0.7;
+                float fres = pow(1.0 - max(dot(n0, view), 0.0), 3.0);
+                float mir  = clamp(0.18 + 0.82*fres, 0.0, 1.0);       // Spiegelstärke (Rand stark)
+                // Seifenblasen-Schimmer (Iridescence), in Blau/Violett gehalten
+                float ph = dot(n0, view)*3.5 + t*0.30;
+                vec3 irid = 0.5 + 0.5*cos(vec3(0.0,2.2,4.4) + ph);
+                vec3 sheen = mix(vec3(0.30,0.45,0.90), vec3(0.60,0.40,0.95), irid.r);
+                vec3 bubble = env*mir*1.3 + sheen*fres*0.30;
+
+                // --- Das Entscheidende für die 3D-KUGEL: Licht von oben-links ---
+                vec3  L    = normalize(vec3(-0.55, 0.72, -0.60));    // virtuelles Licht
+                float diff = max(dot(n0, L), 0.0);                    // Hell-Dunkel-Verlauf = Volumen
+                vec3  Hh   = normalize(L + view);
+                float spec = pow(max(dot(n0, Hh), 0.0), 48.0);        // glänzendes Glanzlicht
+                bubble += vec3(0.10, 0.17, 0.38) * pow(diff, 1.3) * 0.75; // weiche blaue Rundung
+                bubble += vec3(0.90, 0.95, 1.0) * spec * 1.2;             // Glanzpunkt -> klar 3D
+                bubble += vec3(0.55, 0.72, 1.0) * pow(fres, 1.5) * 0.35;  // Spiegel-Saum am Rand
+
+                col += transmit * bubble;
             }
 
             // Photonenring: heller Lichtsaum dort, wo Strahlen den Rand streifen
