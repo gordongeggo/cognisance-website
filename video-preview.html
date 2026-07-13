@@ -13,15 +13,10 @@
             user-select: none;
         }
 
-        /* Platzhalter für Video 1 (Ambient-Schleife) — kommt später als <video> dahinter */
-        #v1placeholder {
-            position: fixed; inset: 0; z-index: 0;
-            background: radial-gradient(circle at center, #0a1226 0%, #05060f 55%, #010103 100%);
-        }
-        #v1note {
-            position: fixed; top: 18px; left: 0; width: 100%; text-align: center; z-index: 6;
-            font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.18);
-            text-transform: uppercase; pointer-events: none;
+        /* Video 1 — die Ambient-Schleife (läuft stumm, endlos, im Hintergrund) */
+        #v1 {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 0; background: #05060f;
         }
 
         /* Video 2 — der Flug */
@@ -102,8 +97,8 @@
     </style>
 </head>
 <body>
-    <div id="v1placeholder"></div>
-    <div id="v1note">Platzhalter — hier läuft später Video 1 (Ambient-Schleife)</div>
+    <!-- Video 1 — Ambient-Schleife (stumm, endlos) -->
+    <video id="v1" src="video1.mp4" muted loop autoplay playsinline></video>
 
     <video id="v2" src="netz_kling_v1.mp4" playsinline preload="auto"></video>
 
