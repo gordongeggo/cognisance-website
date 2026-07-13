@@ -102,13 +102,12 @@
         void main(){
             vec2 uv = gl_FragCoord.xy / u_res;
             vec2 asp = vec2(u_res.x/u_res.y, 1.0);
-            vec2 pv = (uv - u_lens) * asp;               // aspektkorrigiert
-            float r = length(pv);
-            float k = 1.0 - (u_str*u_str)/(r*r + 1e-4);   // Punktmassen-Linse
-            vec2 luv = u_lens + (pv * k) / asp;           // gelinste Sample-Position
-            vec3 col = texture2D(u_video, coverUV(luv)).rgb;
-            float ring = smoothstep(0.022, 0.0, abs(r - u_str)) * step(0.02, u_str);
-            col += vec3(0.35, 0.55, 1.0) * ring * 0.45;   // Einstein-Ring (Aufhellung)
+            vec2 d = (uv - u_lens) * asp;                    // aspektkorrigiert
+            float r = length(d);
+            float sig = 0.15;                                // Größe der Delle
+            float pull = u_str * exp(-(r*r)/(2.0*sig*sig));  // weiche Gravitations-Delle, KEINE Singularität
+            vec2 luv = u_lens + (d * (1.0 - pull)) / asp;    // sanft zum Zentrum verzogen
+            vec3 col = texture2D(u_video, coverUV(luv)).rgb;  // nur geometrische Biegung, keine Aufhellung
             gl_FragColor = vec4(col, 1.0);
         }
     </script>
@@ -189,7 +188,7 @@
                 try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, v1); } catch(e){}
                 gl.uniform2f(uRes, canvas.width, canvas.height);
                 gl.uniform2f(uLens, lx, 1.0 - ly);        // y unten
-                gl.uniform1f(uStr, 0.09 + charge * 0.17); // Linse folgt Maus, wird beim Halten tiefer
+                gl.uniform1f(uStr, 0.07 + charge * 0.20); // dezent in Ruhe, vertieft beim Halten
                 gl.uniform1f(uVasp, (v1.videoWidth || 16) / (v1.videoHeight || 9));
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
             }
