@@ -47,11 +47,11 @@
         /* Naht 2 */
         #veil { position: fixed; inset: 0; z-index: 8; background: #080815; opacity: 0; pointer-events: none; }
 
-        /* Portal-Seite (Seite 2) — sanft animiert, mit kaum sichtbarem Gitter */
+        /* Portal-Seite (Seite 2) — LANGSAM, streng nacheinander; kaum sichtbares Gitter */
         #portal {
             position: fixed; inset: 0; z-index: 9;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: opacity 1.3s ease;
+            opacity: 0; visibility: hidden; transition: opacity 1.8s ease;
             background:
                 repeating-linear-gradient(0deg,  rgba(130,175,245,0.05) 0 1px, transparent 1px 46px),
                 repeating-linear-gradient(90deg, rgba(130,175,245,0.05) 0 1px, transparent 1px 46px),
@@ -59,42 +59,50 @@
         }
         #portal.on { opacity: 1; visibility: visible; }
 
-        /* „Cognizance World" — Buchstabe für Buchstabe (Alien-Titel-Stil) */
+        /* „Cognizance World" — Buchstaben blenden EINZELN, langsam, aus der Mitte heraus auf */
         #wordmark {
             display: flex; font-weight: 100; text-transform: uppercase;
             letter-spacing: clamp(5px, 2.5vw, 16px); font-size: clamp(1.3rem, 6vw, 2.8rem);
             color: rgba(255,255,255,0.92); text-shadow: 0 0 34px rgba(177,159,251,0.28); margin-bottom: 16px;
         }
-        #wordmark .ch { display: inline-block; white-space: pre; opacity: 0; transform: translateY(10px); filter: blur(5px); }
-        #portal.on #wordmark .ch { animation: chIn 1.3s cubic-bezier(0.2,0.7,0.2,1) forwards; animation-delay: var(--d, 0s); }
-        @keyframes chIn { to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        #wordmark .ch {
+            display: inline-block; white-space: pre; opacity: 0;
+            transform: scale(1.25); filter: blur(8px);
+            transition: opacity 2.0s ease, transform 2.0s ease, filter 2.0s ease;
+        }
+        #wordmark .ch.show { opacity: 1; transform: none; filter: blur(0); }
 
         #subtitle {
             font-size: clamp(0.72rem, 2.4vw, 0.95rem); letter-spacing: clamp(3px, 1.6vw, 9px);
             font-weight: 200; text-transform: uppercase; color: rgba(255,255,255,0.55);
-            margin-bottom: clamp(30px, 6vh, 62px); opacity: 0; transition: opacity 1.6s ease;
+            margin-bottom: clamp(30px, 6vh, 62px); opacity: 0; transition: opacity 2.4s ease;
         }
-        #portal.on #subtitle { opacity: 1; transition-delay: 2.0s; }
+        #subtitle.show { opacity: 1; }
 
         .pg { display: grid; grid-template-columns: repeat(2, auto); gap: clamp(24px, 6vw, 64px); justify-items: center; }
-        .portal { display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0; cursor: pointer; }
-        #portal.on .portal { animation: portalEnter 1s cubic-bezier(0.2,0.9,0.25,1) forwards, portalFloat 6s ease-in-out infinite; }
-        #portal.on .portal:nth-child(1) { animation-delay: 2.2s, 3.2s; }
-        #portal.on .portal:nth-child(2) { animation-delay: 2.4s, 3.4s; }
-        #portal.on .portal:nth-child(3) { animation-delay: 2.6s, 3.6s; }
-        #portal.on .portal:nth-child(4) { animation-delay: 2.8s, 3.8s; }
-        @keyframes portalFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-13px); } }
-        @keyframes portalEnter { 0% { opacity: 0; transform: scale(0.4) translateY(40px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .portal { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .portal.float { animation: portalFloat 6s ease-in-out infinite; }
+        @keyframes portalFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
         .orb {
             width: clamp(84px,20vw,130px); height: clamp(84px,20vw,130px); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: #d4af37; font-weight: 100; font-size: clamp(1.4rem,5vw,2.1rem);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
             border: 1px solid rgba(212,175,55,0.35);
             background: radial-gradient(circle at 32% 28%, rgba(177,159,251,0.28), rgba(4,4,20,0.65) 72%);
             box-shadow: 0 0 30px rgba(177,159,251,0.15), inset 0 0 30px rgba(177,159,251,0.12);
-            transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+            opacity: 0; transform: scale(0.5);
+            transition: opacity 2.8s ease, transform 2.8s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.5s ease, border-color 0.5s ease;
         }
-        .portal:hover .orb { transform: scale(1.08); border-color: #d4af37; box-shadow: 0 0 50px rgba(212,175,55,0.4), inset 0 0 40px rgba(177,159,251,0.22); }
-        .plabel2 { font-size: clamp(0.66rem,2.2vw,0.85rem); font-weight: 200; letter-spacing: 3px; text-transform: uppercase; text-align: center; color: rgba(255,255,255,0.72); max-width: 170px; line-height: 1.5; }
+        .orb.show { opacity: 1; transform: scale(1); }
+        .orb:hover { border-color: #d4af37; box-shadow: 0 0 50px rgba(212,175,55,0.4), inset 0 0 40px rgba(177,159,251,0.22); }
+        .num { color: #d4af37; font-weight: 100; font-size: clamp(1.4rem,5vw,2.1rem); opacity: 0; transition: opacity 1.6s ease; }
+        .num.show { opacity: 1; }
+        .plabel2 {
+            font-size: clamp(0.66rem,2.2vw,0.85rem); font-weight: 200; letter-spacing: 3px; text-transform: uppercase;
+            text-align: center; color: rgba(255,255,255,0.72); max-width: 170px; line-height: 1.5;
+            opacity: 0; transition: opacity 1.6s ease;
+        }
+        .plabel2.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -121,10 +129,10 @@
         <div id="wordmark"></div>
         <div id="subtitle">Vier Tore der Erkenntnis</div>
         <div class="pg">
-            <div class="portal"><div class="orb">I</div><div class="plabel2">Die Illusion der Zeit</div></div>
-            <div class="portal"><div class="orb">II</div><div class="plabel2">Außerirdische Intelligenz</div></div>
-            <div class="portal"><div class="orb">III</div><div class="plabel2">Realität als Projektion</div></div>
-            <div class="portal"><div class="orb">IV</div><div class="plabel2">Wachstum durch KI</div></div>
+            <div class="portal"><div class="orb"><span class="num">I</span></div><div class="plabel2">Die Illusion der Zeit</div></div>
+            <div class="portal"><div class="orb"><span class="num">II</span></div><div class="plabel2">Außerirdische Intelligenz</div></div>
+            <div class="portal"><div class="orb"><span class="num">III</span></div><div class="plabel2">Realität als Projektion</div></div>
+            <div class="portal"><div class="orb"><span class="num">IV</span></div><div class="plabel2">Wachstum durch KI</div></div>
         </div>
     </div>
 
@@ -181,6 +189,40 @@
                 wm.appendChild(s);
             });
         })();
+
+        // Reihenfolge aus der Mitte heraus (Alien-Gefühl: erst ein Buchstabe mittig)
+        function middleOut(n){
+            const o = []; let l = Math.floor((n - 1) / 2), r = l + 1;
+            o.push(l);
+            while (o.length < n) { if (r < n) o.push(r++); if (l - 1 >= 0) o.push(--l); }
+            return o;
+        }
+        // Die LANGSAME, ceremonielle Portal-Choreografie (streng nacheinander)
+        function revealPortal(){
+            const chSpans  = [...document.querySelectorAll('#wordmark .ch')];
+            const subtitle = document.getElementById('subtitle');
+            // 1) Schriftzug: Buchstaben einzeln, aus der Mitte, langsam
+            const order = middleOut(chSpans.length);
+            const L_START = 1.4, L_GAP = 0.55;
+            order.forEach((idx, k) => setTimeout(() => chSpans[idx].classList.add('show'), (L_START + k * L_GAP) * 1000));
+            const wordEnd = L_START + order.length * L_GAP + 2.0;
+            // 2) Untertitel
+            setTimeout(() => subtitle.classList.add('show'), wordEnd * 1000);
+            // 3) Kreise NACHEINANDER (mehrere Sekunden Abstand), jeder langsam
+            const orbs = [...document.querySelectorAll('.orb')];
+            const O_START = wordEnd + 2.5, O_GAP = 3.4;
+            orbs.forEach((o, i) => {
+                setTimeout(() => o.classList.add('show'), (O_START + i * O_GAP) * 1000);
+                setTimeout(() => o.closest('.portal').classList.add('float'), (O_START + i * O_GAP + 2.8) * 1000);
+            });
+            const circlesEnd = O_START + (orbs.length - 1) * O_GAP + 2.8;
+            // 4) ERST DANN: Ziffern nacheinander in die Kreise, dann die Bezeichnungen
+            const nums = [...document.querySelectorAll('.num')];
+            const N_START = circlesEnd + 1.2, N_GAP = 1.9;
+            nums.forEach((n, i) => setTimeout(() => n.classList.add('show'), (N_START + i * N_GAP) * 1000));
+            const labels = [...document.querySelectorAll('.plabel2')];
+            labels.forEach((l, i) => setTimeout(() => l.classList.add('show'), (N_START + i * N_GAP + 1.0) * 1000));
+        }
 
         // ---------- WebGL-Gravitationslinse ----------
         const gl = canvas.getContext('webgl');
@@ -277,7 +319,7 @@
             if (t >= d - 0.05) reveal();
         });
         v2.addEventListener('ended', reveal);
-        function reveal(){ if (revealed) return; revealed = true; veil.style.opacity = 1; portal.classList.add('on'); }
+        function reveal(){ if (revealed) return; revealed = true; veil.style.opacity = 1; portal.classList.add('on'); revealPortal(); }
     </script>
 </body>
 </html>
