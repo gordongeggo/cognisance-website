@@ -3,7 +3,7 @@
 > **Eine Datei für alles.** Dieses Dokument ist die *einzige* aktuelle Projekt-Übersicht.
 > Es ersetzt die vorherige `PROJEKT-ZUSAMMENFASSUNG.md`. Du kannst es in einen anderen
 > Claude-Chat oder als Wissensquelle in dein claude.ai-Projekt hochladen.
-> **Stand: 13. Juli 2026 (aktualisiert – Video 2 gefunden).**
+> **Stand: 13. Juli 2026 (aktualisiert – Video 2 gefunden; Naht-2-Widerspruch korrigiert).**
 
 ---
 
@@ -119,9 +119,10 @@ um den sich das ganze Projekt dreht: Realität geschieht erst durch die Handlung
    - bei **100 % Ladung** → löst **Video 2** aus.
    - **Wichtig:** Der Auslöser ist **Code**, nicht ins Video gerechnet (ein Video kann die Maus nicht
      sehen; Video 1 ist zudem gekauft und tabu). → **Das ist der nächste Bau-Job im Code.**
-3. **Video 2 — der Flug** spielt **einmal** ab: auf das Wurmloch zu, mit Sog hinein, hindurch,
-   und **klingt in Schwarz aus**. **Ton erlaubt** (der Klick des Besuchers ist die „Autoplay-Erlaubnis"
-   des Browsers) — Sound kommt aber erst später (Abschnitt 5a, „Ton").
+3. **Video 2 — der Flug** spielt **einmal** ab (der Kling-3.0-Flug: atmendes Quanten-Netz → aufsteigende
+   Figur, **kein** Wurmloch). Es **klingt NICHT von selbst schwarz aus** — **der Code** dunkelt es **ab
+   Sekunde 9** in die Portalfarbe `#080815` ab (Details in „Naht 2 — final festgelegt"). **Ton erlaubt**
+   (der Klick des Besuchers ist die „Autoplay-Erlaubnis" des Browsers) — Sound kommt aber erst später (Abschnitt 5a, „Ton").
 4. **Portal-Seite erscheint aus dem Schwarz** — die echte, klickbare Seite mit den vier Toren.
 
 ### Die zwei „Nähte" (unsichtbare Übergänge)
@@ -130,10 +131,11 @@ um den sich das ganze Projekt dreht: Realität geschieht erst durch die Handlung
   Firefly das **erste Bild von Video 2 = das Ruhebild der Schleife** setzt (`Video_1.png`).
   **(C)** Im Umschaltmoment legt der Code einen **hellen Lichtblitz / eine Druckwelle** aus der Mitte
   darüber, der den Schnitt **überstrahlt** (alter Filmtrick: wo es blitzt, sieht man den Schnitt nicht).
-- **Naht 2 (Video 2 → Portal-Seite):** Video 2 **endet in reinem Schwarz**, die Portal-Seite erscheint
-  aus dem Schwarz → Schwarz auf Schwarz, unsichtbar. **Absicherung:** In der letzten Sekunde legt der
-  Code zusätzlich einen **Schwarz-Schleier** (durchsichtig → voll schwarz) über das Video, falls
-  Firefly am Ende etwas Ungewolltes zeigt. So bestimmt Ronny den Schluss, nicht Firefly.
+- **Naht 2 (Video 2 → Portal-Seite):** Das Video **klingt NICHT von selbst schwarz aus.** Stattdessen legt
+  **der Code ab Sekunde 9** einen **Schleier** über das Bild (durchsichtig → voll deckend), **Zielfarbe =
+  Portal-Hintergrund `#080815`** (nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll deckend**.
+  **Erst dann** öffnet sich die Portal-Seite aus diesem `#080815`. So bestimmt Ronny den Schluss, nicht
+  Firefly. (Ausführlich unten: „Naht 2 — final festgelegt (13. Juli)".)
 
 ### Schriftzug „Cognizance World"
 - **NICHT ins Video einbrennen.** Gründe: KI-Video schreibt Text notorisch fehlerhaft; eingebrannter
@@ -271,6 +273,7 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Changelog
 
+- **13. Juli 2026 (Korrektur):** **Naht-2-Widerspruch bereinigt.** Der Überblick „Die zwei Nähte" sagte fälschlich, Video 2 **ende von selbst in reinem Schwarz** (Code-Schleier nur als Notfall in der letzten Sekunde). Richtig ist die finale Fassung: Das Video klingt **nicht** schwarz aus; **der Code dunkelt ab Sekunde 9** in die Portalfarbe `#080815` ab (voll deckend spätestens bei Sek. 10), dann Portal. Überblick auf diese Fassung nachgezogen. Auch die veraltete „auf das Wurmloch zu"-Beschreibung dort korrigiert (Video 2 ist **kein** Wurmloch).
 - **13. Juli 2026 (Abend):** **Video 2 GEFUNDEN.** Wurmloch verworfen (kein Modell schafft die exakte
   Schlauch-Form zuverlässig — Striche/Ringe/Warp; Abzweigungen nicht in einem Clip machbar → Grenze der
   KI-Video-Modelle bei *exakter Geometrie*). Neuer Flug (**Kling 3.0**): **atmendes Quanten-Netz → aufsteigende
