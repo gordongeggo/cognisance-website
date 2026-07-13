@@ -3,50 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video-Preview — Video 2 + Naht 2</title>
+    <title>Video-Preview — Ritual + Naht 1 + Video 2 + Naht 2</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%;
             background: #030308; overflow: hidden;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            user-select: none;
         }
 
-        /* Video 2 — der Flug (füllt den Schirm) */
+        /* Platzhalter für Video 1 (Ambient-Schleife) — kommt später als <video> dahinter */
+        #v1placeholder {
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(circle at center, #0a1226 0%, #05060f 55%, #010103 100%);
+        }
+        #v1note {
+            position: fixed; top: 18px; left: 0; width: 100%; text-align: center; z-index: 6;
+            font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.18);
+            text-transform: uppercase; pointer-events: none;
+        }
+
+        /* Video 2 — der Flug */
         #v2 {
             position: fixed; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; background: #030308; z-index: 1;
+            object-fit: cover; background: #030308; z-index: 2;
             opacity: 0; transition: opacity 0.4s ease;
         }
         #v2.on { opacity: 1; }
 
-        /* Startzustand (später: Video 1 + Klick-und-Halte-Ritual) */
-        #start {
+        /* Das Ritual: leuchtender Auslöser in der Mitte (gedrückt halten) */
+        #ritual {
             position: fixed; inset: 0; z-index: 5;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, #080815 0%, #010103 100%);
-            transition: opacity 0.8s ease;
+            transition: opacity 0.6s ease;
         }
-        #start.hidden { opacity: 0; pointer-events: none; }
-        #start .ring {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            display: flex; align-items: center; justify-content: center;
-            letter-spacing: 5px; font-weight: 200; font-size: 0.75rem; color: #d4af37;
-            text-indent: 5px; cursor: pointer;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        #ritual.gone { opacity: 0; pointer-events: none; }
+        #trigger {
+            position: relative; width: 160px; height: 160px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        #start .ring:hover { border-color: #d4af37; box-shadow: 0 0 45px rgba(212, 175, 55, 0.35); }
-        #start .note {
-            margin-top: 26px; font-size: 0.72rem; letter-spacing: 2px; line-height: 1.7;
-            color: rgba(255, 255, 255, 0.35); text-align: center; max-width: 80%;
+        #ring { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
+        #ring circle { fill: none; stroke-width: 2; }
+        #ring .bg { stroke: rgba(212,175,55,0.12); }
+        #ring .prog {
+            stroke: #d4af37; stroke-dasharray: 440; stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.08s linear; filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
         }
+        #label {
+            font-size: 0.85rem; font-weight: 300; letter-spacing: 8px; text-indent: 8px;
+            color: #d4af37; text-shadow: 0 0 12px rgba(212,175,55,0.4);
+        }
+        /* sanftes Pulsieren, das zum Berühren einlädt */
+        #trigger { animation: breathe 3.2s ease-in-out infinite; }
+        @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        #trigger.charging { animation: none; }
+        #hint {
+            margin-top: 30px; font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase;
+            color: rgba(255,255,255,0.35); transition: opacity 0.4s ease;
+        }
+        #hint.hide { opacity: 0; }
 
-        /* Naht 2: Schleier, der auf die Portalfarbe #080815 blendet (nicht reines Schwarz) */
+        /* Naht 1: heller Lichtblitz beim Umschalten Video 1 -> Video 2 */
+        #flash {
+            position: fixed; inset: 0; z-index: 7; pointer-events: none; opacity: 0;
+            background: radial-gradient(circle at center,
+                        rgba(255,246,220,0.95) 0%, rgba(212,175,55,0.5) 22%,
+                        rgba(177,159,251,0.18) 45%, rgba(3,3,8,0) 68%);
+            transition: opacity 0.5s ease;
+        }
+        #flash.on { opacity: 1; transition: opacity 0.12s ease; }
+
+        /* Naht 2: Schleier auf Portalfarbe #080815 */
         #veil { position: fixed; inset: 0; z-index: 8; background: #080815; opacity: 0; pointer-events: none; }
 
-        /* Portal-Platzhalter (hier kommt später das echte Menü) */
+        /* Portal-Platzhalter */
         #portal {
             position: fixed; inset: 0; z-index: 9;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -56,78 +87,106 @@
         #portal.on { opacity: 1; visibility: visible; }
         #portal h2 {
             font-weight: 100; letter-spacing: 10px; text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 25px rgba(177, 159, 251, 0.3);
+            color: rgba(255,255,255,0.85); text-shadow: 0 0 25px rgba(177,159,251,0.3);
             margin-bottom: 44px; font-size: clamp(1rem, 4vw, 1.6rem); text-align: center;
         }
-        .pg { display: grid; grid-template-columns: repeat(2, auto); gap: clamp(24px, 6vw, 60px); justify-items: center; }
+        .pg { display: grid; grid-template-columns: repeat(2, auto); gap: clamp(24px,6vw,60px); justify-items: center; }
         .orb {
-            width: clamp(84px, 20vw, 120px); height: clamp(84px, 20vw, 120px); border-radius: 50%;
+            width: clamp(84px,20vw,120px); height: clamp(84px,20vw,120px); border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: #d4af37; font-weight: 100; font-size: 1.7rem;
-            border: 1px solid rgba(212, 175, 55, 0.35);
-            background: radial-gradient(circle at 32% 28%, rgba(177, 159, 251, 0.28), rgba(4, 4, 20, 0.65) 72%);
+            border: 1px solid rgba(212,175,55,0.35);
+            background: radial-gradient(circle at 32% 28%, rgba(177,159,251,0.28), rgba(4,4,20,0.65) 72%);
         }
-        .plabel { margin-top: 54px; font-size: 0.68rem; letter-spacing: 3px; color: rgba(255, 255, 255, 0.3); text-align: center; }
+        .plabel { margin-top: 54px; font-size: 0.68rem; letter-spacing: 3px; color: rgba(255,255,255,0.3); text-align: center; }
     </style>
 </head>
 <body>
-    <!-- Video 2 — der Flug (Kling-Netz), spielt einmal -->
+    <div id="v1placeholder"></div>
+    <div id="v1note">Platzhalter — hier läuft später Video 1 (Ambient-Schleife)</div>
+
     <video id="v2" src="netz_kling_v1.mp4" playsinline preload="auto"></video>
 
-    <!-- Vorläufiger Start (ersetzt später Video 1 + Klick-und-Halte) -->
-    <div id="start">
-        <div class="ring" id="go">FLUG&nbsp;STARTEN</div>
-        <div class="note">
-            Test-Auslöser (später: Video 1 als Schleife + Klick-und-Halte-Ritual).<br>
-            Video 2 läuft, ab Sekunde 9 dunkelt der Code auf <b style="color:#8aa">#080815</b> ab → Portal.
+    <!-- Das Ritual: gedrückt halten -->
+    <div id="ritual">
+        <div id="trigger">
+            <svg id="ring" viewBox="0 0 160 160">
+                <circle class="bg"   cx="80" cy="80" r="70"></circle>
+                <circle class="prog" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div id="label">ERKENNE</div>
         </div>
+        <div id="hint">gedrückt halten</div>
     </div>
 
-    <!-- Naht-2-Schleier -->
+    <div id="flash"></div>
     <div id="veil"></div>
 
-    <!-- Portal-Platzhalter -->
     <div id="portal">
         <h2>Vier Tore der Erkenntnis</h2>
-        <div class="pg">
-            <div class="orb">I</div><div class="orb">II</div><div class="orb">III</div><div class="orb">IV</div>
-        </div>
+        <div class="pg"><div class="orb">I</div><div class="orb">II</div><div class="orb">III</div><div class="orb">IV</div></div>
         <div class="plabel">(Portal-Platzhalter — hier kommt später das echte Menü)</div>
     </div>
 
     <script>
-        const v2     = document.getElementById('v2');
-        const start  = document.getElementById('start');
-        const veil   = document.getElementById('veil');
-        const portal = document.getElementById('portal');
-        const go     = document.getElementById('go');
+        const v2      = document.getElementById('v2');
+        const ritual  = document.getElementById('ritual');
+        const trigger = document.getElementById('trigger');
+        const prog    = document.querySelector('#ring .prog');
+        const hint    = document.getElementById('hint');
+        const flash   = document.getElementById('flash');
+        const veil    = document.getElementById('veil');
+        const portal  = document.getElementById('portal');
 
-        const DARK_START = 9.0;   // Sekunde, ab der abgedunkelt wird (Naht 2)
+        // ---- Klick-und-Halte-Ritual ----
+        const CIRC = 440;                 // Umfang des Rings (2·π·70)
+        let charge = 0, holding = false, launched = false;
+
+        function down(e){ if (!launched) { holding = true; hint.classList.add('hide'); trigger.classList.add('charging'); } }
+        function up(){ holding = false; if (!launched) trigger.classList.remove('charging'); }
+        window.addEventListener('mousedown', down);
+        window.addEventListener('mouseup', up);
+        window.addEventListener('touchstart', down, { passive: true });
+        window.addEventListener('touchend', up);
+
+        function ritualLoop(){
+            if (!launched){
+                charge += holding ? 0.012 : -0.02;      // laden beim Halten, sonst zurück
+                charge = Math.max(0, Math.min(1, charge));
+                prog.style.strokeDashoffset = CIRC * (1 - charge);
+                if (charge >= 1) launch();
+            }
+            requestAnimationFrame(ritualLoop);
+        }
+        requestAnimationFrame(ritualLoop);
+
+        // ---- Naht 1: Lichtblitz -> Video 2 ----
+        function launch(){
+            if (launched) return;
+            launched = true;
+            flash.classList.add('on');                  // heller Blitz überstrahlt den Schnitt
+            ritual.classList.add('gone');
+            v2.classList.add('on');
+            v2.play().catch(err => console.error('Video-Start:', err));
+            setTimeout(() => flash.classList.remove('on'), 450);
+        }
+
+        // ---- Naht 2: ab Sek. 9 auf #080815 abdunkeln -> Portal ----
+        const DARK_START = 9.0;
         let revealed = false;
-
-        // Ab Sekunde 9: Schleier von durchsichtig → voll deckend (#080815),
-        // spätestens am Video-Ende voll. Danach Portal aus dem #080815 heraus.
-        function onTime() {
-            const t = v2.currentTime;
-            const d = v2.duration || 10;
-            const s = Math.min(DARK_START, d - 1.0);   // Sicherheitsnetz, falls Video kürzer als 10 s
+        v2.addEventListener('timeupdate', () => {
+            const t = v2.currentTime, d = v2.duration || 10;
+            const s = Math.min(DARK_START, d - 1.0);
             if (t >= s) veil.style.opacity = Math.min(1, (t - s) / (d - s));
             if (t >= d - 0.05) reveal();
-        }
-        function reveal() {
+        });
+        v2.addEventListener('ended', reveal);
+        function reveal(){
             if (revealed) return;
             revealed = true;
-            veil.style.opacity = 1;              // sicher voll deckend
-            portal.classList.add('on');          // Portal erscheint aus #080815
+            veil.style.opacity = 1;
+            portal.classList.add('on');
         }
-        v2.addEventListener('timeupdate', onTime);
-        v2.addEventListener('ended', reveal);
-
-        go.addEventListener('click', () => {
-            start.classList.add('hidden');
-            v2.classList.add('on');
-            v2.play().catch(e => console.error('Video-Start fehlgeschlagen:', e));
-        });
     </script>
 </body>
 </html>
