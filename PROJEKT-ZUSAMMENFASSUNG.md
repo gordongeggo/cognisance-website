@@ -1,296 +1,161 @@
-# TheHolographicMe — Projekt-Übergabe & Zusammenfassung
+# Cognizance World — Projekt-Übergabe & Zusammenfassung
 
 > **Eine Datei für alles.** Dieses Dokument ist die *einzige* aktuelle Projekt-Übersicht.
-> Es ersetzt die vorherige `PROJEKT-ZUSAMMENFASSUNG.md`. Du kannst es in einen anderen
-> Claude-Chat oder als Wissensquelle in dein claude.ai-Projekt hochladen.
-> **Stand: 13. Juli 2026 (aktualisiert – Video 2 gefunden; Naht-2-Widerspruch korrigiert).**
+> Es ersetzt jede vorherige Fassung. In einen anderen Claude-Chat oder als Wissensquelle
+> ins claude.ai-Projekt hochladen. **Immer nur die neueste Version im Projekt behalten.**
+> **Stand: 13. Juli 2026 — die neue Video-Startseite ist GEBAUT und LIVE.**
 
 ---
 
-## 0. Das Wichtigste zuerst (aktueller Stand & nächster Schritt)
+## 0. Das Wichtigste zuerst (aktueller Stand)
 
-Die Startseite wird **interaktiv** und besteht aus **zwei Videos + einer Code-Schicht (Overlay)**.
-Das Portal-Menü mit den vier Toren **bleibt unangetastet** (Abschnitt 4a).
+**Die neue interaktive Video-Startseite ist fertig, integriert und LIVE** auf `cognizance-website.pages.dev`.
+Sie hat das alte WebGL-Schwarze-Loch-Intro **komplett ersetzt**. Die ganze Kette läuft:
 
-**Fertig und bereit zum Hochladen ins GitHub: Video 1** — die **Ambient-Schleife** (gekauft, perfekte
-nahtlose Endlosschleife, Ende = Anfang, kein Ruckeln). Sie läuft sofort beim Laden und ist der ruhige,
-wartende Zustand.
+> **Video 1 (blaues Quanten-Netz, Ambient-Schleife) mit Gravitationslinse** → **„ERKENNE" gedrückt halten**
+> (goldener Lade-Ring) → **Lichtblitz (Naht 1)** → **Video 2 (der Flug)** → **ab Sek. 9 abdunkeln auf `#080815` (Naht 2)**
+> → **Portal-Menü**, ceremoniell aufgebaut (Schriftzug „Cognizance World" Buchstabe für Buchstabe, dann die 4 Tore
+> nacheinander, dann die Ziffern) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation).
 
-**Nächster Job für den Watson im Code:** das **Overlay** über Video 1 codieren — der **leuchtende
-Klick-und-Halte-Auslöser in der Bildmitte** mit **Gravitationslinsen-Effekt** auf das Netz darunter
-(Details in Abschnitt 5a). Das kann **sofort** gebaut werden, unabhängig von Video 2, weil das Overlay
-auf Video 1 liegt.
-
-**GEFUNDEN & abgesegnet: Video 2** — der Startseiten-Flug. **NICHT** das Wurmloch (das hat kein
-Modell zuverlässig hinbekommen), sondern ein **atmendes Quanten-Netz, aus dem eine geometrische
-Figur aufsteigt** (Details + Historie in Abschnitt 5a). Erzeugt in **Kling 3.0**. Muss als Datei
-gesichert und später in `index.html` eingebunden werden.
+**Nächste offene Ziele:** Inhalte für Portale II & IV, Portal III (Holodeck, Abschnitt 6), Sound für Video 2,
+Feinschliff der Timings, Domain-Entscheidung. Details in Abschnitt 8.
 
 ---
 
 ## 1. Was ist das Projekt?
 
 Ein interaktives digitales **Kunstwerk über Wahrnehmung, Quantenphysik und Bewusstsein**.
-Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment automatisch
-bei jedem Push zu GitHub).
+Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment automatisch bei jedem Push zu GitHub).
 
-- **Live-Adresse aktuell:** die kostenlose Cloudflare-Pages-Adresse `…pages.dev` (das Pages-Projekt läuft weiter, unabhängig von Domains).
-- **Eigene Domain:** ⚠️ **im Umbruch** — siehe Abschnitt 7. Es ist aktuell **keine** eigene Domain zugewiesen.
-- **Früher:** cognizance.world (abgelöst) und danach theholographicme.com (siehe Changelog / Abschnitt 7).
-- **GitHub:** github.com/gordongeggo/cognisance-website · **Ordner:** `cognisance-website` (die „s/z"-Schreibweise ist rein kosmetisch)
-- **Inspiration (Ursprung):** die Orano-Innovations-Seite (`orano.group/experience/innovation/en`). Wichtig zu wissen: Das ist ein **Echtzeit-Code-Erlebnis (WebGL)**, kein Video — daher das lebendige Reagieren auf die Maus. Das ist das Vorbild für das „lebendige" Gefühl, nicht als Video kopierbar.
+- **Live-Adresse:** die kostenlose Cloudflare-Pages-Adresse **`cognizance-website.pages.dev`** (+ 2 angehängte Domains).
+- **Eigene Domain:** ⚠️ **im Umbruch** — siehe Abschnitt 7. Aktuell **keine** feste eigene Domain zugewiesen.
+- **GitHub:** github.com/gordongeggo/cognisance-website · **Ordner:** `cognisance-website` (die „s/z"-Schreibweise ist rein kosmetisch).
+- **Inspiration (Ursprung):** die Orano-Innovations-Seite (`orano.group/experience/innovation/en`) — ein Echtzeit-Code-Erlebnis, Vorbild fürs „lebendige" Gefühl.
 
 ## 2. Über den Entwickler & Arbeitsweise (WICHTIG)
 
 **Ronny ist absoluter Programmier-Anfänger.** Für jede Zusammenarbeit gilt:
 - Jeden Schritt **VORHER in einfachem Deutsch erklären**, keine Fachbegriffe ohne Erklärung.
-- **Qualität vor Tempo — „Hier gibt es kein schnell, nur Qualität."** Kein Zeitdruck; eine einzelne Sequenz darf ruhig einen Tag oder eine Woche dauern. **Nie heimlich abkürzen** – wenn etwas länger dauert, **vorher** ehrlich sagen.
+- **Qualität vor Tempo — „Hier gibt es kein schnell, nur Qualität."** Kein Zeitdruck; eine Sequenz darf einen Tag oder eine Woche dauern. **Nie heimlich abkürzen** — wenn etwas länger dauert, **vorher** ehrlich sagen.
 - **Immer auf ein ausdrückliches „Go" warten:** erst erklären → Rückfragen → Ronnys Go → **DANN** bauen. **Keine eigenmächtigen kreativen oder Scope-Entscheidungen.**
 - **Kleine Schritte**, nach jedem ein sichtbares Ergebnis; jede Änderung mit **Git-Commit** sichern.
-- **Präzision in der Sprache ist Pflicht.** Nie behaupten, eine Datei/einen Ort erreicht zu haben, den man nicht wirklich erreichen kann. Was aus Uploads bekannt ist, klar trennen von dem, was vermutet/gefolgert ist.
+- **Präzision in der Sprache ist Pflicht.** Nie behaupten, etwas erreicht/gesehen zu haben, das man nicht wirklich erreichen kann. Bekanntes klar von Vermutetem trennen.
 - **Git-Identität:** Ronny Hammer / ronny.hammer1@icloud.com
 
-**Was der claude.ai-Chat sehen kann (präzise):** Die **Text-Dateien im Projekt** (`.md`, `.docx`,
-`.pdf`) und **direkt in den Chat hochgeladene Bilder** liegen im Kontext und können gelesen/gesehen
-werden. **NICHT** sichtbar sind: der tatsächliche Code in `index.html` / `neues-intro.html`, die
-**fertigen Videos** (Bewegung ist für den Chat unsichtbar) und Dateien im **Schreibtisch-Ordner**.
-Wenn Claude im Chat ein Bild sehen soll, muss es **direkt in den Chat hochgeladen** werden.
+**Was der claude.ai-Chat (HOME-Watson) sehen kann (präzise):** die **Text-Dateien im Projekt** (`.md`, `.docx`, `.pdf`) und **direkt in den Chat hochgeladene Bilder**. **NICHT** sichtbar: der laufende Code, die **Videos** (Bewegung ist im Chat unsichtbar) und Dateien im **Schreibtisch-Ordner**. Damit der HOME-Watson auf Stand ist, wird **genau dieses Dokument** aktuell gehalten und ins Projekt geladen.
 
-**Veröffentlichen:** Änderung an `index.html` → committen → zu GitHub pushen →
-Cloudflare Pages baut automatisch neu (1–2 Min.) → im Browser mit **Cmd+Shift+R** hart neu laden.
+**Veröffentlichen:** Änderung an `index.html` → committen → zu GitHub pushen → Cloudflare Pages baut automatisch neu (1–2 Min.) → im Browser mit **Cmd+Shift+R** hart neu laden.
 
-**Werkzeug-Aufteilung:** Die technische Arbeit (Code, Git, Cloudflare) passiert in **Claude Code**.
-Der claude.ai-Chat ist für **Planung, Architektur, Dokumentation** (dieses Dokument) sowie fürs
-Ansehen hochgeladener Bilder und fürs gemeinsame **Firefly-Prompten**.
+**Werkzeug-Aufteilung:** Technische Arbeit (Code, Git, Cloudflare, Video-Umwandlung) passiert in **Claude Code**. Der claude.ai-Chat ist für **Planung, Architektur, Dokumentation** und fürs gemeinsame **Firefly-/Video-Prompten**.
 
 ## 3. Technik
 
-- **Vanilla JavaScript + HTML5-Canvas**, keine Frameworks, `requestAnimationFrame` — für Menü + Kapitel + das Overlay (mobilkompatibel).
-- **Startseite = zwei eingebettete Videos (`<video>`) + eine Code-Overlay-Schicht darüber.** Details in Abschnitt 5a. Bewusst **kein** Echtzeit-WebGL-Flug mehr.
-- Aktuell steckt **alles in einer Datei**: `index.html` (HTML + CSS + JavaScript zusammen).
+- **Startseite:** zwei eingebettete Videos (`<video>`) + eine **Code-Overlay-Schicht** + eine **WebGL-Gravitationslinse** auf Video 1. Bewusst **kein** Echtzeit-WebGL-Flug mehr.
+- **Menü, Kapitel, Navigation, Overlay:** **Vanilla JS + HTML5/CSS**, keine Frameworks.
+- Alles steckt in **einer Datei**: `index.html` (HTML + CSS + JS zusammen).
 - **Farbwelt:** samtiges Schwarz-Blau (#030308 / #080815), Gold **#d4af37**, Violett **#b19ffb**, Sternenweiß.
+- **Desktop-fokussiert** (die Linse nutzt WebGL). Es gibt einen **Rückfall**: kann der Browser das lokale Video nicht in die Linse einlesen (z. B. Doppelklick/`file://`) oder fehlt WebGL, zeigt der Code **Video 1 einfach normal** (ohne Linsen-Biegung). Live über HTTPS läuft die Linse voll.
 
 ## 4. Verbindliche Design-Identität (gilt für ALLE Seiten)
 
-Das Menü nach dem Eingang und die Kapitel-I-Seite definieren die visuelle Identität:
-- **Präzise und mathematisch statt verspielt.** Exakte Geometrie, klare Konstruktion. Möglichst **kein zufälliger „Staub"**, keine wolkige Verspieltheit.
+- **Präzise und mathematisch statt verspielt.** Exakte Geometrie, klare Konstruktion. Möglichst **kein zufälliger „Staub"**.
 - **Typografie:** scharf, dünn (font-weight 100–300), weit gesperrt, Großbuchstaben für Titel.
-- **Leitmotiv „Holodeck-Gitter"** (Star-Trek-inspiriert): ein leeres, perspektivisches Liniengitter als „Struktur hinter der Realität". Die sichtbare Welt ist nur eine Projektion darüber.
-- **Durchgehende Farb-Harmonie (Entscheidung 13. Juli):** Die Farbe soll über die **ganze** Seite fließen — vom blauen Quanten-Netz (Video 1) über den Flug (Video 2) bis zur Portal-Seite. Ein **fließender Übergang**, keine harten Farbbrüche. Das Wurmloch wird farblich in *Ronnys* Palette geholt (Schwarz-Blau, Gold, Violett) statt warm-orange, und trägt **am Ende des Fluges die Farben der Portal-Seite**, bevor es ins Schwarz geht.
+- **Leitmotiv „Holodeck-Gitter":** ein leeres, perspektivisches Liniengitter als „Struktur hinter der Realität".
+- **Durchgehende Farb-Harmonie:** die Farbe fließt über die **ganze** Seite — vom blauen Quanten-Netz (Video 1) über den Flug (Video 2) bis zur Portal-Seite. Fließende Übergänge, keine harten Farbbrüche; das Ganze mündet ins dunkle `#080815`.
 
-## 4a. Das Portal-Menü — FERTIG und TABU
+## 4a. Das Portal-Menü — FERTIG und (bis auf Überschriften) TABU
 
-Die Seite mit den **vier Toren** ist **fertig, perfekt und wird nicht mehr verändert** —
-einzige mögliche spätere Ausnahme: die **Überschriften** der Portale.
+Die Seite mit den **vier Toren** ist **fertig**. Einzige mögliche spätere Ausnahme: die **Überschriften** der Portale.
 
 **Menü „Vier Tore der Erkenntnis":**
-- **I. Die Illusion der Zeit** → Kapitel I fertig (Einstein-Zitat), öffnet sich langsam (4,5 Sek.)
-- **II. Außerirdische Intelligenz** → Platzhalter-Seite (Inhalt folgt)
-- **III. Realität als Projektion** → Platzhalter-Seite (Drehbuch siehe Abschnitt 6)
-- **IV. Wachstum durch KI** → Platzhalter-Seite (Inhalt folgt)
+- **I. Die Illusion der Zeit** → Kapitel I fertig (Einstein-Zitat).
+- **II. Außerirdische Intelligenz** → Platzhalter-Seite (Inhalt folgt).
+- **III. Realität als Projektion** → Platzhalter-Seite (Drehbuch siehe Abschnitt 6).
+- **IV. Wachstum durch KI** → Platzhalter-Seite (Inhalt folgt).
 
-**Navigation (fertig):** „← Zu den Toren" auf jeder Kapitel-/Platzhalterseite, „Andere Tore: I II III IV"-Sprunglinks, „↻ Von vorn" (Intro neu).
+**Navigation (fertig & live):** „← Zu den Toren" auf jeder Kapitel-/Platzhalterseite; „Andere Tore: I II III IV"-Sprunglinks (auch in Kapitel I); „↻ Von vorn" (lädt die Seite neu, das ganze Intro startet von vorn).
 
-## 5. Was heute wirklich live läuft (Ist-Zustand in `index.html`)
+**Ceremonieller Aufbau (neu gebaut, langsam ~30 Sek. — Ronnys Wunsch):**
+1. **„Cognizance World"** — die Buchstaben blenden **einzeln, langsam, aus der Mitte heraus** auf (Alien-Titel-Stil).
+2. dann der Untertitel **„Vier Tore der Erkenntnis"**.
+3. dann die **4 Kreise nacheinander** (je ~3,4 Sek. Abstand), jeder erscheint **langsam** und zunächst **leer**.
+4. **erst wenn alle 4 Kreise da sind**, kommen die **Ziffern** (I→II→III→IV) einzeln hinein, danach die Bezeichnungen; die Tore **schweben** sanft.
+- Feines **Hintergrund-Gitter** (Holo-Gitter, ~5 % Deckkraft). **Alle Timings sind im Code leicht justierbar.**
 
-> Dieser Ist-Zustand **wird durch die neue Startseite (Abschnitt 5a) ersetzt**, bleibt aber als
-> stabile Live-Version bestehen, **bis** die neue Video-Startseite fertig und abgesegnet ist.
-> **Nichts wird gelöscht, nichts überschrieben, bevor der Ersatz steht.**
+## 5. Was live läuft (Ist-Zustand in `index.html`)
 
-Aktuell läuft in `index.html` das alte **WebGL-Schwarze-Loch-Intro**: fernes gelinstes Schwarzes Loch
-→ Maus-Sog → Auto-Flug ins Loch → Gitter-Tunnel → Projektionsfläche dreht sich gerade → Portal-Menü.
-Der **Wurmloch-Tunnel** und das **Projektionsflächen-Ende** waren bereits vorher von Ronny abgelehnt.
+**Die interaktive Video-Startseite (Abschnitt 5a) ist LIVE.** Ablauf: Video 1 (Netz) + Gravitationslinse → „ERKENNE" halten → Lichtblitz → Video 2 (Flug) → ab Sek. 9 abdunkeln → Portal-Menü (ceremoniell) → klickbar.
 
-## 5a. Die neue Startseite — interaktiv, zwei Videos + Overlay (Stand 13. Juli 2026)
+*(Das alte WebGL-Schwarze-Loch-Intro ist damit ersetzt und nicht mehr live. Siehe Abschnitt 5b.)*
 
-**Grundidee:** Die Seite ist vom ersten Moment an **lebendig** und **interaktiv** (Gegenteil eines
-still ablaufenden Videos). Der Besucher **löst den Flug selbst aus** — das ist der Beobachter-Effekt,
-um den sich das ganze Projekt dreht: Realität geschieht erst durch die Handlung des Betrachters.
+## 5a. Die Video-Startseite — GEBAUT & LIVE (13. Juli 2026)
 
-### Der Ablauf (die Kette)
-1. **Video 1 — Ambient-Schleife** läuft sofort beim Laden, endlos, ruhig, **stummgeschaltet**
-   (Browser erlauben Auto-Start nur bei stummem Video). Zeigt den wartenden Zustand: das blaue
-   Quanten-Netz. **Status: FERTIG & gekauft**, perfekte nahtlose Schleife (Ende = Anfang).
-2. **Overlay (Code, über Video 1)** — ein **leuchtender Auslöser in der Bildmitte**:
-   - reagiert auf die Maus (glüht auf beim Annähern),
-   - **Klick-und-Halten** lädt ihn auf (kreisrunder Ladebalken, das „Ritual" wie in der allerersten
-     HTML-Version — bewusst gewählt, **nicht** „jede Mausbewegung", **nicht** einfacher Klick),
-   - verbiegt das Netz darunter wie eine **echte Gravitationslinse** (Linien krümmen sich um ihn),
-   - bei **100 % Ladung** → löst **Video 2** aus.
-   - **Wichtig:** Der Auslöser ist **Code**, nicht ins Video gerechnet (ein Video kann die Maus nicht
-     sehen; Video 1 ist zudem gekauft und tabu). → **Das ist der nächste Bau-Job im Code.**
-3. **Video 2 — der Flug** spielt **einmal** ab (der Kling-3.0-Flug: atmendes Quanten-Netz → aufsteigende
-   Figur, **kein** Wurmloch). Es **klingt NICHT von selbst schwarz aus** — **der Code** dunkelt es **ab
-   Sekunde 9** in die Portalfarbe `#080815` ab (Details in „Naht 2 — final festgelegt"). **Ton erlaubt**
-   (der Klick des Besuchers ist die „Autoplay-Erlaubnis" des Browsers) — Sound kommt aber erst später (Abschnitt 5a, „Ton").
-4. **Portal-Seite erscheint aus dem Schwarz** — die echte, klickbare Seite mit den vier Toren.
+**Grundidee:** Die Seite ist vom ersten Moment an **lebendig** und **interaktiv**. Der Besucher **löst den Flug selbst aus** — der Beobachter-Effekt, um den sich das Projekt dreht.
 
-### Die zwei „Nähte" (unsichtbare Übergänge)
-- **Naht 1 (Video 1 → Video 2):** Kombi aus **B + C**.
-  **(B)** Video 2 **beginnt genau im Ruhezustand von Video 1** — das erreicht Ronny, indem er in
-  Firefly das **erste Bild von Video 2 = das Ruhebild der Schleife** setzt (`Video_1.png`).
-  **(C)** Im Umschaltmoment legt der Code einen **hellen Lichtblitz / eine Druckwelle** aus der Mitte
-  darüber, der den Schnitt **überstrahlt** (alter Filmtrick: wo es blitzt, sieht man den Schnitt nicht).
-- **Naht 2 (Video 2 → Portal-Seite):** Das Video **klingt NICHT von selbst schwarz aus.** Stattdessen legt
-  **der Code ab Sekunde 9** einen **Schleier** über das Bild (durchsichtig → voll deckend), **Zielfarbe =
-  Portal-Hintergrund `#080815`** (nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll deckend**.
-  **Erst dann** öffnet sich die Portal-Seite aus diesem `#080815`. So bestimmt Ronny den Schluss, nicht
-  Firefly. (Ausführlich unten: „Naht 2 — final festgelegt (13. Juli)".)
+### Der Ablauf (die Kette) — alles gebaut
+1. **Video 1 — Ambient-Schleife** (`video1.mp4`) läuft sofort, endlos, **stumm**, Autoplay-Loop. Das blaue Quanten-Netz. **Web-Version 1080p / 4,9 MB**, aus dem gekauften 4K-Original (`AdobeStock_430161342.mov`, 62,7 MB) mit macOS-`avconvert` gerechnet. Die 4K-Datei bleibt **lokal** (via `.gitignore` ausgeschlossen, > 25 MB).
+2. **Overlay (Code) über Video 1:**
+   - **Gravitationslinse** (WebGL): eine weiche Raumzeit-Delle biegt das Netz, **folgt dem Mauszeiger** und **vertieft sich beim Halten** von „ERKENNE". Dezent/real (keine Singularität, kein bunter Ring). Mit Rückfall (Abschnitt 3).
+   - **„ERKENNE"-Ritual** in der Mitte: **Klick-und-Halten** lädt einen goldenen Ring (~1,4 Sek.), bei **100 %** → Video 2. (Bewusst „Ritual", nicht bloßer Klick.)
+3. **Video 2 — der Flug** (`netz_kling_v1.mp4`, Kling 3.0, 13,9 MB) spielt **einmal**: atmendes Quanten-Netz, aus dem eine geometrische Figur aufsteigt (**kein** Wurmloch). **Ton erlaubt** (kommt später).
+4. **Portal-Seite** erscheint aus dem `#080815` und baut sich ceremoniell auf (Abschnitt 4a).
+
+### Die zwei „Nähte" (unsichtbare Übergänge) — gebaut
+- **Naht 1 (Video 1 → Video 2):** im Umschaltmoment legt der Code einen **hellen Lichtblitz** aus der Mitte darüber, der den Schnitt überstrahlt. *(Zusätzlich sicherbar über Frame-Matching: erstes Bild von Video 2 = Ruhebild der Schleife, `Video_1.png`.)*
+- **Naht 2 (Video 2 → Portal):** Das Video klingt **NICHT von selbst schwarz aus.** **Der Code dunkelt ab Sekunde 9** einen Schleier von durchsichtig auf voll deckend, **Zielfarbe = `#080815`** (nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll**. **Erst dann** öffnet die Portal-Seite. *(Timing im Code justierbar.)*
 
 ### Schriftzug „Cognizance World"
-- **NICHT ins Video einbrennen.** Gründe: KI-Video schreibt Text notorisch fehlerhaft; eingebrannter
-  Text ist unveränderlich und trifft den Hausstil nicht. **Stattdessen als Code-Overlay** in exakt
-  Ronnys Stil (dünn, weit gesperrt, Großbuchstaben, Gold/Violett), jederzeit änderbar.
-- **Offen:** ob und wo der Schriftzug erscheint (evtl. erst auf **Seite 2 / Portal-Seite**). Ronny
-  entscheidet später. Kein Zeitdruck.
+- **Gebaut** als **Code-Overlay auf der Portal-Seite** (nicht ins Video eingebrannt), in Ronnys Stil (dünn, gesperrt, Großbuchstaben). Erscheint **Buchstabe für Buchstabe aus der Mitte heraus** (Alien-Titel-Stil). Text jederzeit änderbar.
 
-### Firefly-Einstellungen für Video 2 (der Flug)
-- **Modell:** **Veo 3.1** (erster Versuch). Das **Adobe-eigene** Firefly-Modell ist schwächer — daher
-  eins der **Partner-Modelle**. Reihenfolge, falls Veo 3.1 enttäuscht: **Kling 3.0 Omni** (treueste
-  Übernahme des Vorlage-Looks) als 2. Wahl; **Runway Gen 4.5** (Kamera-Kontrolle, aber die besten
-  Regler leben in Runways eigener App, evtl. nicht voll in Firefly). **Sora 2 meiden** (wird
-  eingestellt). Praxis-Tipp: denselben Prompt bei Unzufriedenheit durch ein zweites Modell jagen und
-  vergleichen (Credits sind vorhanden).
-- **Referenz-Bilder:** **erstes Bild (First) = `Video_1.png`** (sichert Naht 1). **Kein Endbild (Last)**
-  — ein festes Endbild würde in Firefly **Kamera-Bewegungen deaktivieren**, die wir für den Flug (und
-  später die Abzweigungen) brauchen. Das Schwarz am Ende kommt über **Prompt + Code-Schleier**, nicht
-  über ein Endbild.
-- **Format/Auflösung/Dauer:** **16:9**, **1080p** (reicht auch für größere Bildschirme, bleibt leichter
-  als 4K), **8 Sekunden** (bewusst statt 6; kein Schnitt in Premiere gewünscht).
-- **Ton:** **später** über Fireflys „Generate sound effects". Nur Video 2 darf Ton haben (Video 1 läuft
-  stumm wegen Autoplay).
+### Reine Referenz/Produktion (wie Video 2 entstand — Firefly/Kling)
+- **Video 2 gefunden mit Kling 3.0** (nach vielen Runden). Kein Modell (Veo 3.1, Kling, Ray/Ray HDR) konnte eine **exakte Wurmloch-Röhre** zuverlässig — die Schwäche der KI-Video-Modelle ist *exakte Geometrie*. Der Netz-Flug passt sogar besser zur Design-Identität.
+- **Firefly-Erkenntnisse (für künftige Videos):** Adobe-eigenes Modell schwächer → Partner-Modelle (Kling 3.0 / Veo 3.1 / Runway Gen 4.5; **Sora 2 meiden**). **Startbild `Video_1.png`, KEIN Endbild** (Endbild sperrt Kamerabewegung). **16:9, 1080p.** Ton später via „Generate sound effects".
+- **Referenz-Dateien (im claude.ai-Projekt):** `Video_1.png` (Ruhebild/Startbild), `schwarzes_Ende.png`, `Page_Seite_2_.png` (Portal-Farbvorlage).
 
-### Video 2 — GEFUNDEN (Stand 13. Juli, nach vielen Runden)
+### Echte Farbwerte der Portal-Seite (für Prompts & Code)
+- **Hintergrund:** radial `#080815` (Mitte) → `#010103` (Rand); Grundton `#030308`.
+- **Holo-Gitter-Linien:** `rgb(130,175,245)` bei ~5 % Deckkraft. **Gold:** `#d4af37` · **Violett:** `#b19ffb`.
 
-**Ergebnis:** Der Startseiten-Flug ist **kein Wurmloch** mehr. Kein Modell (Veo 3.1, Kling, Ray/Ray HDR)
-konnte die gewünschte **schlauchförmige, abgegrenzte, transparente Wurmloch-Röhre mit Krümmungen**
-zuverlässig erzeugen — mal wurden es Striche, mal Ringe, mal ein bildschirmfüllender Warp. **Ehrliche
-Erkenntnis:** eine *exakte geometrische Form* ist die Schwäche dieser KI-Video-Modelle (Stimmung/Licht/
-Weltraum: super; „genau diese Form": Glücksspiel). Abzweigungen ebenfalls nicht machbar in einem Clip.
+## 5b. Frühere Code-Wege (WebGL-Schwarzes-Loch & Platinen-Hybrid) — HISTORIE / pausiert
 
-**Der Flug, der funktioniert (Kling 3.0):** ein **atmendes Quanten-Netz** (auf/ab, wie Atmen), aus dem
-sich eine **geradlinige, nach oben spitz zulaufende geometrische Figur** erhebt (wie eine Fontäne), aus
-der **Sterne entspringen und verblassen**. Präzise, geometrisch, ruhig — passt **perfekt zur Design-
-Identität** (Holodeck-Gitter, aus dem Struktur entsteht). Besser als das Wurmloch je gepasst hätte.
+> **Status:** durch die Video-Startseite abgelöst. Dateien bleiben erhalten (nichts gelöscht).
 
-- **Länge: 10 Sekunden.** **Ab Sekunde 9** werden die Sterne weniger, schwächer, sinken nach unten —
-  das Video bereitet den ruhigen Ausklang selbst vor.
-- **Modell: Kling 3.0** (nicht Omni nötig). **Als beste Datei sichern** (`netz_kling_final.mp4`) — Kling
-  liefert das **nie wieder exakt so**.
-- **Ende bewusst NICHT in Firefly erzwungen** — das Abdunkeln in die Portalfarbe macht der Code (s. u.,
-  Naht 2). Das Video darf mit ein paar Sternen ausklingen; das reicht.
-
-### Naht 2 (Video 2 → Portal-Seite) — final festgelegt (13. Juli)
-Ablauf **nacheinander** (bewusst, damit nichts abrupt wirkt):
-1. **Abdunkeln:** Ab **Sekunde 9** des Videos legt der Code einen **Schleier** über das Bild, der von
-   durchsichtig auf voll deckend blendet — **Zielfarbe = Portal-Hintergrund `#080815`** (nicht reines
-   Schwarz!). Dauer **~1–1,5 Sek.** (Richtwert, **im Code fein justierbar**, „so dass es funktional passt").
-   **Wichtig:** Der Schleier muss **spätestens mit dem Video-Ende (Sek. 10) voll deckend** sein, sonst
-   „geht das Video aus", bevor der Schleier zu ist → sichtbarer Ruck. Also z. B. 9,0 starten, bei 10,0 voll.
-2. **DANN Portal öffnen:** Aus diesem dunklen `#080815` heraus erscheint die Portal-Seite mit ihrer
-   **gestaffelten Einblende** (im Code bereits angelegt, s. u.). Erst abdunkeln, dann öffnen — nicht gleichzeitig.
-
-### Portal-Seite: „Aufleuchten"-Wunsch + was schon im Code steckt (aus `index.html` gelesen, 13. Juli)
-- **Erlaubnis (Ronny, 13. Juli):** Die Portal-Seite darf für das **Animierte** angefasst werden — solange
-  **Layout, Design, Farben, Schriften, Hintergrund unverändert** bleiben. Nur „Elemente erscheinen sanfter",
-  kein verändertes Aussehen. (Plus die ohnehin erlaubte Ausnahme: Portal-Überschriften evtl. umbenennen.)
-- **Schon vorhanden im Code:** Das Menü (`#menu-screen`) blendet per Opacity/Transform ein; die vier
-  Portale haben eine **gestaffelte Einblende** (`portalEnter`, Delays 0.9s/1.1s/1.3s/1.5s) + sanftes
-  Schweben (`portalFloat`). Es gibt ein fertiges **Licht-Aufblitzen** (`#bloom`: warmes Weiß → Gold →
-  Violett) — nutzbar u. a. als Lichtblitz für **Naht 1**. → Ronnys „Tore erleuchten langsam" ist **größtenteils
-  schon da**; der Code-Watson muss nur **verfeinern + an den Video-Übergang anschließen**, nicht neu bauen.
-
-### Echte Farbwerte der Portal-Seite (aus `index.html`, für Prompts & Code)
-- **Hintergrund (dunkel):** radial `#080815` (Mitte) → `#010103` (Rand); Grundton `#030308`.
-- **Holo-Gitter-Linien:** `rgb(130,175,245)` bei nur **~5 %** Deckkraft (sehr zart).
-- **Gold:** `#d4af37` · **Violett:** `#b19ffb` (= `rgb(177,159,251)`).
-- **Merke:** Die Portal-Seite ist **sehr dunkel** (fast schwarz-blau), **nicht** hellblau. Das Video muss
-  also in dieses dunkle `#080815` münden — passt perfekt zum „dunkel ausklingen".
-
-### Referenz-Dateien (im Projekt hochgeladen)
-- **`Video_1.png`** = Endbild von Video 1 = **Startbild von Video 2** (blaues Quanten-Netz).
-- **`schwarzes_Ende.png`** = schwarzes Konzept-Endbild. **Nicht** mehr als Firefly-Endbild benutzt
-  (s. o.), bleibt als Referenz für den Code-Schwarz-Schleier.
-- **`Page_Seite_2_.png`** = Screenshot der Portal-Seite (Farb-/Stimmungs-Vorlage, **nicht** exakte Schablone).
-- **`index.html`** wurde am 13. Juli in den Chat hochgeladen und **gelesen** → echte Portal-Farbwerte + vorhandene
-  Animationen bekannt (s. o.). (Der laufende Code selbst ist im Chat nicht „live" sichtbar, nur diese eine Kopie.)
-
-### Dateigröße (für später notiert)
-Ein Video liegt bei „normaler" Auflösung bei ca. **70 MB** — für Web hoch (zwei Videos ≈ 140 MB Ladelast).
-**Später optimieren:** moderner Codec (H.265 / WebM), Bitrate, Länge, Auflösung. 1080p statt 4K hilft
-schon. **Aufgabe für später gemerkt.**
-
-## 5b. Frühere Code-Pläne (Schwarzes-Loch-WebGL & Platinen-Hybrid) — PAUSIERT / abgelöst
-
-> **Status:** Durch die Video-Entscheidung (5a) **abgelöst.** Dateien und bisherige Arbeit **bleiben
-> erhalten** — nichts wird gelöscht. Rückgriff möglich, falls die Video-Richtung nicht überzeugt.
-
-Frühere Richtung (WebGL): „Flug rückwärts zum Ursprung" — Projektion (fernes Schwarzes Loch) → Tunnel →
-Hardware (Platine) → zentraler Chip = Portal-Menü. Bedeutungskette **Hardware → Programm → Projektion**;
-„auch wir sind nur Code auf einer 2D-Fläche" (holografisches Prinzip → Name *theholographicme*).
-Ergänzung: schwarzes Loch = Weg hinein, weißes Loch = Weg hinaus → Chip als ewiger Nullpunkt.
-**Bau-Stand (in `neues-intro.html`):** Teil 1 („Blick zurück auf den schrumpfenden Eingang") gebaut;
-Teile 2–4 nicht. `index.html` = stabiler Live-Stand, `neues-intro.html` = Werkstatt-Preview.
+- Das **WebGL-Schwarze-Loch-Intro** war eine Zeit lang live, ist jetzt **ersetzt**.
+- Der **Platinen-/Chip-Hybrid** („Flug rückwärts zum Ursprung": Projektion → Tunnel → Hardware/Platine → Chip = Menü; Bedeutungskette **Hardware → Programm → Projektion**; schwarzes Loch rein / weißes Loch raus als Unsterblichkeits-Kreislauf) liegt als **Werkstatt-Preview** in **`neues-intro.html`** (Teil 1 „Blick zurück auf schrumpfenden Eingang" gebaut, Teile 2–4 nicht). Als Ideen-Reserve behalten.
+- **`video-preview.html`** war die Werkstatt-Preview der Video-Startseite (jetzt in `index.html` übernommen; die Datei kann später aufgeräumt werden).
 
 ## 6. Drehbuch: Portal III „Realität als Projektion" (Holodeck) — noch zu bauen
 
-Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canvas, kein WebGL, mobilkompatibel.
+Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canvas, mobilkompatibel.
 
-- **Phase A – Leerer Raum:** Ankunft in einem leeren Holodeck: schwarzer Raum mit präzisem, perspektivischem **Gold-Liniengitter** (Fluchtpunkt Bildmitte), das minimal auf die Maus reagiert (Parallaxe). Text: „WAS DU REALITÄT NENNST, IST EINE PROJEKTION." Darunter klein: „Erzeuge sie."
-- **Phase B – Der Befehl:** feiner goldener Kreis „PROJIZIERE" (gleiche Click-and-Hold-Mechanik wie „ERKENNE").
-- **Phase C – Rendern der Realität:** bei 100 % baut sich die „Realität" ÜBER dem Gitter auf (Lichtflecken → Sterne → Nebel → Texte). Gitter verblasst, verschwindet aber **nie ganz** (Opacity ~3–5 %).
-- **Phase D – Durchschauen (Kern):** bewegt der Besucher die Maus, schimmert das Gitter in einem Radius um den Cursor wieder durch. Metapher: der aufmerksame Blick entlarvt die Simulation.
-- **Phase E – Inhalt:** 2–3 philosophische Fragmente, die erst beim Annähern scharf werden, z. B.:
-  - „Wenn die Auflösung fein genug ist — woran erkennst du den Unterschied?"
-  - „Ein Programm, das sich selbst beobachtet: Nennt man das Bewusstsein?"
-  - „Vielleicht ist Mathematik keine Beschreibung der Welt. Vielleicht ist sie ihr Quellcode."
-- **Bau-Reihenfolge (inkrementell, je Schritt sichtbares Ergebnis + Git-Commit):**
-  1. statisches perspektivisches Gitter · 2. Maus-Parallaxe · 3. „PROJIZIERE"-Kreis · 4. Render-Übergang · 5. Durchschimmer-Effekt am Cursor · 6. Text-Fragmente
+- **Phase A – Leerer Raum:** perspektivisches **Gold-Liniengitter** (Fluchtpunkt Bildmitte), minimale Maus-Parallaxe. Text: „WAS DU REALITÄT NENNST, IST EINE PROJEKTION." Darunter klein: „Erzeuge sie."
+- **Phase B – Der Befehl:** feiner goldener Kreis „PROJIZIERE" (Click-and-Hold wie „ERKENNE").
+- **Phase C – Rendern:** bei 100 % baut sich „Realität" ÜBER dem Gitter auf (Lichtflecken → Sterne → Nebel → Texte). Gitter verblasst, verschwindet aber **nie ganz** (~3–5 %).
+- **Phase D – Durchschauen (Kern):** bei Mausbewegung schimmert das Gitter um den Cursor wieder durch. Metapher: der aufmerksame Blick entlarvt die Simulation.
+- **Phase E – Inhalt:** 2–3 philosophische Fragmente, z. B. „Vielleicht ist Mathematik keine Beschreibung der Welt. Vielleicht ist sie ihr Quellcode."
 
-## 7. Infrastruktur (⚠️ IM UMBRUCH — Stand 9. Juli 2026, unverändert)
+## 7. Infrastruktur (⚠️ IM UMBRUCH)
 
-**Was sich geändert hat:** Die drei Domains `theholographicme.com`, `.de` und `.global` wurden **von Ronny aus Cloudflare entfernt**. Ronny hat inzwischen **5 neue Domains**; welche davon für das Projekt genutzt wird, ist **noch nicht entschieden**.
-
-- **Cloudflare-Pages-Projekt:** **läuft weiter**, unabhängig von den gelöschten Domains. Erreichbar über die kostenlose `…pages.dev`-Adresse (im Cloudflare-Menü unter **„Workers & Pages"** → Projekt). Zum Weiterbauen/Testen reicht diese Adresse.
-- **Eigene Domain zuweisen:** noch offen. Kleiner, separater Schritt für später. **Kein Zeitdruck.**
-- **DMARC / E-Mail-Schutz:** Die alten `_dmarc`-TXT-Einträge hingen an den entfernten Domains. **Vermutlich mit-entfernt — zu prüfen**, sobald eine neue Domain gewählt ist.
-- **Cloudflare Access (Login-Schutz „Nur ich"):** war an `theholographicme.com` gebunden. **Vermutlich mit-entfernt — zu prüfen.**
-- **Cloudflare-MCP:** `.mcp.json` verbindet den Cloudflare-MCP-Server (deckt v. a. Workers/Storage ab, **nicht** DNS/Zone-Settings).
+- Die drei Domains `theholographicme.com`/`.de`/`.global` wurden **aus Cloudflare entfernt**. Ronny hat **5 neue Domains**; welche fürs Projekt, ist **noch offen**.
+- **Cloudflare-Pages-Projekt läuft weiter**, erreichbar über `cognizance-website.pages.dev` (+ 2 Domains). Zum Testen reicht das.
+- **DMARC / E-Mail-Schutz** und **Cloudflare Access (Login „Nur ich")** hingen an den entfernten Domains — **vermutlich mit-weg, zu prüfen** nach Domain-Wahl.
+- **Cloudflare-MCP:** `.mcp.json` deckt Workers/Storage ab, **nicht** DNS/Zone oder Pages-Deploy-Status.
 
 ## 8. Offene Aufgaben / nächste Ziele
 
-- **NÄCHSTER CODE-JOB: Overlay über Video 1 bauen** — Klick-und-Halte-Auslöser in der Mitte + Gravitationslinsen-Effekt aufs Netz + Lade-Logik, die bei 100 % Video 2 startet. Kann sofort beginnen (Video 1 ist fertig). Inkrementell, je Schritt Git-Commit.
-- **Video 1 ins GitHub hochladen** und in `index.html` als `<video>` einbinden (stumm, Autoplay-Loop).
-- **Video 2 (Kling-3.0-Netz) sichern** (`netz_kling_final.mp4`) → in `index.html` als Auslöse-Video einbinden → **Naht 1** (Lichtblitz, `#bloom` vorhanden) + **Naht 2** (Schleier ab Sek. 9 in `#080815`, dann Portal öffnen) im Code. Video 2 ist **inhaltlich fertig** (Abschnitt 5a).
-- **Portal-„Aufleuchten" verfeinern** (Abschnitt 5a): vorhandene Einblende (`portalEnter`) an den Video-Übergang anschließen; nur Animation, kein Aussehen ändern.
-- **Portal III (Holodeck)** bauen — Drehbuch in Abschnitt 6.
-- Inhalte für **Portale II & IV**.
-- **Sound** für Video 2 (später, Firefly „Generate sound effects").
-- **Video-Dateigröße optimieren** (Codec/Bitrate/Länge; Abschnitt 5a).
-- **Domain-Entscheidung:** eine der 5 neuen Domains auswählen und dem Pages-Projekt zuweisen.
-- **Infrastruktur prüfen** (Abschnitt 7): DMARC weg? Access-Schutz weg? Nach Domain-Wahl klären.
-- Optional: JavaScript aus `index.html` in eine eigene `script.js` auslagern.
+- **Feinschliff der Timings** der Startseite (Ladezeit „ERKENNE", Naht-Tempo, Portal-Choreografie) — nach Ronnys Gefühl, alles leicht justierbar.
+- **Inhalte für Portale II & IV** (aktuell Platzhalter).
+- **Portal III (Holodeck)** bauen — Drehbuch Abschnitt 6.
+- **Sound für Video 2** (Firefly „Generate sound effects").
+- **Video-Dateigröße** ggf. weiter optimieren (aktuell Video 1 = 4,9 MB, Video 2 = 13,9 MB — beide ok für Cloudflares 25-MB-Grenze).
+- **Domain-Entscheidung:** eine der 5 neuen Domains auswählen und dem Pages-Projekt zuweisen; danach **DMARC/Access prüfen** (Abschnitt 7).
+- Optional: `video-preview.html` / `neues-intro.html` aufräumen; JS aus `index.html` in `script.js` auslagern.
 
 ## 9. Changelog
 
-- **13. Juli 2026 (Korrektur):** **Naht-2-Widerspruch bereinigt.** Der Überblick „Die zwei Nähte" sagte fälschlich, Video 2 **ende von selbst in reinem Schwarz** (Code-Schleier nur als Notfall in der letzten Sekunde). Richtig ist die finale Fassung: Das Video klingt **nicht** schwarz aus; **der Code dunkelt ab Sekunde 9** in die Portalfarbe `#080815` ab (voll deckend spätestens bei Sek. 10), dann Portal. Überblick auf diese Fassung nachgezogen. Auch die veraltete „auf das Wurmloch zu"-Beschreibung dort korrigiert (Video 2 ist **kein** Wurmloch).
-- **13. Juli 2026 (Abend):** **Video 2 GEFUNDEN.** Wurmloch verworfen (kein Modell schafft die exakte
-  Schlauch-Form zuverlässig — Striche/Ringe/Warp; Abzweigungen nicht in einem Clip machbar → Grenze der
-  KI-Video-Modelle bei *exakter Geometrie*). Neuer Flug (**Kling 3.0**): **atmendes Quanten-Netz → aufsteigende
-  geometrische Figur (spitz, „Fontäne") → Sterne verblassen**, 10 Sek., ab Sek. 9 Ausklang. Passt zur Design-
-  Identität. **`index.html` gelesen** → echte Portal-Farben (`#080815`/`#010103`, Gitter `rgb(130,175,245)`@5%,
-  Gold `#d4af37`, Violett `#b19ffb`) + vorhandene Animationen (`portalEnter` gestaffelt, `#bloom` Lichtblitz).
-  **Naht 2 final:** Code-Schleier ab **Sek. 9** → Zielfarbe **`#080815`**, ~1–1,5 Sek. (im Code justierbar),
-  **spätestens bei Sek. 10 voll deckend**; **danach** Portal öffnen (nacheinander, nicht gleichzeitig).
-  Portal-Seite darf fürs **Animierte** angefasst werden (Layout/Design/Farben/Schriften/Hintergrund bleiben).
-  Modell-Praxis: Ray HDR (schön, aber 5 Sek. + dunkelt Startbild ab + teuer 1800 Cr.), Ray normal (9 Sek., 900 Cr.,
-  kein Seed-Feld), Veo (Seed änderbar, teurer), Kling (günstig, Treffer). Farbwerte statt „heller" via Adobe-Stock-KI.
-
-- **13. Juli 2026:** **Startseite als INTERAKTIVE Zwei-Video-Architektur festgelegt** (Abschnitt 5a) — Gegenteil des still ablaufenden Videos vom 11. Juli. Kette: **Video 1 (Ambient-Loop, stumm, fertig & gekauft) → Overlay mit Klick-und-Halte-Auslöser + Gravitationslinse (Code) → Video 2 (Flug, einmalig, endet schwarz, Ton erlaubt) → Portal-Seite aus Schwarz.** Auslöser bewusst als **Ritual** (Klick-und-Halten in der Mitte). **Naht 1** = Frame-Matching (Firefly-Startbild = Ruhebild) + Code-Lichtblitz; **Naht 2** = Schwarz-Ausklang + Code-Schwarz-Schleier. **Schriftzug** „Cognizance World" nicht ins Video, sondern als Code-Overlay (evtl. Seite 2). **Firefly Video 2:** Modell **Veo 3.1** (Adobe-Modell schwächer; Alternativen Kling 3.0 Omni, Runway Gen 4.5; Sora 2 meiden), **Startbild `Video_1.png`, kein Endbild** (sonst Kamera-Sperre), **16:9 / 1080p / 8 Sek.** **Farbe:** durchgehend harmonisch blau → gold/violett → schwarz. **Video 2 v1 generiert:** Netz + Universum gut; Wurmloch/Sog/Abzweigungen noch offen → nachgeschärfter Prompt (Wurmloch+Sog zuerst, Abzweigungen später, evtl. nicht in einem Clip lösbar). **Recherche:** Firefly First/Last-Frame bestätigt; Endbild sperrt Kamerabewegung; Modell-Vergleich 2026. **Orano** = Echtzeit-Code-Erlebnis (kein Video). **Dateigröße** ~70 MB/Video → später optimieren.
-- **11. Juli 2026:** Grundsatz-Entscheidung: Startseite komplett neu als eingebettetes Firefly-Video (löst WebGL-Schwarze-Loch-Intro ab; Code-Platinen-Hybrid pausiert, Dateien bleiben). Recherche geklärt: „Video → lesbarer Code" geht nicht; Lottie nur für Vektor/Linien; After-Effects-Video nicht via Bodymovin in Code wandelbar. Naht-Lösung: Video endet schwarz → Portal-Seite aus Schwarz.
-- **9. Juli 2026:** Hybrid-Umbau (Code-Platine) begonnen in `neues-intro.html`; Teil 1 gebaut. Unsterblichkeits-Kreislauf ergänzt. *(Seit 11./13. Juli pausiert.)*
-- **9. Juli 2026:** Vision fürs „Innere" + Ende (Platine/Chip); Arbeitsregel: kein „schnell", nur Qualität, immer erst erklären und auf „Go" warten.
-- **9. Juli 2026:** Navigations-Buttons + Platzhalter-Seiten für Tore II–IV gebaut.
-- **9. Juli 2026:** WebGL-Schwarze-Loch-Intro fertig & in `index.html` integriert (später abgelöst).
-- **9. Juli 2026:** Alle drei `theholographicme`-Domains aus Cloudflare entfernt; 5 neue Domains, Auswahl offen; Infrastruktur „im Umbruch".
-- *(früher)* Haupt-Domain cognizance.world → theholographicme.com; Auge-des-Beobachters-Intro; Wurmloch (4D-Tesserakt); DMARC repariert; Website privat via Access.
+- **13. Juli 2026 (Nacht) — VIDEO-STARTSEITE LIVE.** Komplette neue `index.html` gebaut, integriert und deployed: Video 1 (`video1.mp4`, aus 4K-`.mov` via `avconvert` auf 1080p/4,9 MB) + **Gravitationslinse** (WebGL, weiche Delle, folgt Maus, vertieft beim Halten; **mit Rückfall** für `file://`/kein-WebGL) + **„ERKENNE"-Ritual** → **Lichtblitz (Naht 1)** → **Video 2** (`netz_kling_v1.mp4`, 13,9 MB) → **Naht 2** (Code dunkelt ab Sek. 9 auf `#080815`) → **Portal-Menü** ceremoniell (Schriftzug „Cognizance World" Buchstabe-für-Buchstabe aus der Mitte, dann Kreise einzeln, dann Ziffern) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation, „Von vorn"). Ersetzt das WebGL-Schwarze-Loch-Intro. Beide Videos im Repo, 4K-Original via `.gitignore` ausgeschlossen. Getestet, keine Fehler.
+- **13. Juli 2026:** Naht-2-Widerspruch in der Doku bereinigt (Video klingt **nicht** von selbst schwarz aus; Code dunkelt ab Sek. 9 auf `#080815`).
+- **13. Juli 2026:** **Video 2 gefunden** (Kling 3.0: atmendes Quanten-Netz → aufsteigende Figur; Wurmloch verworfen, weil KI-Video keine exakte Geometrie schafft). Startseite als **Zwei-Video-Architektur** festgelegt (Video 1 Ambient-Loop + Overlay + Video 2 Flug + Nähte).
+- **11. Juli 2026:** Grundsatz-Entscheidung: Startseite als eingebettetes Video statt WebGL. Recherche: „Video → lesbarer Code" geht nicht; Lottie nur für Vektor.
+- **9. Juli 2026:** WebGL-Schwarze-Loch-Intro fertig & integriert (später abgelöst); Navigations-Buttons + Platzhalterseiten II–IV; Platinen-Hybrid-Teil-1 in `neues-intro.html`; Arbeitsregel „Qualität vor Tempo, auf Go warten" festgehalten; alle `theholographicme`-Domains aus Cloudflare entfernt (Infrastruktur „im Umbruch").
+- *(früher)* cognizance.world → theholographicme.com; Auge-des-Beobachters-Intro; Wurmloch (4D-Tesserakt); DMARC repariert; Website zeitweise privat via Access.
