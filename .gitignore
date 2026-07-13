@@ -11,3 +11,7 @@ zwei.png
 drei.png
 vier.jpeg
 fünf.jpeg
+# Original-Video 1 (4K, 62,7 MB) - zu groß für Cloudflare (25-MB-Grenze). Web-Version = video1.mp4
+AdobeStock_430161342.mov
+# macOS-Text-Schnipsel
+*.textClipping
