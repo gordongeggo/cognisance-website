@@ -3,106 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video-Preview — Ritual + Naht 1 + Video 2 + Naht 2</title>
+    <title>Video-Preview — Gravitationslinse + Ritual + Video 2 + Nähte</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%;
             background: #030308; overflow: hidden;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            user-select: none;
+            user-select: none; cursor: crosshair;
         }
 
-        /* Video 1 — die Ambient-Schleife (läuft stumm, endlos, im Hintergrund) */
-        #v1 {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: 0; background: #05060f;
-        }
+        /* Video 1 = nur Textur-Quelle (unsichtbar, läuft aber weiter) */
+        #v1 { position: fixed; top: 0; left: 0; width: 2px; height: 2px; opacity: 0.01; z-index: -1; pointer-events: none; }
+
+        /* Die Gravitationslinse rendert Video 1 (WebGL) — der sichtbare Hintergrund */
+        #lens { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
 
         /* Video 2 — der Flug */
-        #v2 {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; background: #030308; z-index: 2;
-            opacity: 0; transition: opacity 0.4s ease;
-        }
+        #v2 { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #030308; z-index: 2; opacity: 0; transition: opacity 0.4s ease; }
         #v2.on { opacity: 1; }
 
-        /* Das Ritual: leuchtender Auslöser in der Mitte (gedrückt halten) */
-        #ritual {
-            position: fixed; inset: 0; z-index: 5;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.6s ease;
-        }
+        /* Ritual */
+        #ritual { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease; }
         #ritual.gone { opacity: 0; pointer-events: none; }
-        #trigger {
-            position: relative; width: 160px; height: 160px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
+        #trigger { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
         #ring { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
         #ring circle { fill: none; stroke-width: 2; }
-        #ring .bg { stroke: rgba(212,175,55,0.12); }
-        #ring .prog {
-            stroke: #d4af37; stroke-dasharray: 440; stroke-dashoffset: 440;
-            transition: stroke-dashoffset 0.08s linear; filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
-        }
-        #label {
-            font-size: 0.85rem; font-weight: 300; letter-spacing: 8px; text-indent: 8px;
-            color: #d4af37; text-shadow: 0 0 12px rgba(212,175,55,0.4);
-        }
-        /* sanftes Pulsieren, das zum Berühren einlädt */
+        #ring .bg { stroke: rgba(212,175,55,0.16); }
+        #ring .prog { stroke: #d4af37; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 0.08s linear; filter: drop-shadow(0 0 7px rgba(212,175,55,0.6)); }
+        #label { font-size: 0.85rem; font-weight: 300; letter-spacing: 8px; text-indent: 8px; color: #d4af37; text-shadow: 0 0 14px rgba(212,175,55,0.5); }
         #trigger { animation: breathe 3.2s ease-in-out infinite; }
         @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         #trigger.charging { animation: none; }
-        #hint {
-            margin-top: 30px; font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase;
-            color: rgba(255,255,255,0.35); transition: opacity 0.4s ease;
-        }
+        #hint { margin-top: 30px; font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.4); transition: opacity 0.4s ease; }
         #hint.hide { opacity: 0; }
 
-        /* Naht 1: heller Lichtblitz beim Umschalten Video 1 -> Video 2 */
-        #flash {
-            position: fixed; inset: 0; z-index: 7; pointer-events: none; opacity: 0;
-            background: radial-gradient(circle at center,
-                        rgba(255,246,220,0.95) 0%, rgba(212,175,55,0.5) 22%,
-                        rgba(177,159,251,0.18) 45%, rgba(3,3,8,0) 68%);
-            transition: opacity 0.5s ease;
-        }
+        /* Naht 1: Lichtblitz */
+        #flash { position: fixed; inset: 0; z-index: 7; pointer-events: none; opacity: 0;
+            background: radial-gradient(circle at center, rgba(255,246,220,0.95) 0%, rgba(212,175,55,0.5) 22%, rgba(177,159,251,0.18) 45%, rgba(3,3,8,0) 68%);
+            transition: opacity 0.5s ease; }
         #flash.on { opacity: 1; transition: opacity 0.12s ease; }
 
-        /* Naht 2: Schleier auf Portalfarbe #080815 */
+        /* Naht 2 */
         #veil { position: fixed; inset: 0; z-index: 8; background: #080815; opacity: 0; pointer-events: none; }
 
         /* Portal-Platzhalter */
-        #portal {
-            position: fixed; inset: 0; z-index: 9;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, #080815 0%, #010103 100%);
-            opacity: 0; visibility: hidden; transition: opacity 1.3s ease;
-        }
+        #portal { position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, #080815 0%, #010103 100%); opacity: 0; visibility: hidden; transition: opacity 1.3s ease; }
         #portal.on { opacity: 1; visibility: visible; }
-        #portal h2 {
-            font-weight: 100; letter-spacing: 10px; text-transform: uppercase;
-            color: rgba(255,255,255,0.85); text-shadow: 0 0 25px rgba(177,159,251,0.3);
-            margin-bottom: 44px; font-size: clamp(1rem, 4vw, 1.6rem); text-align: center;
-        }
+        #portal h2 { font-weight: 100; letter-spacing: 10px; text-transform: uppercase; color: rgba(255,255,255,0.85); text-shadow: 0 0 25px rgba(177,159,251,0.3); margin-bottom: 44px; font-size: clamp(1rem,4vw,1.6rem); text-align: center; }
         .pg { display: grid; grid-template-columns: repeat(2, auto); gap: clamp(24px,6vw,60px); justify-items: center; }
-        .orb {
-            width: clamp(84px,20vw,120px); height: clamp(84px,20vw,120px); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: #d4af37; font-weight: 100; font-size: 1.7rem;
-            border: 1px solid rgba(212,175,55,0.35);
-            background: radial-gradient(circle at 32% 28%, rgba(177,159,251,0.28), rgba(4,4,20,0.65) 72%);
-        }
+        .orb { width: clamp(84px,20vw,120px); height: clamp(84px,20vw,120px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-weight: 100; font-size: 1.7rem; border: 1px solid rgba(212,175,55,0.35); background: radial-gradient(circle at 32% 28%, rgba(177,159,251,0.28), rgba(4,4,20,0.65) 72%); }
         .plabel { margin-top: 54px; font-size: 0.68rem; letter-spacing: 3px; color: rgba(255,255,255,0.3); text-align: center; }
     </style>
 </head>
 <body>
-    <!-- Video 1 — Ambient-Schleife (stumm, endlos) -->
     <video id="v1" src="video1.mp4" muted loop autoplay playsinline></video>
+    <canvas id="lens"></canvas>
 
     <video id="v2" src="netz_kling_v1.mp4" playsinline preload="auto"></video>
 
-    <!-- Das Ritual: gedrückt halten -->
     <div id="ritual">
         <div id="trigger">
             <svg id="ring" viewBox="0 0 160 160">
@@ -123,8 +83,40 @@
         <div class="plabel">(Portal-Platzhalter — hier kommt später das echte Menü)</div>
     </div>
 
+    <!-- ===== Gravitationslinse (WebGL) ===== -->
+    <script id="lens-vert" type="x-shader/x-vertex">
+        attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }
+    </script>
+    <script id="lens-frag" type="x-shader/x-fragment">
+        precision highp float;
+        uniform sampler2D u_video;
+        uniform vec2  u_res;
+        uniform vec2  u_lens;     // Linsenzentrum, 0..1 (y unten)
+        uniform float u_str;      // Einstein-Radius (y-normiert)
+        uniform float u_vaspect;  // Video-Seitenverhältnis (b/h)
+        vec2 coverUV(vec2 uv){
+            float sa = u_res.x/u_res.y;
+            vec2 s = (sa > u_vaspect) ? vec2(1.0, u_vaspect/sa) : vec2(sa/u_vaspect, 1.0);
+            return (uv - 0.5)*s + 0.5;
+        }
+        void main(){
+            vec2 uv = gl_FragCoord.xy / u_res;
+            vec2 asp = vec2(u_res.x/u_res.y, 1.0);
+            vec2 pv = (uv - u_lens) * asp;               // aspektkorrigiert
+            float r = length(pv);
+            float k = 1.0 - (u_str*u_str)/(r*r + 1e-4);   // Punktmassen-Linse
+            vec2 luv = u_lens + (pv * k) / asp;           // gelinste Sample-Position
+            vec3 col = texture2D(u_video, coverUV(luv)).rgb;
+            float ring = smoothstep(0.022, 0.0, abs(r - u_str)) * step(0.02, u_str);
+            col += vec3(0.35, 0.55, 1.0) * ring * 0.45;   // Einstein-Ring (Aufhellung)
+            gl_FragColor = vec4(col, 1.0);
+        }
+    </script>
+
     <script>
+        const v1      = document.getElementById('v1');
         const v2      = document.getElementById('v2');
+        const canvas  = document.getElementById('lens');
         const ritual  = document.getElementById('ritual');
         const trigger = document.getElementById('trigger');
         const prog    = document.querySelector('#ring .prog');
@@ -133,40 +125,92 @@
         const veil    = document.getElementById('veil');
         const portal  = document.getElementById('portal');
 
-        // ---- Klick-und-Halte-Ritual ----
-        const CIRC = 440;                 // Umfang des Rings (2·π·70)
-        let charge = 0, holding = false, launched = false;
+        // ---------- WebGL-Gravitationslinse ----------
+        const gl = canvas.getContext('webgl');
+        let uRes, uLens, uStr, uVasp, lensReady = false;
+        if (gl) {
+            const cs = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) console.error('Shader:', gl.getShaderInfoLog(sh)); return sh; };
+            const prog2 = gl.createProgram();
+            gl.attachShader(prog2, cs(gl.VERTEX_SHADER,   document.getElementById('lens-vert').textContent));
+            gl.attachShader(prog2, cs(gl.FRAGMENT_SHADER, document.getElementById('lens-frag').textContent));
+            gl.linkProgram(prog2); gl.useProgram(prog2);
+            const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+            const lp = gl.getAttribLocation(prog2, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+            const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            uRes  = gl.getUniformLocation(prog2, 'u_res');
+            uLens = gl.getUniformLocation(prog2, 'u_lens');
+            uStr  = gl.getUniformLocation(prog2, 'u_str');
+            uVasp = gl.getUniformLocation(prog2, 'u_vaspect');
+            window._lensTex = tex;
+            lensReady = true;
+        }
+        function resizeLens(){
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            canvas.width  = Math.floor(window.innerWidth  * dpr);
+            canvas.height = Math.floor(window.innerHeight * dpr);
+            if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resizeLens); resizeLens();
 
-        function down(e){ if (!launched) { holding = true; hint.classList.add('hide'); trigger.classList.add('charging'); } }
-        function up(){ holding = false; if (!launched) trigger.classList.remove('charging'); }
+        // Mausposition (Linsenzentrum), weich nachgezogen
+        let lx = 0.5, ly = 0.5, tlx = 0.5, tly = 0.5;
+        window.addEventListener('mousemove', e => { tlx = e.clientX / window.innerWidth; tly = e.clientY / window.innerHeight; });
+        window.addEventListener('touchmove', e => { if (e.touches[0]) { tlx = e.touches[0].clientX / window.innerWidth; tly = e.touches[0].clientY / window.innerHeight; } }, { passive: true });
+
+        // ---------- Ritual ----------
+        const CIRC = 440;
+        let charge = 0, holding = false, launched = false;
+        const down = () => { if (!launched) { holding = true; hint.classList.add('hide'); trigger.classList.add('charging'); } };
+        const up   = () => { holding = false; if (!launched) trigger.classList.remove('charging'); };
         window.addEventListener('mousedown', down);
         window.addEventListener('mouseup', up);
         window.addEventListener('touchstart', down, { passive: true });
         window.addEventListener('touchend', up);
 
-        function ritualLoop(){
-            if (!launched){
-                charge += holding ? 0.012 : -0.02;      // laden beim Halten, sonst zurück
-                charge = Math.max(0, Math.min(1, charge));
-                prog.style.strokeDashoffset = CIRC * (1 - charge);
-                if (charge >= 1) launch();
-            }
-            requestAnimationFrame(ritualLoop);
-        }
-        requestAnimationFrame(ritualLoop);
+        // ---------- Haupt-Schleife (Linse + Ladung) ----------
+        function loop(){
+            if (launched) return;                     // Video 2 übernimmt -> Linse stoppt
+            lx += (tlx - lx) * 0.10; ly += (tly - ly) * 0.10;
 
-        // ---- Naht 1: Lichtblitz -> Video 2 ----
+            // Ladung
+            charge += holding ? 0.012 : -0.02;
+            charge = Math.max(0, Math.min(1, charge));
+            prog.style.strokeDashoffset = CIRC * (1 - charge);
+
+            // Linse rendern
+            if (gl && lensReady && v1.readyState >= 2) {
+                gl.bindTexture(gl.TEXTURE_2D, window._lensTex);
+                try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, v1); } catch(e){}
+                gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.uniform2f(uLens, lx, 1.0 - ly);        // y unten
+                gl.uniform1f(uStr, 0.09 + charge * 0.17); // Linse folgt Maus, wird beim Halten tiefer
+                gl.uniform1f(uVasp, (v1.videoWidth || 16) / (v1.videoHeight || 9));
+                gl.drawArrays(gl.TRIANGLES, 0, 3);
+            }
+
+            if (charge >= 1) launch();
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+
+        // ---------- Naht 1 ----------
         function launch(){
             if (launched) return;
             launched = true;
-            flash.classList.add('on');                  // heller Blitz überstrahlt den Schnitt
+            flash.classList.add('on');
             ritual.classList.add('gone');
             v2.classList.add('on');
             v2.play().catch(err => console.error('Video-Start:', err));
             setTimeout(() => flash.classList.remove('on'), 450);
         }
 
-        // ---- Naht 2: ab Sek. 9 auf #080815 abdunkeln -> Portal ----
+        // ---------- Naht 2 ----------
         const DARK_START = 9.0;
         let revealed = false;
         v2.addEventListener('timeupdate', () => {
@@ -176,12 +220,7 @@
             if (t >= d - 0.05) reveal();
         });
         v2.addEventListener('ended', reveal);
-        function reveal(){
-            if (revealed) return;
-            revealed = true;
-            veil.style.opacity = 1;
-            portal.classList.add('on');
-        }
+        function reveal(){ if (revealed) return; revealed = true; veil.style.opacity = 1; portal.classList.add('on'); }
     </script>
 </body>
 </html>
