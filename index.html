@@ -100,10 +100,20 @@
             border: 1px solid rgba(212,175,55,0.35);
             background: radial-gradient(circle at 32% 28%, rgba(177,159,251,0.28), rgba(4,4,20,0.65) 72%);
             box-shadow: 0 0 30px rgba(177,159,251,0.15), inset 0 0 30px rgba(177,159,251,0.12);
-            opacity: 0; transform: scale(0.5);
-            transition: opacity 2.8s ease, transform 2.8s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.5s ease, border-color 0.5s ease;
+            /* UFO-Einflug: der Kreis wartet weit ausserhalb des Bildes (--fx/--fy) und
+               schiesst auf seinen Platz. Dauer/Tempo setzt das JS aus CFG. */
+            opacity: 0; transform: translate(var(--fx, 0px), var(--fy, 0px));
+            transition: transform 0.42s cubic-bezier(0.15,0.7,0.25,1), opacity 0.08s linear,
+                        box-shadow 0.5s ease, border-color 0.5s ease;
         }
-        .orb.show { opacity: 1; transform: scale(1); }
+        .orb.show { opacity: 1; transform: translate(0px, 0px); }
+
+        /* Startpunkte ausserhalb des Bildschirms — 120vw/120vh ist sicher hinter dem Rand.
+           I: von rechts · II: von unten · IV: von links · III: von unten */
+        .portal[data-target="chapter-one"]   .orb { --fx:  120vw; --fy: 0px;   }
+        .portal[data-target="chapter-two"]   .orb { --fx: 0px;    --fy: 120vh; }
+        .portal[data-target="chapter-four"]  .orb { --fx: -120vw; --fy: 0px;   }
+        .portal[data-target="chapter-three"] .orb { --fx: 0px;    --fy: 120vh; }
         .portal:hover .orb { border-color: #d4af37; box-shadow: 0 0 50px rgba(212,175,55,0.4), inset 0 0 40px rgba(177,159,251,0.22); }
         .num { color: #d4af37; font-weight: 100; font-size: clamp(1.4rem,5vw,2.1rem); opacity: 0; transition: opacity 1.6s ease; }
         .num.show { opacity: 1; }
@@ -259,6 +269,23 @@
             WORD_GAP:   0.5,       // Abstand von Buchstabe zu Buchstabe (kleiner = schneller)
             WORD_GLOW:  2.2,       // wie lange EIN Buchstabe zum Aufleuchten braucht
             SUB_DELAY:  1.0,       // Pause zwischen letztem Buchstaben und dem Untertitel
+
+            // --- Die vier Portale (UFO-Einflug) ---
+            // Flugreihenfolge: I (von rechts), II (von unten), IV (von links), III (von unten).
+            // Die Richtungen stehen im CSS bei „.portal[data-target=…] .orb".
+            FLY_ORDER: ['chapter-one', 'chapter-two', 'chapter-four', 'chapter-three'],
+            ORB_DELAY:    1.2,     // Pause zwischen Untertitel und dem ersten Einflug
+            ORB_FLY_DUR:  0.42,    // Flugdauer EINES Kreises (kleiner = schneller/schnittiger)
+            ORB_FLY_GAP:  0.22,    // ganz kurze Pause zwischen zwei Einfluegen
+            ORB_FLY_EASE: 'cubic-bezier(0.15,0.7,0.25,1)',  // hohes Tempo, dann abrupter Stopp
+            ORB_SETTLE:   0.15,    // Pause nach der Landung, bevor das Tor zu schweben beginnt
+            FLOAT_PHASE:  1.5,     // Versatz der Schwebe-Kurve pro Tor (damit sie nicht im
+                                   // Gleichschritt wippen; 0 = alle gleichzeitig)
+
+            // --- Ziffern I–IV und Bezeichnungen ---
+            NUM_DELAY:   0.8,      // Pause, nachdem alle vier Scheiben stehen
+            NUM_GAP:     1.9,      // Abstand von Ziffer zu Ziffer
+            LABEL_DELAY: 1.0,      // Abstand zwischen einer Ziffer und ihrer Bezeichnung
         };
         /* =================================================================== */
 
@@ -331,18 +358,34 @@
             // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
             setTimeout(() => subtitle.classList.add('show'), (wordEnd + CFG.SUB_DELAY) * 1000);
 
-            const orbs = [...document.querySelectorAll('.orb')];
-            const O_START = wordEnd + CFG.SUB_DELAY + 2.5, O_GAP = 3.4;
-            orbs.forEach((o, i) => {
-                setTimeout(() => o.classList.add('show'), (O_START + i * O_GAP) * 1000);
-                setTimeout(() => o.closest('.portal').classList.add('float'), (O_START + i * O_GAP + 2.8) * 1000);
+            // Die vier Portale schiessen nacheinander blitzschnell ins Bild (UFO-Einflug)
+            const flyOrder = CFG.FLY_ORDER.map(t => document.querySelector('.portal[data-target="' + t + '"]'));
+            const O_START = wordEnd + CFG.SUB_DELAY + CFG.ORB_DELAY;
+            const O_STEP  = CFG.ORB_FLY_DUR + CFG.ORB_FLY_GAP;
+            flyOrder.forEach((p, i) => {
+                const orb = p.querySelector('.orb');
+                // Reihenfolge der Werte = Reihenfolge in der transition-Zeile:
+                // transform, opacity, box-shadow, border-color
+                orb.style.transitionDuration       = CFG.ORB_FLY_DUR + 's, 0.08s, 0.5s, 0.5s';
+                orb.style.transitionTimingFunction = CFG.ORB_FLY_EASE + ', linear, ease, ease';
+                const t = O_START + i * O_STEP;
+                setTimeout(() => orb.classList.add('show'), t * 1000);
+                // Schweben beginnt nach der Landung. Die negative Verzoegerung setzt jedes
+                // Tor an eine andere Stelle der Schwebe-Kurve -> sie schweben versetzt
+                // statt im Gleichschritt (so sah es auch vorher aus).
+                setTimeout(() => {
+                    p.style.animationDelay = (-i * CFG.FLOAT_PHASE) + 's';
+                    p.classList.add('float');
+                }, (t + CFG.ORB_FLY_DUR + CFG.ORB_SETTLE) * 1000);
             });
-            const circlesEnd = O_START + (orbs.length - 1) * O_GAP + 2.8;
+            const circlesEnd = O_START + (flyOrder.length - 1) * O_STEP + CFG.ORB_FLY_DUR;
+
+            // Ziffern, danach die Bezeichnungen
             const nums = [...document.querySelectorAll('.num')];
-            const N_START = circlesEnd + 1.2, N_GAP = 1.9;
-            nums.forEach((n, i) => setTimeout(() => n.classList.add('show'), (N_START + i * N_GAP) * 1000));
+            const N_START = circlesEnd + CFG.NUM_DELAY;
+            nums.forEach((n, i) => setTimeout(() => n.classList.add('show'), (N_START + i * CFG.NUM_GAP) * 1000));
             const labels = [...document.querySelectorAll('.plabel2')];
-            labels.forEach((l, i) => setTimeout(() => l.classList.add('show'), (N_START + i * N_GAP + 1.0) * 1000));
+            labels.forEach((l, i) => setTimeout(() => l.classList.add('show'), (N_START + i * CFG.NUM_GAP + CFG.LABEL_DELAY) * 1000));
         }
 
         // ---------- WebGL-Gravitationslinse (mit Rückfall) ----------
