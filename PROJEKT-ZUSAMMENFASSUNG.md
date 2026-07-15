@@ -3,7 +3,7 @@
 > **Eine Datei für alles.** Dieses Dokument ist die *einzige* aktuelle Projekt-Übersicht.
 > Es ersetzt jede vorherige Fassung. In einen anderen Claude-Chat oder als Wissensquelle
 > ins claude.ai-Projekt hochladen. **Immer nur die neueste Version im Projekt behalten.**
-> **Stand: 13. Juli 2026 — die neue Video-Startseite ist GEBAUT und LIVE.**
+> **Stand: 15. Juli 2026 — Video-Startseite LIVE; Portal-Zeremonie auf „UFO-Einflug" umgebaut.**
 
 ---
 
@@ -75,12 +75,24 @@ Die Seite mit den **vier Toren** ist **fertig**. Einzige mögliche spätere Ausn
 
 **Navigation (fertig & live):** „← Zu den Toren" auf jeder Kapitel-/Platzhalterseite; „Andere Tore: I II III IV"-Sprunglinks (auch in Kapitel I); „↻ Von vorn" (lädt die Seite neu, das ganze Intro startet von vorn).
 
-**Ceremonieller Aufbau (neu gebaut, langsam ~30 Sek. — Ronnys Wunsch):**
-1. **„Cognizance World"** — die Buchstaben blenden **einzeln, langsam, aus der Mitte heraus** auf (Alien-Titel-Stil).
+**Ceremonieller Aufbau (umgebaut 15. Juli 2026 — „UFO-Einflug", ~24 Sek.):**
+1. **„Cognizance World"** — die Buchstaben stehen **von Anfang an fest an ihrer Position** und
+   leuchten nacheinander **in zufällig gewürfelter Reihenfolge** auf (kein Einfliegen, kein Zoom).
+   Der Schriftzug ist **responsiv**: auf dem Desktop unverändert, auf schmalen Handys schrumpft er
+   automatisch, damit er nie über den Rand steht.
 2. dann der Untertitel **„Vier Tore der Erkenntnis"**.
-3. dann die **4 Kreise nacheinander** (je ~3,4 Sek. Abstand), jeder erscheint **langsam** und zunächst **leer**.
-4. **erst wenn alle 4 Kreise da sind**, kommen die **Ziffern** (I→II→III→IV) einzeln hinein, danach die Bezeichnungen; die Tore **schweben** sanft.
-- Feines **Hintergrund-Gitter** (Holo-Gitter, ~5 % Deckkraft). **Alle Timings sind im Code leicht justierbar.**
+3. dann der **UFO-Einflug**: die 4 Kreise schießen **blitzschnell** nacheinander ins Bild, jeder mit
+   **gerichtetem Bewegungsschlier**, **abruptem Stopp** und **Einrast-Blitz**.
+   Reihenfolge/Richtung: **I** von rechts (→ oben links), **II** von unten (→ oben rechts),
+   **IV** von links (→ unten rechts), **III** von unten (→ unten links).
+4. **erst wenn alle 4 Scheiben stehen**, erwachen die **Ziffern** langsam — **in zufälliger
+   Reihenfolge, nie I→II→III→IV**; jede Bezeichnung folgt ihrer eigenen Ziffer; die Tore **schweben**
+   sanft (versetzt, nicht im Gleichschritt).
+- Feines **Hintergrund-Gitter** (Holo-Gitter, ~5 % Deckkraft).
+- **Klick irgendwo während der Zeremonie** = überspringen, sofort das fertige Menü.
+- **Wiedererkennung:** erster Besuch → volle Zeremonie; jeder weitere Besuch → direkt das fertige
+  Portal (`localStorage`). **„↻ Von vorn" zeigt immer wieder die volle Zeremonie.**
+- **Alle Timings stehen gesammelt im `CFG`-Block** ganz oben im `<script>` und sind leicht justierbar.
 
 ## 5. Was live läuft (Ist-Zustand in `index.html`)
 
@@ -153,6 +165,21 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Changelog
 
+- **15. Juli 2026 — PORTAL-ZEREMONIE UMGEBAUT („UFO-Einflug").** In 7 kleinen Schritten, je ein Commit:
+  (1) Schriftzug **responsiv** (Desktop beweisbar unverändert; 375 px → Faktor 0,91, 320 px → 0,87;
+  `ResizeObserver` statt `resize`-Event). (2) Buchstaben **fest an Ort und Stelle**, Aufleuchten in
+  **zufälliger Reihenfolge** (`shuffled()`, Fisher-Yates; Zoom-Bewegung entfernt). (3) **UFO-Einflug**
+  I→II→IV→III mit Start außerhalb des Bildes (CSS-Variablen `--fx/--fy`), Landung exakt auf der alten
+  Position. (4) **Gerichteter Bewegungsschlier** (SVG-Filter `#trail-x`/`#trail-y`, `stdDeviation "18 0"`
+  bzw. `"0 18"` — ein normaler `blur()` sähe nach Nebel aus) + **Einrast-Blitz**, der exakt auf die
+  Originalwerte zurückfällt. (5) **Ziffern gewürfelt**, `shuffledStrict()` sperrt I→II→III→IV (bei nur
+  4 Ziffern käme sie sonst in ~jedem 24. Besuch; über 3000 Testläufe: 0×, genau die 23 übrigen
+  Reihenfolgen, gleichverteilt). (6) **Klick überspringt** (alle Zeitschalter über `at()` sammelbar,
+  `#portal.instant` nimmt nur den Aufbau-Bewegungen die Dauer — das Schweben läuft weiter; Abbruch-Klick
+  in der capture-Phase, damit er kein Tor öffnet). (7) **Wiedererkennung** über `localStorage`;
+  „Von vorn" hinterlegt eine einmalige `sessionStorage`-Notiz und zeigt die volle Zeremonie.
+  **Video-Kette nachweislich unangetastet** (kein Diff an Video 1/2, Linse, Ritual, Blitz, Naht 2).
+  Dauer der Zeremonie: **~30 → ~24 Sek.** (der Einflug allein: 13,6 → 2,3 Sek.).
 - **13. Juli 2026 (Nacht) — VIDEO-STARTSEITE LIVE.** Komplette neue `index.html` gebaut, integriert und deployed: Video 1 (`video1.mp4`, aus 4K-`.mov` via `avconvert` auf 1080p/4,9 MB) + **Gravitationslinse** (WebGL, weiche Delle, folgt Maus, vertieft beim Halten; **mit Rückfall** für `file://`/kein-WebGL) + **„ERKENNE"-Ritual** → **Lichtblitz (Naht 1)** → **Video 2** (`netz_kling_v1.mp4`, 13,9 MB) → **Naht 2** (Code dunkelt ab Sek. 9 auf `#080815`) → **Portal-Menü** ceremoniell (Schriftzug „Cognizance World" Buchstabe-für-Buchstabe aus der Mitte, dann Kreise einzeln, dann Ziffern) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation, „Von vorn"). Ersetzt das WebGL-Schwarze-Loch-Intro. Beide Videos im Repo, 4K-Original via `.gitignore` ausgeschlossen. Getestet, keine Fehler.
 - **13. Juli 2026:** Naht-2-Widerspruch in der Doku bereinigt (Video klingt **nicht** von selbst schwarz aus; Code dunkelt ab Sek. 9 auf `#080815`).
 - **13. Juli 2026:** **Video 2 gefunden** (Kling 3.0: atmendes Quanten-Netz → aufsteigende Figur; Wurmloch verworfen, weil KI-Video keine exakte Geometrie schafft). Startseite als **Zwei-Video-Architektur** festgelegt (Video 1 Ambient-Loop + Overlay + Video 2 Flug + Nähte).
