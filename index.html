@@ -392,6 +392,31 @@
             do { out = shuffled(arr); } while (out.every((el, i) => el === arr[i]) && ++tries < 20);
             return out;
         }
+        /* ---------- Wiedererkennung: erster vs. wiederkehrender Besuch ----------
+           localStorage = das Gedaechtnis des Browsers, ueberlebt das Schliessen.
+           sessionStorage = nur fuer diesen Tab, ueberlebt das Neuladen — genau richtig
+           fuer den „Von vorn"-Knopf, der ja neu laedt und trotzdem die volle
+           Zeremonie zeigen soll.
+           Beides in try/catch: in privaten Fenstern kann der Zugriff verboten sein,
+           und daran darf die Seite nicht scheitern (dann eben immer volle Zeremonie). */
+        const SEEN_KEY = 'cw_portal_seen', REPLAY_KEY = 'cw_portal_replay';
+        function store(kind, action, key, val){
+            try {
+                const s = (kind === 'local') ? localStorage : sessionStorage;
+                if (action === 'get') return s.getItem(key);
+                if (action === 'set') s.setItem(key, val);
+                if (action === 'del') s.removeItem(key);
+            } catch (e) { return null; }
+        }
+        // Volle Zeremonie? Ja beim ersten Besuch — und immer, wenn „Von vorn" gedrueckt wurde.
+        function wantsFullCeremony(){
+            if (store('session', 'get', REPLAY_KEY) === '1') {
+                store('session', 'del', REPLAY_KEY);   // gilt nur dieses eine Mal
+                return true;
+            }
+            return store('local', 'get', SEEN_KEY) !== '1';
+        }
+
         // Alle Zeitschalter der Zeremonie werden gesammelt, damit ein Klick sie
         // abbrechen kann. at(sek, tuwas) = „mach das nach sek Sekunden".
         let ceremonyTimers = [];
@@ -483,7 +508,18 @@
             });
             void portal.offsetWidth;   // Endzustand sofort verrechnen ...
             // ... und erst danach die normalen Dauern zurueckgeben (fuer Hover usw.)
-            requestAnimationFrame(() => portal.classList.remove('instant'));
+            requestAnimationFrame(() => {
+                portal.classList.remove('instant');
+                // Die Buchstaben-Animation ausdruecklich ans Ende setzen. Ohne das
+                // haengt es an einer feinen Browser-Regel, ob sie beim Zurueckgeben der
+                // Dauer (0s -> 2.2s) beendet bleibt oder von vorn losliefe. Chrome
+                // macht es richtig; hier verlassen wir uns nicht darauf.
+                if (document.getAnimations) {
+                    document.getAnimations().forEach(a => {
+                        if (a.animationName === 'chIgnite') { try { a.finish(); } catch (e) {} }
+                    });
+                }
+            });
         }
 
         // Ein Klick irgendwo waehrend der Zeremonie springt zum fertigen Menue.
@@ -603,7 +639,10 @@
             document.body.classList.add('menu');
             portal.classList.add('on');
             document.getElementById('restart').classList.add('show');
-            revealPortal();
+            // Erster Besuch -> volle Zeremonie. Wiederkehrer -> direkt das fertige Menue.
+            if (wantsFullCeremony()) revealPortal();
+            else                     finishCeremony();
+            store('local', 'set', SEEN_KEY, '1');   // ab jetzt gilt: war schon da
         }
 
         // ---------- Navigation (Menü / Kapitel / Platzhalter) ----------
@@ -662,7 +701,12 @@
             }));
         document.getElementById('back-to-menu').addEventListener('click', () => navigate('menu'));
         document.getElementById('ph-back').addEventListener('click', () => navigate('menu'));
-        document.getElementById('restart').addEventListener('click', () => window.location.reload());
+        // „Von vorn" ist die bewusste Wiederholung: hier soll die volle Zeremonie
+        // erneut laufen, auch wenn der Browser den Besucher schon kennt.
+        document.getElementById('restart').addEventListener('click', () => {
+            store('session', 'set', REPLAY_KEY, '1');
+            window.location.reload();
+        });
         makeLinks(document.getElementById('ch1-links'), 'chapter-one');
     </script>
 </body>
