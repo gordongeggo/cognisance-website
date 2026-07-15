@@ -69,12 +69,18 @@
                die echte Breite messen kann). Passt der Text nicht, schrumpft ihn das JS. */
             width: max-content; transform-origin: 50% 50%;
         }
-        #wordmark .ch {
-            display: inline-block; white-space: pre; opacity: 0;
-            transform: scale(1.25); filter: blur(8px);
-            transition: opacity 2.0s ease, transform 2.0s ease, filter 2.0s ease;
+        /* Die Buchstaben stehen von Anfang an FEST an ihrer Position (keine Bewegung,
+           kein Einfliegen). Sie werden nur aus der Unschaerfe heraus „angezuendet". */
+        #wordmark .ch { display: inline-block; white-space: pre; opacity: 0; filter: blur(9px); }
+        #wordmark .ch.show { animation: chIgnite 2.2s ease forwards; }   /* Dauer setzt das JS aus CFG */
+        @keyframes chIgnite {
+            0%   { opacity: 0; filter: blur(9px);
+                   text-shadow: 0 0 0 rgba(177,159,251,0); }
+            60%  { opacity: 1; filter: blur(0);                       /* kurzes Aufglimmen ... */
+                   text-shadow: 0 0 26px rgba(177,159,251,0.85), 0 0 10px rgba(255,255,255,0.55); }
+            100% { opacity: 1; filter: blur(0);                       /* ... und zurueck auf den normalen Wert */
+                   text-shadow: 0 0 34px rgba(177,159,251,0.28); }
         }
-        #wordmark .ch.show { opacity: 1; transform: none; filter: blur(0); }
 
         #subtitle {
             font-size: clamp(0.72rem, 2.4vw, 0.95rem); letter-spacing: clamp(3px, 1.6vw, 9px);
@@ -249,6 +255,10 @@
             // --- Schriftzug „Cognizance World" ---
             WORDMARK_FILL: 0.92,   // wie viel der Bildschirmbreite der Schriftzug höchstens
                                    // einnehmen darf (0.92 = 92 %, Rest bleibt Luft am Rand)
+            WORD_START: 1.2,       // Wartezeit, bis der erste Buchstabe aufleuchtet
+            WORD_GAP:   0.5,       // Abstand von Buchstabe zu Buchstabe (kleiner = schneller)
+            WORD_GLOW:  2.2,       // wie lange EIN Buchstabe zum Aufleuchten braucht
+            SUB_DELAY:  1.0,       // Pause zwischen letztem Buchstaben und dem Untertitel
         };
         /* =================================================================== */
 
@@ -271,6 +281,7 @@
                 const s = document.createElement('span');
                 s.className = 'ch';
                 s.textContent = (c === ' ') ? '  ' : c;
+                if (c === ' ') s.dataset.space = '1';   // Leerzeichen: kein eigener Aufleucht-Takt
                 wm.appendChild(s);
             });
         })();
@@ -294,24 +305,34 @@
         window.addEventListener('load', fitWordmark);   // falls die Schrift verspätet fertig lädt
         fitWordmark();
 
-        // Reihenfolge aus der Mitte heraus (Alien-Gefühl: erst ein Buchstabe mittig)
-        function middleOut(n){
-            const o = []; let l = Math.floor((n - 1) / 2), r = l + 1;
-            o.push(l);
-            while (o.length < n) { if (r < n) o.push(r++); if (l - 1 >= 0) o.push(--l); }
-            return o;
+        // Zufaellige Reihenfolge (Fisher-Yates): jedes Mal anders gewuerfelt
+        function shuffled(arr){
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
         }
-        // Die LANGSAME, ceremonielle Portal-Choreografie (streng nacheinander)
+        // Die ceremonielle Portal-Choreografie
         function revealPortal(){
             const chSpans  = [...document.querySelectorAll('#wordmark .ch')];
             const subtitle = document.getElementById('subtitle');
-            const order = middleOut(chSpans.length);
-            const L_START = 1.4, L_GAP = 0.55;
-            order.forEach((idx, k) => setTimeout(() => chSpans[idx].classList.add('show'), (L_START + k * L_GAP) * 1000));
-            const wordEnd = L_START + order.length * L_GAP + 2.0;
-            setTimeout(() => subtitle.classList.add('show'), wordEnd * 1000);
+
+            // Buchstaben: fest an Ort und Stelle, nacheinander in ZUFAELLIGER Reihenfolge aufleuchten
+            chSpans.filter(s => s.dataset.space === '1').forEach(s => s.classList.add('show'));
+            const glyphs = shuffled(chSpans.filter(s => s.dataset.space !== '1'));
+            glyphs.forEach((el, k) => {
+                el.style.animationDuration = CFG.WORD_GLOW + 's';
+                setTimeout(() => el.classList.add('show'), (CFG.WORD_START + k * CFG.WORD_GAP) * 1000);
+            });
+            const wordEnd = CFG.WORD_START + (glyphs.length - 1) * CFG.WORD_GAP + CFG.WORD_GLOW;
+
+            // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
+            setTimeout(() => subtitle.classList.add('show'), (wordEnd + CFG.SUB_DELAY) * 1000);
+
             const orbs = [...document.querySelectorAll('.orb')];
-            const O_START = wordEnd + 2.5, O_GAP = 3.4;
+            const O_START = wordEnd + CFG.SUB_DELAY + 2.5, O_GAP = 3.4;
             orbs.forEach((o, i) => {
                 setTimeout(() => o.classList.add('show'), (O_START + i * O_GAP) * 1000);
                 setTimeout(() => o.closest('.portal').classList.add('float'), (O_START + i * O_GAP + 2.8) * 1000);
