@@ -689,6 +689,19 @@
             document.body.classList.add('menu');
             portal.classList.add('on');
             document.getElementById('restart').classList.add('show');
+
+            /* Ab hier werden die Videoebenen nie wieder gebraucht („Von vorn" laedt neu).
+               Vorher liefen sie unsichtbar weiter: Video 1 dekodierte endlos 1080p hinter
+               der undurchsichtigen Portalseite, und der Browser rechnete drei bildschirm-
+               fuellende Ebenen (Video 1 + Linse + Video 2) mit uebereinander. An der
+               Bildkante entstehen dabei Rundungsfehler von einem Bildpunkt, die beim
+               Eintreffen neuer Videobilder kurz aufblitzen — Ronnys „Flackern am unteren
+               Rand". Abschalten spart ausserdem Strom.
+               Sicher, weil der Schleier (#veil, z-index 8) hier bereits voll deckt. */
+            v1.pause(); v2.pause();
+            v1.style.display = 'none';
+            v2.style.display = 'none';
+            canvas.style.display = 'none';
             // Erster Besuch -> volle Zeremonie. Wiederkehrer -> direkt das fertige Menue.
             if (wantsFullCeremony()) revealPortal();
             else                     finishCeremony();
