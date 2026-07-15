@@ -75,24 +75,29 @@ Die Seite mit den **vier Toren** ist **fertig**. Einzige mögliche spätere Ausn
 
 **Navigation (fertig & live):** „← Zu den Toren" auf jeder Kapitel-/Platzhalterseite; „Andere Tore: I II III IV"-Sprunglinks (auch in Kapitel I); „↻ Von vorn" (lädt die Seite neu, das ganze Intro startet von vorn).
 
-**Ceremonieller Aufbau (umgebaut 15. Juli 2026 — „UFO-Einflug", ~24 Sek.):**
-1. **„Cognizance World"** — die Buchstaben stehen **von Anfang an fest an ihrer Position** und
-   leuchten nacheinander **in zufällig gewürfelter Reihenfolge** auf (kein Einfliegen, kein Zoom).
+**Ceremonieller Aufbau (umgebaut 15. Juli 2026 — „UFO-Einflug", ~17 Sek.):**
+Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe Bewegung in der Mitte.
+1. **Sek. 1,0–6,0: „Cognizance World"** erglüht **als GANZES**, gemächlich: eine einzige Bewegung
+   aus der Unschärfe herauf, kurzes violettes Aufglimmen, dann setzt er sich. *(Kein Buchstabe-für-
+   Buchstabe mehr — das flackerte, weil ständig 4–5 Buchstaben in verschiedenen Stadien überlappten.)*
    Der Schriftzug ist **responsiv**: auf dem Desktop unverändert, auf schmalen Handys schrumpft er
    automatisch, damit er nie über den Rand steht.
-2. dann der Untertitel **„Vier Tore der Erkenntnis"**.
-3. dann der **UFO-Einflug**: die 4 Kreise schießen **blitzschnell** nacheinander ins Bild, jeder mit
-   **gerichtetem Bewegungsschlier**, **abruptem Stopp** und **Einrast-Blitz**.
-   Reihenfolge/Richtung: **I** von rechts (→ oben links), **II** von unten (→ oben rechts),
-   **IV** von links (→ unten rechts), **III** von unten (→ unten links).
-4. **erst wenn alle 4 Scheiben stehen**, erwachen die **Ziffern** langsam — **in zufälliger
-   Reihenfolge, nie I→II→III→IV**; jede Bezeichnung folgt ihrer eigenen Ziffer; die Tore **schweben**
-   sanft (versetzt, nicht im Gleichschritt).
+2. **Sek. 2,6–8,2 (parallel dazu): der UFO-Einflug.** Die 4 Kreise schießen nacheinander ins Bild
+   (Flug je 0,42 s, **1,3 s Pause dazwischen**), jeder mit **gerichtetem Bewegungsschlier**,
+   **abruptem Stopp** und **Einrast-Blitz**. Reihenfolge/Richtung: **I** von rechts (→ oben links),
+   **II** von unten (→ oben rechts), **IV** von links (→ unten rechts), **III** von unten (→ unten links).
+3. **Sek. 7,0:** der Untertitel **„Vier Tore der Erkenntnis"**.
+4. **Ab Sek. 9,0 — erst wenn alle 4 Scheiben stehen** — erwachen die **Ziffern** langsam, **in
+   zufälliger Reihenfolge, nie I→II→III→IV**; jede Bezeichnung folgt ihrer eigenen Ziffer; die Tore
+   **schweben** sanft (versetzt, nicht im Gleichschritt). Ende bei ~17,3 Sek.
 - Feines **Hintergrund-Gitter** (Holo-Gitter, ~5 % Deckkraft).
 - **Klick irgendwo während der Zeremonie** = überspringen, sofort das fertige Menü.
 - **Wiedererkennung:** erster Besuch → volle Zeremonie; jeder weitere Besuch → direkt das fertige
   Portal (`localStorage`). **„↻ Von vorn" zeigt immer wieder die volle Zeremonie.**
 - **Alle Timings stehen gesammelt im `CFG`-Block** ganz oben im `<script>` und sind leicht justierbar.
+  Wichtigste Schrauben: `WORD_GLOW` (wie gemächlich der Schriftzug erglüht), `ORB_FLY_GAP` (Ruhe
+  zwischen den Einflügen) und **`ORB_START`** — *eine* Zahl entscheidet über parallel (2.6) oder
+  streng nacheinander (8.0).
 
 ## 5. Was live läuft (Ist-Zustand in `index.html`)
 
@@ -165,6 +170,16 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Changelog
 
+- **15. Juli 2026 (später) — ZEREMONIE NACHGESCHLIFFEN (Ronnys Rückmeldung).** (8) Der Schriftzug
+  erglüht jetzt **als Ganzes** statt Buchstabe für Buchstabe (Animation von `.ch` auf `#wordmark`
+  verlegt, `chIgnite` → `wmIgnite`, 5,0 s). Grund fürs Flackern war der Rhythmus: alle 0,5 s zündete
+  ein Buchstabe über 2,2 s → es überlappten ständig 4–5 in verschiedenen Stadien. Jetzt: **eine**
+  Bewegung (geprüft: 1 Animation statt 15). Die Buchstaben-Kästchen bleiben und halten das exakte
+  Schriftbild. (9) **`ORB_FLY_GAP` 0,22 → 1,3 s** (Flugdauer bleibt 0,42 = „blitzschnell mit abruptem
+  Stopp"); `ORB_DELAY` ersetzt durch **`ORB_START`** = fester Zeitpunkt ab Zeremonie-Beginn, damit der
+  Einflug **parallel** zum Schriftzug laufen kann (2.6 = parallel, 8.0 = nacheinander — eine Zahl).
+  `N_START` nimmt `Math.max(circlesEnd, subEnd)`, damit die Ziffern immer auf beides warten.
+  **Zeremonie: 30 → 24 → ~17,3 Sek.**
 - **15. Juli 2026 — PORTAL-ZEREMONIE UMGEBAUT („UFO-Einflug").** In 7 kleinen Schritten, je ein Commit:
   (1) Schriftzug **responsiv** (Desktop beweisbar unverändert; 375 px → Faktor 0,91, 320 px → 0,87;
   `ResizeObserver` statt `resize`-Event). (2) Buchstaben **fest an Ort und Stelle**, Aufleuchten in
