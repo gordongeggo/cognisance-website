@@ -3,7 +3,8 @@
 > **Eine Datei für alles.** Dieses Dokument ist die *einzige* aktuelle Projekt-Übersicht.
 > Es ersetzt jede vorherige Fassung. In einen anderen Claude-Chat oder als Wissensquelle
 > ins claude.ai-Projekt hochladen. **Immer nur die neueste Version im Projekt behalten.**
-> **Stand: 15. Juli 2026 — Video-Startseite LIVE; Portal-Zeremonie auf „UFO-Einflug" umgebaut.**
+> **Stand: 15. Juli 2026, abends — Video-Startseite LIVE; Portal-Zeremonie auf „UFO-Einflug"
+> umgebaut und von Ronny abgenommen.**
 
 ---
 
@@ -14,11 +15,14 @@ Sie hat das alte WebGL-Schwarze-Loch-Intro **komplett ersetzt**. Die ganze Kette
 
 > **Video 1 (blaues Quanten-Netz, Ambient-Schleife) mit Gravitationslinse** → **„ERKENNE" gedrückt halten**
 > (goldener Lade-Ring) → **Lichtblitz (Naht 1)** → **Video 2 (der Flug)** → **ab Sek. 9 abdunkeln auf `#12122e` (Naht 2)**
-> → **Portal-Menü**, ceremoniell aufgebaut (Schriftzug „Cognizance World" Buchstabe für Buchstabe, dann die 4 Tore
-> nacheinander, dann die Ziffern) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation).
+> → **Portal-Menü**, ceremoniell aufgebaut (**Schriftzug erglüht als Ganzes in 5 s, parallel dazu schießen die
+> 4 Tore herein, dann erwachen die Ziffern**) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation).
+
+**Die Portal-Zeremonie wurde am 15. Juli komplett umgebaut** („UFO-Einflug", ~30 → **~17 Sek.**) und von Ronny
+abgenommen: *„das layout ist jetzt perfekt und auch die animation."* Details in Abschnitt 4a.
 
 **Nächste offene Ziele:** Inhalte für Portale II & IV, Portal III (Holodeck, Abschnitt 6), Sound für Video 2,
-Feinschliff der Timings, Domain-Entscheidung. Details in Abschnitt 8.
+Domain-Entscheidung. Details in Abschnitt 8.
 
 ---
 
@@ -97,10 +101,39 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 - **Klick irgendwo während der Zeremonie** = überspringen, sofort das fertige Menü.
 - **Wiedererkennung:** erster Besuch → volle Zeremonie; jeder weitere Besuch → direkt das fertige
   Portal (`localStorage`). **„↻ Von vorn" zeigt immer wieder die volle Zeremonie.**
-- **Alle Timings stehen gesammelt im `CFG`-Block** ganz oben im `<script>` und sind leicht justierbar.
-  Wichtigste Schrauben: `WORD_GLOW` (wie gemächlich der Schriftzug erglüht), `ORB_FLY_GAP` (Ruhe
-  zwischen den Einflügen) und **`ORB_START`** — *eine* Zahl entscheidet über parallel (2.6) oder
-  streng nacheinander (8.0).
+- **Klick auf ein Tor während der Zeremonie öffnet es NICHT** — er bricht nur ab. *(Der Abbruch-Zuhörer
+  hängt in der „capture"-Phase an `#portal` und stoppt die Weitergabe.)*
+
+## 4b. Alle Stellschrauben auf einen Blick
+
+**Zeiten:** gesammelt im `CFG`-Block ganz oben im `<script>`, alle in Sekunden, größer = langsamer.
+**Farben/Abstände:** als CSS-Variablen oben im `<style>`.
+
+| Schraube | Wert | Was sie tut |
+|---|---|---|
+| `WORD_GLOW` | 5.0 | Zeit von **unsichtbar bis sichtbar** für den Schriftzug (ehrlich: 5 heißt 5 s) |
+| `WORD_START` | 1.0 | Wartezeit, bis der Schriftzug zu erglühen beginnt |
+| `SUB_DELAY` | 1.0 | Pause zwischen lesbarem Schriftzug und Untertitel |
+| **`ORB_START`** | **2.6** | Wann der 1. Kreis fliegt. **2.6 = parallel zum Schriftzug, 8.0 = streng nacheinander** |
+| `ORB_FLY_DUR` | 0.42 | Flugdauer *eines* Kreises (das „blitzschnell") |
+| **`ORB_FLY_GAP`** | **1.3** | Pause zwischen zwei Einflügen (größer = ruhiger) |
+| `ORB_SNAP` / `ORB_SETTLE` | 0.45 / 0.15 | Einrast-Blitz / Pause bis zum Schweben |
+| `FLOAT_PHASE` | 1.5 | Versatz der Schwebe-Kurve pro Tor (0 = alle im Gleichschritt) |
+| `NUM_DELAY` / `NUM_GAP` / `NUM_GLOW` | 0.8 / 1.9 / 1.6 | Ziffern: Vorlauf / Abstand / Aufleuchtdauer |
+| `LABEL_DELAY` / `LABEL_GLOW` | 1.0 / 1.6 | Bezeichnungen: Abstand zur Ziffer / Erscheindauer |
+| `WORDMARK_FILL` | 0.92 | max. Breite des Schriftzugs (Anteil der Bildschirmbreite) |
+| `FLY_ORDER` | I, II, IV, III | Flugreihenfolge (Richtungen stehen im CSS bei `.portal[data-target=…] .orb`) |
+| `--grund-mitte` / `--grund-rand` | `#12122e` / `#000000` | **Grundfarben**, speisen Naht 2 + Portal + Kapitel gemeinsam |
+| `--gitter` | 0.08 | Deckkraft der Holo-Gitterlinien |
+| `--luft-zu-toren` | `clamp(38px, 12vh, 175px)` | Abstand Schriftzug ↔ Tore |
+
+**Zwei Fallen, die schon zugeschnappt sind — bitte nicht erneut hineintappen:**
+1. **Bei Blenden entscheidet die Kurve mindestens so viel wie die Dauer.** Mit `ease` stand der
+   Schriftzug nach der *halben* Zeit schon bei 80 % Deckkraft — die Uhr sagte 5 s, das Auge sah 2.
+   Deshalb `ease-in` (entspricht etwa der Wahrnehmungskurve des Auges). Ronny musste dreimal
+   reklamieren, bis das gefunden war.
+2. **CSS-cm sind keine echten cm.** CSS rechnet starr mit 96 px/Zoll, das Studio Display hat ~109 —
+   ein CSS-cm ist dort nur ~0,88 echte cm. Abstände deshalb in px/vh angeben, nicht in cm.
 
 ## 5. Was live läuft (Ist-Zustand in `index.html`)
 
@@ -125,7 +158,7 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 - **Naht 2 (Video 2 → Portal):** Das Video klingt **NICHT von selbst schwarz aus.** **Der Code dunkelt ab Sekunde 9** einen Schleier von durchsichtig auf voll deckend, **Zielfarbe = `#12122e`** (= `--grund-mitte`, nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll**. **Erst dann** öffnet die Portal-Seite. *(Timing im Code justierbar.)*
 
 ### Schriftzug „Cognizance World"
-- **Gebaut** als **Code-Overlay auf der Portal-Seite** (nicht ins Video eingebrannt), in Ronnys Stil (dünn, gesperrt, Großbuchstaben). Erscheint **Buchstabe für Buchstabe aus der Mitte heraus** (Alien-Titel-Stil). Text jederzeit änderbar.
+- **Gebaut** als **Code-Overlay auf der Portal-Seite** (nicht ins Video eingebrannt), in Ronnys Stil (dünn, gesperrt, Großbuchstaben). Erscheint **als Ganzes, gemächlich über 5 Sek.** aus der Unschärfe herauf (Abschnitt 4a). Text jederzeit änderbar. *(Bis 15. Juli: Buchstabe für Buchstabe aus der Mitte — verworfen, weil es flackerte.)*
 
 ### Reine Referenz/Produktion (wie Video 2 entstand — Firefly/Kling)
 - **Video 2 gefunden mit Kling 3.0** (nach vielen Runden). Kein Modell (Veo 3.1, Kling, Ray/Ray HDR) konnte eine **exakte Wurmloch-Röhre** zuverlässig — die Schwäche der KI-Video-Modelle ist *exakte Geometrie*. Der Netz-Flug passt sogar besser zur Design-Identität.
@@ -167,13 +200,32 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 8. Offene Aufgaben / nächste Ziele
 
-- **Feinschliff der Timings** der Startseite (Ladezeit „ERKENNE", Naht-Tempo, Portal-Choreografie) — nach Ronnys Gefühl, alles leicht justierbar.
+- ✅ ~~Feinschliff der Portal-Choreografie~~ — **erledigt am 15. Juli**, von Ronny abgenommen.
+  *(Noch nicht befasst: Ladezeit „ERKENNE" (1,4 s) und Naht-Tempo (ab Sek. 9) — bisher kein Anlass.)*
+- **Gitter/Vignette am Studio Display gegenprüfen.** Ronny hat die **12 %** am Studio Display gewählt,
+  die endgültigen **8 % + Vignette „stark"** aber am Mac (Studio Display war aus). Beide Werte hängen
+  voneinander ab — die hellere Mitte trägt das Gitter mit. Am großen Schirm nochmal ansehen;
+  `--gitter` ist eine Zahl. *(Werkzeug: `Gitter-Vergleich.html`, s. u.)*
 - **Inhalte für Portale II & IV** (aktuell Platzhalter).
 - **Portal III (Holodeck)** bauen — Drehbuch Abschnitt 6.
 - **Sound für Video 2** (Firefly „Generate sound effects").
 - **Video-Dateigröße** ggf. weiter optimieren (aktuell Video 1 = 4,9 MB, Video 2 = 13,9 MB — beide ok für Cloudflares 25-MB-Grenze).
 - **Domain-Entscheidung:** eine der 5 neuen Domains auswählen und dem Pages-Projekt zuweisen; danach **DMARC/Access prüfen** (Abschnitt 7).
+- **Ungeklärt: sporadisches Flackern.** Ronny sieht gelegentlich ein millisekundenkurzes Aufblitzen an
+  **wechselnden** Stellen, nie an derselben. **Sehr wahrscheinlich nicht die Website:** es trat schon
+  **vor** allen Änderungen auf und **auch in anderen Fenstern** (während des Tippens im Chat). Eine
+  Website kann kein fremdes Fenster zum Zucken bringen — das kann nur macOS, die Grafikausgabe, das
+  Studio Display oder dessen Kabel. **Nicht bewiesen.** Gegentest, falls es wieder auffällt: Seite
+  komplett schließen und weiter beobachten. *(Was dabei gefunden und behoben wurde: Video 1 dekodierte
+  endlos hinter der Portalseite weiter — echte Verschwendung, aber nicht die Ursache des Flackerns.)*
 - Optional: `video-preview.html` / `neues-intro.html` aufräumen; JS aus `index.html` in `script.js` auslagern.
+
+### Werkzeuge auf Ronnys Schreibtisch (nicht im Repo)
+- **`Gitter-Vergleich.html`** — eigenständige Datei zum Doppelklicken (kein Server nötig). Zeigt den
+  Portal-Hintergrund und schaltet Gitter (5–20 %, „aus") und Vignette durch. Gebaut, weil **niemand am
+  falschen Bildschirm über Farben entscheiden kann**: Screenshots zeigen das Gitter ja gerade, das Studio
+  Display verschluckt es. ⚠️ **Zeigt noch die alten Farben** (Vignette-Varianten vor der „stark"-Wahl) —
+  vor der nächsten Nutzung nachziehen lassen.
 
 ## 9. Changelog
 
