@@ -75,16 +75,28 @@
            Die Buchstaben-Kaestchen halten nur noch das Schriftbild (exakter Abstand,
            doppeltes Leerzeichen im Wort) — sie werden NICHT mehr einzeln angesteuert. */
         #wordmark .ch { display: inline-block; white-space: pre; }
-        #wordmark.show { animation: wmIgnite 5s ease forwards; }   /* Dauer setzt das JS aus CFG */
+        #wordmark.show { animation: wmIgnite 5s forwards; }   /* Dauer setzt das JS aus CFG,
+                                                                 Kurven stehen in den Keyframes */
         /* Die Prozente teilen die Dauer auf: bis 75 % geht der Schriftzug von unsichtbar
            auf sichtbar (das eigentliche Aufblenden), die letzten 25 % nimmt sich nur noch
            das Glimmen zurueck. Frueher stand hier 60 % — dann gingen 40 % der Zeit fuer
-           ein Nachglühen drauf, das man gar nicht als „Erscheinen" wahrnimmt. */
+           ein Nachglühen drauf, das man gar nicht als „Erscheinen" wahrnimmt.
+
+           WICHTIG — die Kurve: „ease" (der Normalfall) ist VORNE LASTIG. Damit stand der
+           Schriftzug nach der halben Zeit schon bei 80 % Deckkraft und die restlichen
+           2,5 s krochen unbemerkt hinterher: die Uhr sagte 5 s, das Auge sah 2.
+           „ease-in" startet gemaechlich und gewinnt erst nach und nach an Kraft — das
+           entspricht in etwa der Art, wie das Auge Helligkeit wahrnimmt, und macht aus
+           den 5 Sekunden auch gefuehlte 5 Sekunden.
+           Die Kurve steht IN den Keyframes, damit sie nur fuer das Aufblenden gilt und
+           nicht auch fuers Abklingen. */
         @keyframes wmIgnite {
             0%   { opacity: 0; filter: blur(9px);
-                   text-shadow: 0 0 0 rgba(177,159,251,0); }
+                   text-shadow: 0 0 0 rgba(177,159,251,0);
+                   animation-timing-function: ease-in; }             /* gilt fuer 0% -> 75% */
             75%  { opacity: 1; filter: blur(0);                       /* jetzt voll da, glimmt kurz ... */
-                   text-shadow: 0 0 26px rgba(177,159,251,0.85), 0 0 10px rgba(255,255,255,0.55); }
+                   text-shadow: 0 0 26px rgba(177,159,251,0.85), 0 0 10px rgba(255,255,255,0.55);
+                   animation-timing-function: ease-out; }            /* gilt fuer 75% -> 100% */
             100% { opacity: 1; filter: blur(0);                       /* ... und zurueck auf den normalen Wert */
                    text-shadow: 0 0 34px rgba(177,159,251,0.28); }
         }
