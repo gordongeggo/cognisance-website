@@ -13,7 +13,7 @@
 Sie hat das alte WebGL-Schwarze-Loch-Intro **komplett ersetzt**. Die ganze Kette läuft:
 
 > **Video 1 (blaues Quanten-Netz, Ambient-Schleife) mit Gravitationslinse** → **„ERKENNE" gedrückt halten**
-> (goldener Lade-Ring) → **Lichtblitz (Naht 1)** → **Video 2 (der Flug)** → **ab Sek. 9 abdunkeln auf `#080815` (Naht 2)**
+> (goldener Lade-Ring) → **Lichtblitz (Naht 1)** → **Video 2 (der Flug)** → **ab Sek. 9 abdunkeln auf `#12122e` (Naht 2)**
 > → **Portal-Menü**, ceremoniell aufgebaut (Schriftzug „Cognizance World" Buchstabe für Buchstabe, dann die 4 Tore
 > nacheinander, dann die Ziffern) → **voll klickbar** (Kapitel I, Platzhalter II–IV, Navigation).
 
@@ -53,7 +53,7 @@ Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment au
 - **Startseite:** zwei eingebettete Videos (`<video>`) + eine **Code-Overlay-Schicht** + eine **WebGL-Gravitationslinse** auf Video 1. Bewusst **kein** Echtzeit-WebGL-Flug mehr.
 - **Menü, Kapitel, Navigation, Overlay:** **Vanilla JS + HTML5/CSS**, keine Frameworks.
 - Alles steckt in **einer Datei**: `index.html` (HTML + CSS + JS zusammen).
-- **Farbwelt:** samtiges Schwarz-Blau (#030308 / #080815), Gold **#d4af37**, Violett **#b19ffb**, Sternenweiß.
+- **Farbwelt:** samtiges Schwarz-Blau (#030308 / **#12122e**), Gold **#d4af37**, Violett **#b19ffb**, Sternenweiß.
 - **Desktop-fokussiert** (die Linse nutzt WebGL). Es gibt einen **Rückfall**: kann der Browser das lokale Video nicht in die Linse einlesen (z. B. Doppelklick/`file://`) oder fehlt WebGL, zeigt der Code **Video 1 einfach normal** (ohne Linsen-Biegung). Live über HTTPS läuft die Linse voll.
 
 ## 4. Verbindliche Design-Identität (gilt für ALLE Seiten)
@@ -61,7 +61,10 @@ Eine einzelne, statische Website, live über **Cloudflare Pages** (Deployment au
 - **Präzise und mathematisch statt verspielt.** Exakte Geometrie, klare Konstruktion. Möglichst **kein zufälliger „Staub"**.
 - **Typografie:** scharf, dünn (font-weight 100–300), weit gesperrt, Großbuchstaben für Titel.
 - **Leitmotiv „Holodeck-Gitter":** ein leeres, perspektivisches Liniengitter als „Struktur hinter der Realität".
-- **Durchgehende Farb-Harmonie:** die Farbe fließt über die **ganze** Seite — vom blauen Quanten-Netz (Video 1) über den Flug (Video 2) bis zur Portal-Seite. Fließende Übergänge, keine harten Farbbrüche; das Ganze mündet ins dunkle `#080815`.
+- **Durchgehende Farb-Harmonie:** die Farbe fließt über die **ganze** Seite — vom blauen Quanten-Netz (Video 1) über den Flug (Video 2) bis zur Portal-Seite. Fließende Übergänge, keine harten Farbbrüche; das Ganze mündet ins dunkle `#12122e`.
+  **Technisch abgesichert:** dieser Grundton steht als CSS-Variable `--grund-mitte` (Rand: `--grund-rand`)
+  **einmal** in `:root` und speist Naht 2, die Portal-Seite und die Kapitelseiten gemeinsam — so kann
+  keine der drei Stellen mehr auseinanderlaufen und einen Farbbruch erzeugen.
 
 ## 4a. Das Portal-Menü — FERTIG und (bis auf Überschriften) TABU
 
@@ -90,7 +93,7 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 4. **Ab Sek. 9,0 — erst wenn alle 4 Scheiben stehen** — erwachen die **Ziffern** langsam, **in
    zufälliger Reihenfolge, nie I→II→III→IV**; jede Bezeichnung folgt ihrer eigenen Ziffer; die Tore
    **schweben** sanft (versetzt, nicht im Gleichschritt). Ende bei ~17,3 Sek.
-- Feines **Hintergrund-Gitter** (Holo-Gitter, **12 % Deckkraft** — Stellschraube `--gitter` in `#portal`).
+- Feines **Hintergrund-Gitter** (Holo-Gitter, **8 % Deckkraft** — Stellschraube `--gitter` in `#portal`).
 - **Klick irgendwo während der Zeremonie** = überspringen, sofort das fertige Menü.
 - **Wiedererkennung:** erster Besuch → volle Zeremonie; jeder weitere Besuch → direkt das fertige
   Portal (`localStorage`). **„↻ Von vorn" zeigt immer wieder die volle Zeremonie.**
@@ -115,11 +118,11 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
    - **Gravitationslinse** (WebGL): eine weiche Raumzeit-Delle biegt das Netz, **folgt dem Mauszeiger** und **vertieft sich beim Halten** von „ERKENNE". Dezent/real (keine Singularität, kein bunter Ring). Mit Rückfall (Abschnitt 3).
    - **„ERKENNE"-Ritual** in der Mitte: **Klick-und-Halten** lädt einen goldenen Ring (~1,4 Sek.), bei **100 %** → Video 2. (Bewusst „Ritual", nicht bloßer Klick.)
 3. **Video 2 — der Flug** (`netz_kling_v1.mp4`, Kling 3.0, 13,9 MB) spielt **einmal**: atmendes Quanten-Netz, aus dem eine geometrische Figur aufsteigt (**kein** Wurmloch). **Ton erlaubt** (kommt später).
-4. **Portal-Seite** erscheint aus dem `#080815` und baut sich ceremoniell auf (Abschnitt 4a).
+4. **Portal-Seite** erscheint aus dem `#12122e` und baut sich ceremoniell auf (Abschnitt 4a).
 
 ### Die zwei „Nähte" (unsichtbare Übergänge) — gebaut
 - **Naht 1 (Video 1 → Video 2):** im Umschaltmoment legt der Code einen **hellen Lichtblitz** aus der Mitte darüber, der den Schnitt überstrahlt. *(Zusätzlich sicherbar über Frame-Matching: erstes Bild von Video 2 = Ruhebild der Schleife, `Video_1.png`.)*
-- **Naht 2 (Video 2 → Portal):** Das Video klingt **NICHT von selbst schwarz aus.** **Der Code dunkelt ab Sekunde 9** einen Schleier von durchsichtig auf voll deckend, **Zielfarbe = `#080815`** (nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll**. **Erst dann** öffnet die Portal-Seite. *(Timing im Code justierbar.)*
+- **Naht 2 (Video 2 → Portal):** Das Video klingt **NICHT von selbst schwarz aus.** **Der Code dunkelt ab Sekunde 9** einen Schleier von durchsichtig auf voll deckend, **Zielfarbe = `#12122e`** (= `--grund-mitte`, nicht reines Schwarz), **spätestens bei Video-Ende (Sek. 10) voll**. **Erst dann** öffnet die Portal-Seite. *(Timing im Code justierbar.)*
 
 ### Schriftzug „Cognizance World"
 - **Gebaut** als **Code-Overlay auf der Portal-Seite** (nicht ins Video eingebrannt), in Ronnys Stil (dünn, gesperrt, Großbuchstaben). Erscheint **Buchstabe für Buchstabe aus der Mitte heraus** (Alien-Titel-Stil). Text jederzeit änderbar.
@@ -130,7 +133,9 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 - **Referenz-Dateien (im claude.ai-Projekt):** `Video_1.png` (Ruhebild/Startbild), `schwarzes_Ende.png`, `Page_Seite_2_.png` (Portal-Farbvorlage).
 
 ### Echte Farbwerte der Portal-Seite (für Prompts & Code)
-- **Hintergrund:** radial `#080815` (Mitte) → `#010103` (Rand); Grundton `#030308`.
+- **Hintergrund:** radial `#12122e` (Mitte, = `--grund-mitte`) → `#000000` (Rand, = `--grund-rand`); Grundton `#030308`.
+  *(Bis 15. Juli 2026 abends: `#080815` → `#010103`. Ronny hat am Studio Display die kräftigere
+  Variante gewählt — die hellere Mitte stellt die Tore in einen Lichthof.)*
 - **Holo-Gitter-Linien:** `rgb(130,175,245)` bei **12 %** Deckkraft (CSS-Variable `--gitter` in `#portal`;
   bis 15. Juli 2026 waren es 5 % — auf dem Studio Display unsichtbar, siehe Changelog).
   **Gold:** `#d4af37` · **Violett:** `#b19ffb`.
@@ -172,6 +177,24 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Changelog
 
+- **15. Juli 2026 (spät) — VIGNETTE „STARK", GITTER 8 %, LAYOUT ENTZERRT, „VON VORN" REPARIERT.**
+  **Farbwelt:** Ronny hat am Studio Display die kräftigere Vignette gewählt: Mitte `#080815` → **`#12122e`**,
+  Rand `#010103` → **`#000000`** — die hellere Mitte stellt die Tore in einen Lichthof. Weil die Mitte
+  jetzt mitträgt, reichen **8 %** Gitter (statt der zuvor gewählten 12 %).
+  **Wichtig dabei:** `#080815` steckte an **drei** Stellen (Naht-2-Schleier, Portal-Seite, Kapitelseiten).
+  Nur die Vignette zu ändern hätte genau die harten Farbbrüche erzeugt, die die Design-Identität
+  ausschließt. Alle drei hängen jetzt an **einer** Quelle: `--grund-mitte` / `--grund-rand` in `:root`.
+  **Layout:** Abstand Schriftzug ↔ Tore +94 px (= 2,19 *echte* cm auf dem Studio Display), Stellschraube
+  `--luft-zu-toren`. *(Merke: CSS-cm sind keine echten cm — CSS rechnet starr mit 96px/Zoll, das Studio
+  Display hat ~109.)*
+  **„Von vorn":** zeigte in Safari die Zeremonie nicht mehr (die `sessionStorage`-Notiz überlebte das
+  Neuladen nicht). Nicht nachstellbar in Chromium → statt zu raten die Abhängigkeit entfernt: der Marker
+  steht jetzt in der **Adresse** (`?vonvorn=1`, wird sofort wieder entfernt). Erzwingt nebenbei einen
+  echten Neuaufbau statt einer Seite aus dem Zwischenspeicher. **`?vonvorn=1` ist auch von Hand aufrufbar.**
+  **Aufgeräumt:** Video 1/2 und das Linsen-Canvas werden abgeschaltet, sobald das Portal steht — vorher
+  dekodierte Video 1 endlos 1080p hinter der undurchsichtigen Seite.
+  *(Offen: Ronny sieht sporadisches Flackern an wechselnden Stellen. Trat schon vor allen Änderungen auf
+  und auch in anderen Fenstern → sehr wahrscheinlich System/Display, nicht die Seite. Nicht bewiesen.)*
 - **15. Juli 2026 (Abend) — HOLO-GITTER 5 % → 12 %; Schriftzug-Blende korrigiert.**
   **Gitter:** Ronny sah den Hintergrund auf dem **Studio Display nicht** (auf dem Handy schon).
   Nachgerechnet: bei 5 % lagen die Linien nur **6–11 Helligkeitsstufen von 255** über dem Grund,
