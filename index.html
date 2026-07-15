@@ -422,27 +422,30 @@
         }
         /* ---------- Wiedererkennung: erster vs. wiederkehrender Besuch ----------
            localStorage = das Gedaechtnis des Browsers, ueberlebt das Schliessen.
-           sessionStorage = nur fuer diesen Tab, ueberlebt das Neuladen — genau richtig
-           fuer den „Von vorn"-Knopf, der ja neu laedt und trotzdem die volle
-           Zeremonie zeigen soll.
-           Beides in try/catch: in privaten Fenstern kann der Zugriff verboten sein,
-           und daran darf die Seite nicht scheitern (dann eben immer volle Zeremonie). */
-        const SEEN_KEY = 'cw_portal_seen', REPLAY_KEY = 'cw_portal_replay';
-        function store(kind, action, key, val){
+           In try/catch: in privaten Fenstern kann der Zugriff verboten sein, und daran
+           darf die Seite nicht scheitern (dann laeuft eben immer die volle Zeremonie). */
+        const SEEN_KEY = 'cw_portal_seen';
+        function store(action, key, val){
             try {
-                const s = (kind === 'local') ? localStorage : sessionStorage;
-                if (action === 'get') return s.getItem(key);
-                if (action === 'set') s.setItem(key, val);
-                if (action === 'del') s.removeItem(key);
+                if (action === 'get') return localStorage.getItem(key);
+                if (action === 'set') localStorage.setItem(key, val);
             } catch (e) { return null; }
         }
-        // Volle Zeremonie? Ja beim ersten Besuch — und immer, wenn „Von vorn" gedrueckt wurde.
+
+        /* Der „Von vorn"-Marker steht in der ADRESSE (?vonvorn=1), nicht im Speicher.
+           Frueher lag er im sessionStorage — der muss ein Neuladen ueberleben, und ob
+           er das tut, entscheidet der Browser (in Safari kam die Zeremonie nicht wieder).
+           Eine Adresse ueberlebt jedes Neuladen in jedem Browser. Nebenbei erzwingt die
+           geaenderte Adresse einen echten Neuaufbau statt einer Seite aus dem Zwischenspeicher.
+           Der Marker wird sofort abgelesen und aus der Adresse entfernt, damit ein
+           spaeteres Neuladen nicht endlos die Zeremonie zeigt. */
+        const WILL_VON_VORN = new URLSearchParams(location.search).has('vonvorn');
+        if (WILL_VON_VORN && window.history && history.replaceState) {
+            history.replaceState(null, '', location.pathname);
+        }
+        // Volle Zeremonie? Ja beim ersten Besuch — und immer nach „Von vorn".
         function wantsFullCeremony(){
-            if (store('session', 'get', REPLAY_KEY) === '1') {
-                store('session', 'del', REPLAY_KEY);   // gilt nur dieses eine Mal
-                return true;
-            }
-            return store('local', 'get', SEEN_KEY) !== '1';
+            return WILL_VON_VORN || store('get', SEEN_KEY) !== '1';
         }
 
         // Alle Zeitschalter der Zeremonie werden gesammelt, damit ein Klick sie
@@ -678,7 +681,7 @@
             // Erster Besuch -> volle Zeremonie. Wiederkehrer -> direkt das fertige Menue.
             if (wantsFullCeremony()) revealPortal();
             else                     finishCeremony();
-            store('local', 'set', SEEN_KEY, '1');   // ab jetzt gilt: war schon da
+            store('set', SEEN_KEY, '1');   // ab jetzt gilt: war schon da
         }
 
         // ---------- Navigation (Menü / Kapitel / Platzhalter) ----------
@@ -739,9 +742,11 @@
         document.getElementById('ph-back').addEventListener('click', () => navigate('menu'));
         // „Von vorn" ist die bewusste Wiederholung: hier soll die volle Zeremonie
         // erneut laufen, auch wenn der Browser den Besucher schon kennt.
+        // location.replace(...?vonvorn=1) statt reload(): der Marker steht damit in der
+        // Adresse und ueberlebt garantiert. „replace" statt „href", damit der
+        // Zurueck-Knopf nicht zwischen den beiden Adressen hin und her springt.
         document.getElementById('restart').addEventListener('click', () => {
-            store('session', 'set', REPLAY_KEY, '1');
-            window.location.reload();
+            location.replace(location.pathname + '?vonvorn=1');
         });
         makeLinks(document.getElementById('ch1-links'), 'chapter-one');
     </script>
