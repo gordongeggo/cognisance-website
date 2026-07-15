@@ -76,10 +76,14 @@
            doppeltes Leerzeichen im Wort) — sie werden NICHT mehr einzeln angesteuert. */
         #wordmark .ch { display: inline-block; white-space: pre; }
         #wordmark.show { animation: wmIgnite 5s ease forwards; }   /* Dauer setzt das JS aus CFG */
+        /* Die Prozente teilen die Dauer auf: bis 75 % geht der Schriftzug von unsichtbar
+           auf sichtbar (das eigentliche Aufblenden), die letzten 25 % nimmt sich nur noch
+           das Glimmen zurueck. Frueher stand hier 60 % — dann gingen 40 % der Zeit fuer
+           ein Nachglühen drauf, das man gar nicht als „Erscheinen" wahrnimmt. */
         @keyframes wmIgnite {
             0%   { opacity: 0; filter: blur(9px);
                    text-shadow: 0 0 0 rgba(177,159,251,0); }
-            60%  { opacity: 1; filter: blur(0);                       /* kurzes Aufglimmen ... */
+            75%  { opacity: 1; filter: blur(0);                       /* jetzt voll da, glimmt kurz ... */
                    text-shadow: 0 0 26px rgba(177,159,251,0.85), 0 0 10px rgba(255,255,255,0.55); }
             100% { opacity: 1; filter: blur(0);                       /* ... und zurueck auf den normalen Wert */
                    text-shadow: 0 0 34px rgba(177,159,251,0.28); }
@@ -308,7 +312,9 @@
             WORDMARK_FILL: 0.92,   // wie viel der Bildschirmbreite der Schriftzug höchstens
                                    // einnehmen darf (0.92 = 92 %, Rest bleibt Luft am Rand)
             WORD_START: 1.0,       // Wartezeit, bis der Schriftzug zu erglühen beginnt
-            WORD_GLOW:  5.0,       // wie lange das Erglühen dauert (größer = gemächlicher)
+            WORD_GLOW:  5.0,       // wie lange der Schriftzug braucht, um von UNSICHTBAR auf
+                                   // SICHTBAR zu kommen. Genau diese Zeit, nicht weniger —
+                                   // das kurze Nachglimmen kommt oben drauf (siehe WM_FADE_SHARE).
             SUB_DELAY:  1.0,       // Pause zwischen fertigem Schriftzug und dem Untertitel
 
             // --- Die vier Portale (UFO-Einflug) ---
@@ -431,10 +437,16 @@
         function revealPortal(){
             const subtitle = document.getElementById('subtitle');
 
-            // Der Schriftzug erglueht gemaechlich als GANZES — eine einzige ruhige Bewegung
+            // Der Schriftzug erglueht gemaechlich als GANZES — eine einzige ruhige Bewegung.
+            // In @keyframes wmIgnite ist der Schriftzug bei 75 % voll da, die letzten 25 %
+            // nehmen nur noch das Glimmen zurueck. Damit WORD_GLOW wirklich die Zeit bis
+            // „sichtbar" ist, wird die Gesamtdauer entsprechend hochgerechnet.
+            const WM_FADE_SHARE = 0.75;   // muss zum Prozentwert in @keyframes wmIgnite passen
             const wm = document.getElementById('wordmark');
-            wm.style.animationDuration = CFG.WORD_GLOW + 's';
+            wm.style.animationDuration = (CFG.WORD_GLOW / WM_FADE_SHARE) + 's';
             at(CFG.WORD_START, () => wm.classList.add('show'));
+            // „fertig" = der Moment, in dem der Schriftzug LESBAR ist — nicht der Moment,
+            // in dem das Nachglimmen verklungen ist. Daran haengt der Untertitel.
             const wordEnd = CFG.WORD_START + CFG.WORD_GLOW;
 
             // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
