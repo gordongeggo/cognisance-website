@@ -114,6 +114,23 @@
         .portal[data-target="chapter-two"]   .orb { --fx: 0px;    --fy: 120vh; }
         .portal[data-target="chapter-four"]  .orb { --fx: -120vw; --fy: 0px;   }
         .portal[data-target="chapter-three"] .orb { --fx: 0px;    --fy: 120vh; }
+
+        /* Der Schlier gilt NUR waehrend des Fluges (Klasse .trail) und passt zur
+           Flugrichtung: waagerecht bei I und IV, senkrecht bei II und III. */
+        .portal[data-target="chapter-one"]   .orb.trail,
+        .portal[data-target="chapter-four"]  .orb.trail { filter: url(#trail-x); }
+        .portal[data-target="chapter-two"]   .orb.trail,
+        .portal[data-target="chapter-three"] .orb.trail { filter: url(#trail-y); }
+
+        /* Einrast-Blitz im Moment des Stopps: kurz hell aufblitzen und exakt auf die
+           normalen Werte zurueckfallen (Endbild bleibt damit unveraendert). */
+        .orb.snap { animation: orbSnap 0.45s ease-out; }   /* Dauer setzt das JS aus CFG */
+        @keyframes orbSnap {
+            0%   { border-color: rgba(255,246,220,0.95);
+                   box-shadow: 0 0 46px rgba(255,246,220,0.7), inset 0 0 30px rgba(255,246,220,0.45); }
+            100% { border-color: rgba(212,175,55,0.35);
+                   box-shadow: 0 0 30px rgba(177,159,251,0.15), inset 0 0 30px rgba(177,159,251,0.12); }
+        }
         .portal:hover .orb { border-color: #d4af37; box-shadow: 0 0 50px rgba(212,175,55,0.4), inset 0 0 40px rgba(177,159,251,0.22); }
         .num { color: #d4af37; font-weight: 100; font-size: clamp(1.4rem,5vw,2.1rem); opacity: 0; transition: opacity 1.6s ease; }
         .num.show { opacity: 1; }
@@ -227,6 +244,19 @@
         </div>
     </div>
 
+    <!-- Bewegungsschlier: gerichteter Weichzeichner (nur waagerecht bzw. nur senkrecht),
+         damit die Scheibe wie ein Streifen wirkt und nicht wie Nebel.
+         stdDeviation = Laenge des Schliers. Der grosse Filterbereich verhindert,
+         dass der Schlier an den Kanten abgeschnitten wird. -->
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+        <filter id="trail-x" x="-150%" y="-50%" width="400%" height="200%" color-interpolation-filters="sRGB">
+            <feGaussianBlur stdDeviation="18 0"/>
+        </filter>
+        <filter id="trail-y" x="-50%" y="-150%" width="200%" height="400%" color-interpolation-filters="sRGB">
+            <feGaussianBlur stdDeviation="0 18"/>
+        </filter>
+    </svg>
+
     <!-- ===== Gravitationslinse (WebGL) ===== -->
     <script id="lens-vert" type="x-shader/x-vertex">
         attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }
@@ -278,6 +308,7 @@
             ORB_FLY_DUR:  0.42,    // Flugdauer EINES Kreises (kleiner = schneller/schnittiger)
             ORB_FLY_GAP:  0.22,    // ganz kurze Pause zwischen zwei Einfluegen
             ORB_FLY_EASE: 'cubic-bezier(0.15,0.7,0.25,1)',  // hohes Tempo, dann abrupter Stopp
+            ORB_SNAP:     0.45,    // Dauer des Einrast-Blitzes beim Stopp
             ORB_SETTLE:   0.15,    // Pause nach der Landung, bevor das Tor zu schweben beginnt
             FLOAT_PHASE:  1.5,     // Versatz der Schwebe-Kurve pro Tor (damit sie nicht im
                                    // Gleichschritt wippen; 0 = alle gleichzeitig)
@@ -368,8 +399,15 @@
                 // transform, opacity, box-shadow, border-color
                 orb.style.transitionDuration       = CFG.ORB_FLY_DUR + 's, 0.08s, 0.5s, 0.5s';
                 orb.style.transitionTimingFunction = CFG.ORB_FLY_EASE + ', linear, ease, ease';
+                orb.style.animationDuration = CFG.ORB_SNAP + 's';
                 const t = O_START + i * O_STEP;
-                setTimeout(() => orb.classList.add('show'), t * 1000);
+                // Start: Schlier an + losfliegen
+                setTimeout(() => orb.classList.add('trail', 'show'), t * 1000);
+                // Landung: Schlier weg (das Auge hat sie wieder erfasst) + Einrast-Blitz
+                setTimeout(() => {
+                    orb.classList.remove('trail');
+                    orb.classList.add('snap');
+                }, (t + CFG.ORB_FLY_DUR) * 1000);
                 // Schweben beginnt nach der Landung. Die negative Verzoegerung setzt jedes
                 // Tor an eine andere Stelle der Schwebe-Kurve -> sie schweben versetzt
                 // statt im Gleichschritt (so sah es auch vorher aus).
