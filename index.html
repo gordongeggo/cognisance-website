@@ -122,6 +122,15 @@
         .portal[data-target="chapter-two"]   .orb.trail,
         .portal[data-target="chapter-three"] .orb.trail { filter: url(#trail-y); }
 
+        /* SPRUNG ZUM FERTIGEN BILD (Klick waehrend der Zeremonie).
+           Setzt nur die Aufbau-Bewegungen auf Null — das Schweben (.portal.float)
+           steht bewusst NICHT in dieser Liste und laeuft normal weiter. */
+        #portal.instant #subtitle,
+        #portal.instant .ch,
+        #portal.instant .orb,
+        #portal.instant .num,
+        #portal.instant .plabel2 { transition-duration: 0s !important; animation-duration: 0s !important; }
+
         /* Einrast-Blitz im Moment des Stopps: kurz hell aufblitzen und exakt auf die
            normalen Werte zurueckfallen (Endbild bleibt damit unveraendert). */
         .orb.snap { animation: orbSnap 0.45s ease-out; }   /* Dauer setzt das JS aus CFG */
@@ -318,6 +327,7 @@
             NUM_GAP:     1.9,      // Abstand von Ziffer zu Ziffer
             NUM_GLOW:    1.6,      // wie lange EINE Ziffer zum Aufleuchten braucht
             LABEL_DELAY: 1.0,      // Abstand zwischen einer Ziffer und ihrer Bezeichnung
+            LABEL_GLOW:  1.6,      // wie lange EINE Bezeichnung zum Erscheinen braucht
         };
         /* =================================================================== */
 
@@ -382,6 +392,12 @@
             do { out = shuffled(arr); } while (out.every((el, i) => el === arr[i]) && ++tries < 20);
             return out;
         }
+        // Alle Zeitschalter der Zeremonie werden gesammelt, damit ein Klick sie
+        // abbrechen kann. at(sek, tuwas) = „mach das nach sek Sekunden".
+        let ceremonyTimers = [];
+        let ceremonyDone = false;
+        function at(sec, fn){ ceremonyTimers.push(setTimeout(fn, sec * 1000)); }
+
         // Die ceremonielle Portal-Choreografie
         function revealPortal(){
             const chSpans  = [...document.querySelectorAll('#wordmark .ch')];
@@ -392,12 +408,12 @@
             const glyphs = shuffled(chSpans.filter(s => s.dataset.space !== '1'));
             glyphs.forEach((el, k) => {
                 el.style.animationDuration = CFG.WORD_GLOW + 's';
-                setTimeout(() => el.classList.add('show'), (CFG.WORD_START + k * CFG.WORD_GAP) * 1000);
+                at(CFG.WORD_START + k * CFG.WORD_GAP, () => el.classList.add('show'));
             });
             const wordEnd = CFG.WORD_START + (glyphs.length - 1) * CFG.WORD_GAP + CFG.WORD_GLOW;
 
             // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
-            setTimeout(() => subtitle.classList.add('show'), (wordEnd + CFG.SUB_DELAY) * 1000);
+            at(wordEnd + CFG.SUB_DELAY, () => subtitle.classList.add('show'));
 
             // Die vier Portale schiessen nacheinander blitzschnell ins Bild (UFO-Einflug)
             const flyOrder = CFG.FLY_ORDER.map(t => document.querySelector('.portal[data-target="' + t + '"]'));
@@ -412,19 +428,19 @@
                 orb.style.animationDuration = CFG.ORB_SNAP + 's';
                 const t = O_START + i * O_STEP;
                 // Start: Schlier an + losfliegen
-                setTimeout(() => orb.classList.add('trail', 'show'), t * 1000);
+                at(t, () => orb.classList.add('trail', 'show'));
                 // Landung: Schlier weg (das Auge hat sie wieder erfasst) + Einrast-Blitz
-                setTimeout(() => {
+                at(t + CFG.ORB_FLY_DUR, () => {
                     orb.classList.remove('trail');
                     orb.classList.add('snap');
-                }, (t + CFG.ORB_FLY_DUR) * 1000);
+                });
                 // Schweben beginnt nach der Landung. Die negative Verzoegerung setzt jedes
                 // Tor an eine andere Stelle der Schwebe-Kurve -> sie schweben versetzt
                 // statt im Gleichschritt (so sah es auch vorher aus).
-                setTimeout(() => {
+                at(t + CFG.ORB_FLY_DUR + CFG.ORB_SETTLE, () => {
                     p.style.animationDelay = (-i * CFG.FLOAT_PHASE) + 's';
                     p.classList.add('float');
-                }, (t + CFG.ORB_FLY_DUR + CFG.ORB_SETTLE) * 1000);
+                });
             });
             const circlesEnd = O_START + (flyOrder.length - 1) * O_STEP + CFG.ORB_FLY_DUR;
 
@@ -436,11 +452,46 @@
             nums.forEach((n, i) => {
                 n.style.transitionDuration = CFG.NUM_GLOW + 's';
                 const t = N_START + i * CFG.NUM_GAP;
-                setTimeout(() => n.classList.add('show'), t * 1000);
+                at(t, () => n.classList.add('show'));
                 const label = n.closest('.portal').querySelector('.plabel2');
-                setTimeout(() => label.classList.add('show'), (t + CFG.LABEL_DELAY) * 1000);
+                label.style.transitionDuration = CFG.LABEL_GLOW + 's';
+                at(t + CFG.LABEL_DELAY, () => label.classList.add('show'));
             });
+
+            // Ende der Zeremonie: ab hier ist ein Klick wieder ein normaler Klick
+            // (und kein „Ueberspringen" mehr).
+            const lastLabel = N_START + (nums.length - 1) * CFG.NUM_GAP + CFG.LABEL_DELAY;
+            at(lastLabel + CFG.LABEL_GLOW, () => { ceremonyDone = true; ceremonyTimers = []; });
         }
+
+        // Zeremonie abbrechen und sofort das fertige Portal-Menue zeigen.
+        function finishCeremony(){
+            if (ceremonyDone) return;
+            ceremonyDone = true;
+            ceremonyTimers.forEach(clearTimeout);
+            ceremonyTimers = [];
+
+            // „instant" nimmt allen Aufbau-Bewegungen die Dauer -> das Endbild steht sofort
+            portal.classList.add('instant');
+            document.querySelectorAll('#wordmark .ch').forEach(el => el.classList.add('show'));
+            document.getElementById('subtitle').classList.add('show');
+            document.querySelectorAll('.orb').forEach(o => { o.classList.remove('trail'); o.classList.add('show'); });
+            document.querySelectorAll('.num, .plabel2').forEach(el => el.classList.add('show'));
+            document.querySelectorAll('#portal .portal').forEach((p, i) => {
+                p.style.animationDelay = (-i * CFG.FLOAT_PHASE) + 's';
+                p.classList.add('float');
+            });
+            void portal.offsetWidth;   // Endzustand sofort verrechnen ...
+            // ... und erst danach die normalen Dauern zurueckgeben (fuer Hover usw.)
+            requestAnimationFrame(() => portal.classList.remove('instant'));
+        }
+
+        // Ein Klick irgendwo waehrend der Zeremonie springt zum fertigen Menue.
+        // „capture" = dieser Zuhoerer kommt VOR den Portal-Klicks dran; so oeffnet
+        // der Abbruch-Klick nicht gleichzeitig ein Tor.
+        portal.addEventListener('click', e => {
+            if (!ceremonyDone) { e.stopPropagation(); finishCeremony(); }
+        }, true);
 
         // ---------- WebGL-Gravitationslinse (mit Rückfall) ----------
         const gl = canvas.getContext('webgl');
