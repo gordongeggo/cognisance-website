@@ -316,6 +316,7 @@
             // --- Ziffern I–IV und Bezeichnungen ---
             NUM_DELAY:   0.8,      // Pause, nachdem alle vier Scheiben stehen
             NUM_GAP:     1.9,      // Abstand von Ziffer zu Ziffer
+            NUM_GLOW:    1.6,      // wie lange EINE Ziffer zum Aufleuchten braucht
             LABEL_DELAY: 1.0,      // Abstand zwischen einer Ziffer und ihrer Bezeichnung
         };
         /* =================================================================== */
@@ -372,6 +373,15 @@
             }
             return a;
         }
+        // Wie shuffled(), kommt aber NIE in der Ausgangsreihenfolge heraus.
+        // Noetig bei den vier Ziffern: rein zufaellig waere I-II-III-IV sonst in etwa
+        // jedem 24. Besuch dran — und genau das soll nie passieren.
+        function shuffledStrict(arr){
+            if (arr.length < 2) return [...arr];
+            let out, tries = 0;
+            do { out = shuffled(arr); } while (out.every((el, i) => el === arr[i]) && ++tries < 20);
+            return out;
+        }
         // Die ceremonielle Portal-Choreografie
         function revealPortal(){
             const chSpans  = [...document.querySelectorAll('#wordmark .ch')];
@@ -418,12 +428,18 @@
             });
             const circlesEnd = O_START + (flyOrder.length - 1) * O_STEP + CFG.ORB_FLY_DUR;
 
-            // Ziffern, danach die Bezeichnungen
-            const nums = [...document.querySelectorAll('.num')];
+            // Erst wenn alle vier Scheiben stehen, erwachen die Ziffern — langsam und in
+            // ZUFAELLIGER Reihenfolge (bewusst nicht I->II->III->IV).
+            // Jede Bezeichnung folgt ihrer eigenen Ziffer.
+            const nums = shuffledStrict([...document.querySelectorAll('.num')]);
             const N_START = circlesEnd + CFG.NUM_DELAY;
-            nums.forEach((n, i) => setTimeout(() => n.classList.add('show'), (N_START + i * CFG.NUM_GAP) * 1000));
-            const labels = [...document.querySelectorAll('.plabel2')];
-            labels.forEach((l, i) => setTimeout(() => l.classList.add('show'), (N_START + i * CFG.NUM_GAP + CFG.LABEL_DELAY) * 1000));
+            nums.forEach((n, i) => {
+                n.style.transitionDuration = CFG.NUM_GLOW + 's';
+                const t = N_START + i * CFG.NUM_GAP;
+                setTimeout(() => n.classList.add('show'), t * 1000);
+                const label = n.closest('.portal').querySelector('.plabel2');
+                setTimeout(() => label.classList.add('show'), (t + CFG.LABEL_DELAY) * 1000);
+            });
         }
 
         // ---------- WebGL-Gravitationslinse (mit Rückfall) ----------
