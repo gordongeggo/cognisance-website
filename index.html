@@ -65,6 +65,9 @@
             display: flex; font-weight: 100; text-transform: uppercase;
             letter-spacing: clamp(5px, 2.5vw, 16px); font-size: clamp(1.3rem, 6vw, 2.8rem);
             color: rgba(255,255,255,0.92); text-shadow: 0 0 34px rgba(177,159,251,0.28); margin-bottom: 16px;
+            /* Der Kasten ist immer genau so breit wie der Text (nötig, damit fitWordmark()
+               die echte Breite messen kann). Passt der Text nicht, schrumpft ihn das JS. */
+            width: max-content; transform-origin: 50% 50%;
         }
         #wordmark .ch {
             display: inline-block; white-space: pre; opacity: 0;
@@ -238,6 +241,17 @@
     </script>
 
     <script>
+        /* =====================================================================
+           STELLSCHRAUBEN DER PORTAL-ZEREMONIE
+           Alle Zeiten in Sekunden. Größer = langsamer. Hier gefahrlos justieren.
+           ===================================================================== */
+        const CFG = {
+            // --- Schriftzug „Cognizance World" ---
+            WORDMARK_FILL: 0.92,   // wie viel der Bildschirmbreite der Schriftzug höchstens
+                                   // einnehmen darf (0.92 = 92 %, Rest bleibt Luft am Rand)
+        };
+        /* =================================================================== */
+
         const v1      = document.getElementById('v1');
         const v2      = document.getElementById('v2');
         const canvas  = document.getElementById('lens');
@@ -260,6 +274,25 @@
                 wm.appendChild(s);
             });
         })();
+
+        // Schriftzug an die Bildschirmbreite anpassen.
+        // Auf breiten Bildschirmen passt er ohnehin -> Faktor 1, es ändert sich NICHTS.
+        // Nur wenn er überstehen würde (schmales Handy), wird er passend verkleinert.
+        function fitWordmark(){
+            const wm = document.getElementById('wordmark');
+            wm.style.transform = 'none';                   // erst messen ...
+            const natural = wm.offsetWidth;                 // echte Breite des Schriftzugs
+            if (!natural) return;
+            const avail = document.documentElement.clientWidth * CFG.WORDMARK_FILL;
+            const s = Math.min(1, avail / natural);
+            wm.style.transform = (s < 1) ? 'scale(' + s + ')' : 'none';
+        }
+        // Der ResizeObserver beobachtet die Bildschirmbreite direkt und meldet jede
+        // Änderung (Fenster ziehen, Handy drehen) — zuverlässiger als das resize-Signal.
+        if (window.ResizeObserver) new ResizeObserver(fitWordmark).observe(document.documentElement);
+        else window.addEventListener('resize', fitWordmark);
+        window.addEventListener('load', fitWordmark);   // falls die Schrift verspätet fertig lädt
+        fitWordmark();
 
         // Reihenfolge aus der Mitte heraus (Alien-Gefühl: erst ein Buchstabe mittig)
         function middleOut(n){
