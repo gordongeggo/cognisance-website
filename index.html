@@ -68,12 +68,15 @@
             /* Der Kasten ist immer genau so breit wie der Text (nötig, damit fitWordmark()
                die echte Breite messen kann). Passt der Text nicht, schrumpft ihn das JS. */
             width: max-content; transform-origin: 50% 50%;
+            opacity: 0;   /* wartet, bis er als GANZES erglüht */
         }
-        /* Die Buchstaben stehen von Anfang an FEST an ihrer Position (keine Bewegung,
-           kein Einfliegen). Sie werden nur aus der Unschaerfe heraus „angezuendet". */
-        #wordmark .ch { display: inline-block; white-space: pre; opacity: 0; filter: blur(9px); }
-        #wordmark .ch.show { animation: chIgnite 2.2s ease forwards; }   /* Dauer setzt das JS aus CFG */
-        @keyframes chIgnite {
+        /* Der Schriftzug erglueht als GANZES: eine einzige, ruhige Bewegung aus der
+           Unschaerfe herauf, kurzes violettes Aufglimmen, dann setzt er sich.
+           Die Buchstaben-Kaestchen halten nur noch das Schriftbild (exakter Abstand,
+           doppeltes Leerzeichen im Wort) — sie werden NICHT mehr einzeln angesteuert. */
+        #wordmark .ch { display: inline-block; white-space: pre; }
+        #wordmark.show { animation: wmIgnite 5s ease forwards; }   /* Dauer setzt das JS aus CFG */
+        @keyframes wmIgnite {
             0%   { opacity: 0; filter: blur(9px);
                    text-shadow: 0 0 0 rgba(177,159,251,0); }
             60%  { opacity: 1; filter: blur(0);                       /* kurzes Aufglimmen ... */
@@ -126,7 +129,7 @@
            Setzt nur die Aufbau-Bewegungen auf Null — das Schweben (.portal.float)
            steht bewusst NICHT in dieser Liste und laeuft normal weiter. */
         #portal.instant #subtitle,
-        #portal.instant .ch,
+        #portal.instant #wordmark,
         #portal.instant .orb,
         #portal.instant .num,
         #portal.instant .plabel2 { transition-duration: 0s !important; animation-duration: 0s !important; }
@@ -304,10 +307,9 @@
             // --- Schriftzug „Cognizance World" ---
             WORDMARK_FILL: 0.92,   // wie viel der Bildschirmbreite der Schriftzug höchstens
                                    // einnehmen darf (0.92 = 92 %, Rest bleibt Luft am Rand)
-            WORD_START: 1.2,       // Wartezeit, bis der erste Buchstabe aufleuchtet
-            WORD_GAP:   0.5,       // Abstand von Buchstabe zu Buchstabe (kleiner = schneller)
-            WORD_GLOW:  2.2,       // wie lange EIN Buchstabe zum Aufleuchten braucht
-            SUB_DELAY:  1.0,       // Pause zwischen letztem Buchstaben und dem Untertitel
+            WORD_START: 1.0,       // Wartezeit, bis der Schriftzug zu erglühen beginnt
+            WORD_GLOW:  5.0,       // wie lange das Erglühen dauert (größer = gemächlicher)
+            SUB_DELAY:  1.0,       // Pause zwischen fertigem Schriftzug und dem Untertitel
 
             // --- Die vier Portale (UFO-Einflug) ---
             // Flugreihenfolge: I (von rechts), II (von unten), IV (von links), III (von unten).
@@ -350,7 +352,6 @@
                 const s = document.createElement('span');
                 s.className = 'ch';
                 s.textContent = (c === ' ') ? '  ' : c;
-                if (c === ' ') s.dataset.space = '1';   // Leerzeichen: kein eigener Aufleucht-Takt
                 wm.appendChild(s);
             });
         })();
@@ -425,17 +426,13 @@
 
         // Die ceremonielle Portal-Choreografie
         function revealPortal(){
-            const chSpans  = [...document.querySelectorAll('#wordmark .ch')];
             const subtitle = document.getElementById('subtitle');
 
-            // Buchstaben: fest an Ort und Stelle, nacheinander in ZUFAELLIGER Reihenfolge aufleuchten
-            chSpans.filter(s => s.dataset.space === '1').forEach(s => s.classList.add('show'));
-            const glyphs = shuffled(chSpans.filter(s => s.dataset.space !== '1'));
-            glyphs.forEach((el, k) => {
-                el.style.animationDuration = CFG.WORD_GLOW + 's';
-                at(CFG.WORD_START + k * CFG.WORD_GAP, () => el.classList.add('show'));
-            });
-            const wordEnd = CFG.WORD_START + (glyphs.length - 1) * CFG.WORD_GAP + CFG.WORD_GLOW;
+            // Der Schriftzug erglueht gemaechlich als GANZES — eine einzige ruhige Bewegung
+            const wm = document.getElementById('wordmark');
+            wm.style.animationDuration = CFG.WORD_GLOW + 's';
+            at(CFG.WORD_START, () => wm.classList.add('show'));
+            const wordEnd = CFG.WORD_START + CFG.WORD_GLOW;
 
             // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
             at(wordEnd + CFG.SUB_DELAY, () => subtitle.classList.add('show'));
@@ -498,7 +495,7 @@
 
             // „instant" nimmt allen Aufbau-Bewegungen die Dauer -> das Endbild steht sofort
             portal.classList.add('instant');
-            document.querySelectorAll('#wordmark .ch').forEach(el => el.classList.add('show'));
+            document.getElementById('wordmark').classList.add('show');
             document.getElementById('subtitle').classList.add('show');
             document.querySelectorAll('.orb').forEach(o => { o.classList.remove('trail'); o.classList.add('show'); });
             document.querySelectorAll('.num, .plabel2').forEach(el => el.classList.add('show'));
@@ -510,13 +507,13 @@
             // ... und erst danach die normalen Dauern zurueckgeben (fuer Hover usw.)
             requestAnimationFrame(() => {
                 portal.classList.remove('instant');
-                // Die Buchstaben-Animation ausdruecklich ans Ende setzen. Ohne das
+                // Die Schriftzug-Animation ausdruecklich ans Ende setzen. Ohne das
                 // haengt es an einer feinen Browser-Regel, ob sie beim Zurueckgeben der
-                // Dauer (0s -> 2.2s) beendet bleibt oder von vorn losliefe. Chrome
-                // macht es richtig; hier verlassen wir uns nicht darauf.
+                // Dauer (0s -> volle Dauer) beendet bleibt oder von vorn losliefe.
+                // Chrome macht es richtig; hier verlassen wir uns nicht darauf.
                 if (document.getAnimations) {
                     document.getAnimations().forEach(a => {
-                        if (a.animationName === 'chIgnite') { try { a.finish(); } catch (e) {} }
+                        if (a.animationName === 'wmIgnite') { try { a.finish(); } catch (e) {} }
                     });
                 }
             });
