@@ -90,7 +90,7 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 4. **Ab Sek. 9,0 — erst wenn alle 4 Scheiben stehen** — erwachen die **Ziffern** langsam, **in
    zufälliger Reihenfolge, nie I→II→III→IV**; jede Bezeichnung folgt ihrer eigenen Ziffer; die Tore
    **schweben** sanft (versetzt, nicht im Gleichschritt). Ende bei ~17,3 Sek.
-- Feines **Hintergrund-Gitter** (Holo-Gitter, ~5 % Deckkraft).
+- Feines **Hintergrund-Gitter** (Holo-Gitter, **12 % Deckkraft** — Stellschraube `--gitter` in `#portal`).
 - **Klick irgendwo während der Zeremonie** = überspringen, sofort das fertige Menü.
 - **Wiedererkennung:** erster Besuch → volle Zeremonie; jeder weitere Besuch → direkt das fertige
   Portal (`localStorage`). **„↻ Von vorn" zeigt immer wieder die volle Zeremonie.**
@@ -131,7 +131,9 @@ Schriftzug und Einflug laufen **parallel** — ruhiges Licht oben gegen scharfe 
 
 ### Echte Farbwerte der Portal-Seite (für Prompts & Code)
 - **Hintergrund:** radial `#080815` (Mitte) → `#010103` (Rand); Grundton `#030308`.
-- **Holo-Gitter-Linien:** `rgb(130,175,245)` bei ~5 % Deckkraft. **Gold:** `#d4af37` · **Violett:** `#b19ffb`.
+- **Holo-Gitter-Linien:** `rgb(130,175,245)` bei **12 %** Deckkraft (CSS-Variable `--gitter` in `#portal`;
+  bis 15. Juli 2026 waren es 5 % — auf dem Studio Display unsichtbar, siehe Changelog).
+  **Gold:** `#d4af37` · **Violett:** `#b19ffb`.
 
 ## 5b. Frühere Code-Wege (WebGL-Schwarzes-Loch & Platinen-Hybrid) — HISTORIE / pausiert
 
@@ -170,6 +172,19 @@ Ziel: Der Besucher *erlebt* die Simulationshypothese. Technik: Vanilla JS + Canv
 
 ## 9. Changelog
 
+- **15. Juli 2026 (Abend) — HOLO-GITTER 5 % → 12 %; Schriftzug-Blende korrigiert.**
+  **Gitter:** Ronny sah den Hintergrund auf dem **Studio Display nicht** (auf dem Handy schon).
+  Nachgerechnet: bei 5 % lagen die Linien nur **6–11 Helligkeitsstufen von 255** über dem Grund,
+  Kontrast **1,05:1** — praktisch unsichtbar; ob man es sieht, entschied allein Bildschirm und
+  Raumlicht. Ronny hat am eigenen Display aus einer Vergleichsseite **12 %** gewählt (1,18:1).
+  Neue Stellschraube `--gitter` in `#portal`. Vignette unverändert.
+  **Schriftzug:** Drei Anläufe, bis „5 Sekunden" auch 5 Sekunden *waren* — der Fehler saß jedesmal
+  woanders als in der Zahl: (1) `WORD_GLOW` war die Dauer der *ganzen* Animation statt der Blende,
+  (2) der Untertitel wartete aufs verklungene Nachglimmen statt auf den lesbaren Schriftzug,
+  (3) die Kurve `ease` ist **vorne lastig** — nach der halben Zeit stand er schon bei **80 %**
+  Deckkraft (gefühlt ~90 %), der Rest kroch unbemerkt hinterher. Jetzt `ease-in` (entspricht in etwa
+  der Wahrnehmungskurve des Auges): bei Sekunde 2,5 nur noch **32 %**. **Lehre:** Bei Blenden
+  entscheidet die *Kurve* mindestens so viel wie die Dauer.
 - **15. Juli 2026 (später) — ZEREMONIE NACHGESCHLIFFEN (Ronnys Rückmeldung).** (8) Der Schriftzug
   erglüht jetzt **als Ganzes** statt Buchstabe für Buchstabe (Animation von `.ch` auf `#wordmark`
   verlegt, `chIgnite` → `wmIgnite`, 5,0 s). Grund fürs Flackern war der Rhythmus: alle 0,5 s zündete

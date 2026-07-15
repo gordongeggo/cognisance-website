@@ -50,12 +50,18 @@
 
         /* Portal-Seite (Menü) — LANGSAM, streng nacheinander; kaum sichtbares Gitter */
         #portal {
+            /* Deckkraft der Holo-Gitterlinien. Von Ronny am Studio Display ausgewählt.
+               Bei 0.05 lag das Gitter nur 6–11 Helligkeitsstufen (von 255) über dem
+               Hintergrund — Kontrast 1,05:1, also praktisch unsichtbar. Bei 0.12
+               sind es 15–27 Stufen (1,18:1). Am Handy war schon 0.05 sichtbar. */
+            --gitter: 0.12;
+
             position: fixed; inset: 0; z-index: 9;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 1.8s ease;
             background:
-                repeating-linear-gradient(0deg,  rgba(130,175,245,0.05) 0 1px, transparent 1px 46px),
-                repeating-linear-gradient(90deg, rgba(130,175,245,0.05) 0 1px, transparent 1px 46px),
+                repeating-linear-gradient(0deg,  rgba(130,175,245,var(--gitter)) 0 1px, transparent 1px 46px),
+                repeating-linear-gradient(90deg, rgba(130,175,245,var(--gitter)) 0 1px, transparent 1px 46px),
                 radial-gradient(circle at center, #080815 0%, #010103 100%);
         }
         #portal.on { opacity: 1; visibility: visible; }
