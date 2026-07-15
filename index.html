@@ -315,9 +315,12 @@
             // Flugreihenfolge: I (von rechts), II (von unten), IV (von links), III (von unten).
             // Die Richtungen stehen im CSS bei „.portal[data-target=…] .orb".
             FLY_ORDER: ['chapter-one', 'chapter-two', 'chapter-four', 'chapter-three'],
-            ORB_DELAY:    1.2,     // Pause zwischen Untertitel und dem ersten Einflug
+            ORB_START:    2.6,     // WANN der erste Kreis losfliegt, gerechnet ab Beginn der
+                                   // Zeremonie. 2.6 = parallel zum erglühenden Schriftzug.
+                                   // Auf 8.0 stellen = die Tore kommen brav erst nach dem
+                                   // Untertitel, also streng nacheinander.
             ORB_FLY_DUR:  0.42,    // Flugdauer EINES Kreises (kleiner = schneller/schnittiger)
-            ORB_FLY_GAP:  0.22,    // ganz kurze Pause zwischen zwei Einfluegen
+            ORB_FLY_GAP:  1.3,     // Pause zwischen zwei Einfluegen (größer = ruhiger)
             ORB_FLY_EASE: 'cubic-bezier(0.15,0.7,0.25,1)',  // hohes Tempo, dann abrupter Stopp
             ORB_SNAP:     0.45,    // Dauer des Einrast-Blitzes beim Stopp
             ORB_SETTLE:   0.15,    // Pause nach der Landung, bevor das Tor zu schweben beginnt
@@ -435,11 +438,14 @@
             const wordEnd = CFG.WORD_START + CFG.WORD_GLOW;
 
             // Untertitel „Vier Tore der Erkenntnis" erscheint ruhig danach
-            at(wordEnd + CFG.SUB_DELAY, () => subtitle.classList.add('show'));
+            const subEnd = wordEnd + CFG.SUB_DELAY;
+            at(subEnd, () => subtitle.classList.add('show'));
 
             // Die vier Portale schiessen nacheinander blitzschnell ins Bild (UFO-Einflug)
+            // ORB_START ist ein fester Zeitpunkt ab Beginn der Zeremonie und haengt bewusst
+            // NICHT am Schriftzug: so koennen die Tore parallel zum Erglühen hereinfliegen.
             const flyOrder = CFG.FLY_ORDER.map(t => document.querySelector('.portal[data-target="' + t + '"]'));
-            const O_START = wordEnd + CFG.SUB_DELAY + CFG.ORB_DELAY;
+            const O_START = CFG.ORB_START;
             const O_STEP  = CFG.ORB_FLY_DUR + CFG.ORB_FLY_GAP;
             flyOrder.forEach((p, i) => {
                 const orb = p.querySelector('.orb');
@@ -470,7 +476,10 @@
             // ZUFAELLIGER Reihenfolge (bewusst nicht I->II->III->IV).
             // Jede Bezeichnung folgt ihrer eigenen Ziffer.
             const nums = shuffledStrict([...document.querySelectorAll('.num')]);
-            const N_START = circlesEnd + CFG.NUM_DELAY;
+            // Math.max = „der spaetere von beiden": die Ziffern warten immer, bis BEIDES
+            // erledigt ist — alle vier Scheiben stehen UND der Untertitel ist da. Sonst
+            // koennte ein spaeter gedrehter Zeitwert die Reihenfolge durcheinanderbringen.
+            const N_START = Math.max(circlesEnd, subEnd) + CFG.NUM_DELAY;
             nums.forEach((n, i) => {
                 n.style.transitionDuration = CFG.NUM_GLOW + 's';
                 const t = N_START + i * CFG.NUM_GAP;
